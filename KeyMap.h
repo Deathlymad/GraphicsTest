@@ -16,7 +16,8 @@ public:
 
 	~KeyMap();
 
-	static KeyMap instance; //should be possibly modified for multiplay profiles
 private:
 	std::map<unsigned short, std::vector<std::function<void()>>> KeyBindings; // short inn binary 00000 3 bit modifier Key (Alt, Shift, Ctrl) 8 bit key
+
+	static std::vector<KeyMap*> KeyMaps;
 };

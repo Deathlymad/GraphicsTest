@@ -22,6 +22,8 @@ void Clock::update()
 {
 	init();
 
+	lastSec = system_clock::now();
+
 	while (running)
 	{
 		lastTick = std::chrono::system_clock::now();
