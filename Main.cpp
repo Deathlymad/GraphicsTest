@@ -29,7 +29,6 @@
 #include "KeyMap.h"
 #include "Clock.h"
 
-
 Screen* s;
 Shader* ambient;
 Mesh* m;
