@@ -165,6 +165,25 @@
   <ItemGroup>
     <Text Include="To Do.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\forward_ambient_fs.glsl" />
+    <None Include="assets\shaders\forward_ambient_vs.glsl" />
+    <None Include="assets\shaders\forward_directional_fs.glsl" />
+    <None Include="assets\shaders\forward_directional_vs.glsl" />
+    <None Include="assets\shaders\forward_point_fs.glsl" />
+    <None Include="assets\shaders\forward_point_vs.glsl" />
+    <None Include="assets\shaders\forward_spot_fs.glsl" />
+    <None Include="assets\shaders\forward_spot_vs.glsl" />
+    <None Include="assets\shaders\fs.glsl" />
+    <None Include="assets\shaders\vs.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="assets\mesh\Stein_einfach.obj" />
+    <Object Include="assets\mesh\Tanne_einfach.obj" />
+    <Object Include="assets\mesh\Tanne_einfach_newExport.obj" />
+    <Object Include="assets\mesh\Test_Block.obj" />
+    <Object Include="assets\mesh\Test_Objektfile_001.obj" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

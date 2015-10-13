@@ -35,7 +35,7 @@ Mesh* m;
 
 void initGraphics()
 {
-	s = new Screen(800, 600, "Test", char(153));
+	s = new Screen(1366, 768, "Test", char(154));
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
