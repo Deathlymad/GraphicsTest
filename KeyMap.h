@@ -17,7 +17,7 @@ public:
 	~KeyMap();
 
 private:
-	std::map<unsigned short, std::vector<std::function<void()>>> KeyBindings; // short inn binary 00000 3 bit modifier Key (Alt, Shift, Ctrl) 8 bit key
+	std::map<unsigned short, std::vector<std::function<void()>>> KeyBindings; // short in binary 00000 3 bit modifier Key (Alt, Shift, Ctrl) 8 bit key
 
 	static std::vector<KeyMap*> KeyMaps;
 };

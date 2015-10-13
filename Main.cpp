@@ -30,7 +30,6 @@
 #include "Clock.h"
 
 
-GLFWwindow* Window;
 Screen* s;
 Shader* ambient;
 Mesh* m;
@@ -52,17 +51,7 @@ void initGraphics()
 
 	ambient = new Shader("forward_ambient_vs.glsl", "forward_ambient_fs.glsl");
 
-	std::vector<glm::vec3> vecs = std::vector<glm::vec3>();
-	vecs.push_back(glm::vec3(-1.0f, -1.0f, 0.0f));
-	vecs.push_back(glm::vec3(1.0f, -1.0f, 0.0f));
-	vecs.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
-
-	std::vector<unsigned int> ind = std::vector<unsigned int>();
-	ind.push_back(0);
-	ind.push_back(1);
-	ind.push_back(2);
-
-	m = new Mesh(vecs, ind);
+	m = new Mesh("assets/mesh/stein_einfach.obj");
 }
 
 int main()
