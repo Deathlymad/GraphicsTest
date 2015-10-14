@@ -1,26 +1,19 @@
 #include "KeyMap.h"
 
-std::vector<KeyMap*> KeyMap::KeyMaps;
+KeyMap::KeyMap() : InputHandler(), KeyBindings()
+{}
 
-KeyMap::KeyMap() : KeyBindings()
-{
-	KeyMaps.push_back(this);
-}
-
-void KeyMap::addKeyBind( unsigned short key, std::function<void()> Func)
+void KeyMap::addKeyBind( unsigned short key, std::function<void(unsigned short)> Func)
 {
 	KeyBindings[key].push_back(Func);
 }
 
 void KeyMap::onKeyPress(unsigned short key)
 {
-	for (KeyMap* k : KeyMaps)
-	{
-		std::vector<std::function<void()>> funcs = k->KeyBindings[key];
+	std::vector<std::function<void(unsigned short)>> funcs = KeyBindings[key];
 
-		for (std::function<void()> f : funcs)
-			f();
-	}
+	for (std::function<void(unsigned short)> f : funcs)
+		f(key);
 }
 
 KeyMap::~KeyMap()

@@ -1,5 +1,13 @@
+Short Term:
+Implement Function Registration of Input Handler
+Develop a Way around the Redundancy of the InputHandler class
+
+
+Long Term:
 Texturen
 Physics
 OpenCL
 Recursive Objects
 Automatische Threadauslastung und Speicheroptimierung
+komplette Abstrahierung von OpenGL Operationen und States in OOP
+Gamepad Joystick implementation

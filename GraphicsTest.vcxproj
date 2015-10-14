@@ -147,6 +147,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Clock.cpp" />
+    <ClCompile Include="EngineObject.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="iofunctions.cpp" />
     <ClCompile Include="KeyMap.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -156,6 +158,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clock.h" />
+    <ClInclude Include="EngineObject.h" />
+    <ClInclude Include="InputHandler.h" />
     <ClInclude Include="iofunctions.h" />
     <ClInclude Include="KeyMap.h" />
     <ClInclude Include="Mesh.h" />
@@ -178,11 +182,21 @@
     <None Include="assets\shaders\vs.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="assets\mesh\Stein_einfach.obj" />
-    <Object Include="assets\mesh\Tanne_einfach.obj" />
-    <Object Include="assets\mesh\Tanne_einfach_newExport.obj" />
-    <Object Include="assets\mesh\Test_Block.obj" />
-    <Object Include="assets\mesh\Test_Objektfile_001.obj" />
+    <Object Include="assets\mesh\Stein_einfach.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="assets\mesh\Tanne_einfach.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="assets\mesh\Tanne_einfach_newExport.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="assets\mesh\Test_Block.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="assets\mesh\Test_Objektfile_001.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
