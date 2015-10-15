@@ -5,18 +5,14 @@ struct GLFWwindow;
 class Screen;
 
 #pragma once
-class InputHandler //abstract , To Do Gamepad/Joystick
+class InputHandler //abstract
 {
-	enum InputType
-	{
-		KEYBOARD,
-		MOUSE,
-		JOYSTICK,
-		GAMEPAD,
-		OTHER
-	};
 public:
 	InputHandler(Screen* s);
+	InputHandler();
+	//needs to acceps a collection of InputType too
+
+	static void registerCallbacks(GLFWwindow*);
 
 	~InputHandler();
 protected:
@@ -25,10 +21,9 @@ protected:
 	virtual void onMouseButton(char button, char action, char mods) {} //abstract, need to be overwritten
 
 private:
-	std::set<InputType> EventCalls; //stores all the types of events that are accepted
-
 	static std::vector<InputHandler*> Handles; //atores Update Links to all Input Handlers
 
+	static bool registered;
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);

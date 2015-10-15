@@ -13,12 +13,17 @@ public:
 	static GLFWmonitor* getMonitor(unsigned short monitorID);
 
 
-	Screen( std::string title);
-	Screen( int width, int height, std::string title);
+	Screen(std::string title);
+	Screen(int width, int height, std::string title);
 	Screen(std::string title, char flags);
 	Screen(int width, int height, std::string title, char flags);
 
 	void updateScreen();
+
+	void handleWindow(std::function<void(GLFWwindow*)> f)
+	{
+		f(winHandle);
+	}
 
 	~Screen();
 private:

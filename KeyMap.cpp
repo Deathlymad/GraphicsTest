@@ -1,6 +1,6 @@
 #include "KeyMap.h"
 
-KeyMap::KeyMap() : InputHandler(), KeyBindings()
+KeyMap::KeyMap(Screen* s) : InputHandler(s), KeyBindings()
 {}
 
 void KeyMap::addKeyBind( unsigned short key, std::function<void(unsigned short)> Func)

@@ -1,6 +1,4 @@
 Short Term:
-Implement Function Registration of Input Handler
-Develop a Way around the Redundancy of the InputHandler class
 
 
 Long Term:

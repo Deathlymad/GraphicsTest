@@ -10,7 +10,7 @@ struct GLFWwindow;
 class KeyMap : InputHandler
 {
 public:
-	KeyMap();
+	KeyMap(Screen* s);
 
 	void addKeyBind( unsigned short key, std::function<void(unsigned short)> Func);
 
