@@ -57,14 +57,12 @@ int main()
 {
 	Clock MainLoop( initGraphics, [] {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); ambient->bind(); m->Draw(); s->updateScreen(); });
 
-	while (!s) {} //doesn't change value if in other Thread O.o
+	MainLoop.run();
+
+	while (!s) {}
 	KeyMap k = KeyMap(s);
 	k.addKeyBind(0, [&MainLoop](unsigned short) {MainLoop.shutdown(); });
 
-	MainLoop.run();
-
 	while (MainLoop.isRunning())
 		std::cout << "FPS: " << MainLoop.getLastTPS() << std::endl;
-
-	system("pause");
 }

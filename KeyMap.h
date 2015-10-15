@@ -4,8 +4,6 @@
 
 #include "InputHandler.h"
 
-struct GLFWwindow;
-
 #pragma once
 class KeyMap : InputHandler
 {
@@ -17,7 +15,8 @@ public:
 	void onKeyPress( unsigned short);
 
 	~KeyMap();
-
+protected:
+	void onKeyPress(char button, char action, char mods);
 private:
 	std::map<unsigned short, std::vector<std::function<void(unsigned short)>>> KeyBindings; // short in binary 00000 3 bit modifier Key (Alt, Shift, Ctrl) 8 bit key
 };

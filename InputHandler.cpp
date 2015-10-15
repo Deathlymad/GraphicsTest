@@ -18,6 +18,7 @@ InputHandler::InputHandler(Screen* s)
 {
 	if (!registered)
 		s->handleWindow(registerCallbacks);
+	Handles.push_back(this);
 }
 
 InputHandler::InputHandler()
