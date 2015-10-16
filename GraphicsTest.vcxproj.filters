@@ -51,6 +51,12 @@
     <ClCompile Include="InputHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">
@@ -75,6 +81,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="InputHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

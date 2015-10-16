@@ -59,8 +59,8 @@ int main()
 
 	MainLoop.run();
 
-	while (!s) {}
-	KeyMap k = KeyMap(s);
+	while (!s) {} //waiting for object handles to construct
+	KeyMap k = KeyMap(s); //working O.o
 	k.addKeyBind(0, [&MainLoop](unsigned short) {MainLoop.shutdown(); });
 
 	while (MainLoop.isRunning())

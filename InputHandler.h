@@ -23,6 +23,8 @@ protected:
 private:
 	static std::vector<InputHandler*> Handles; //atores Update Links to all Input Handlers
 
+	double x, y;
+
 	static bool registered;
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos);

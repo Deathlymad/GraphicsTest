@@ -19,6 +19,9 @@ InputHandler::InputHandler(Screen* s)
 	if (!registered)
 		s->handleWindow(registerCallbacks);
 	Handles.push_back(this);
+
+	x = 0;
+	y = 0;
 }
 
 InputHandler::InputHandler()
@@ -48,7 +51,11 @@ void InputHandler::keyCallback(GLFWwindow * window, int key, int scancode, int a
 void InputHandler::cursorPosCallback(GLFWwindow * window, double xpos, double ypos)
 {
 	for (InputHandler* handle : Handles)
-		handle->onMouseMove(xpos, ypos);
+	{
+		handle->onMouseMove(xpos - handle->x, ypos - handle->y);
+		handle->x = xpos;
+		handle->y = ypos;
+	}
 }
 
 void InputHandler::mouseButtonCallback(GLFWwindow * window, int button, int action, int mods)

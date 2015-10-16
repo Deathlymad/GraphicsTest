@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="EngineObject.cpp" />
     <ClCompile Include="InputHandler.cpp" />
@@ -153,16 +154,19 @@
     <ClCompile Include="KeyMap.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="EngineObject.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="iofunctions.h" />
     <ClInclude Include="KeyMap.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>
