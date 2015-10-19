@@ -2,11 +2,17 @@
 
 #pragma once
 #include "InputHandler.h"
+
+class Shader;
+
 class Camera :
 	public InputHandler
 {
 public:
 	Camera();
+
+	void registerUniforms(Shader*);
+
 	~Camera();
 protected:
 	void onKeyPress(char button, char action, char mods);
@@ -17,6 +23,9 @@ private:
 	glm::vec3 up;
 	glm::mat4 projection;
 
+	double XAngle, YAngle;
+
 	static float speed;
+	static glm::vec3 YAxis;
 };
 

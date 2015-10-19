@@ -21,7 +21,11 @@ void KeyMap::addKeyBind( unsigned short key, std::function<void(unsigned short)>
 
 void KeyMap::onKeyPress(unsigned short key)
 {
-	KeyBindings[key](key);
+	if (KeyBindings[key] != nullptr)
+	{ 
+		auto temp = KeyBindings[key];
+		temp(key);
+	}
 }
 
 KeyMap::~KeyMap()

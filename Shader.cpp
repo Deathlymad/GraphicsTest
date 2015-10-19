@@ -61,19 +61,19 @@ void Shader::addShader(ShaderCode &code)
 int Shader::addUniform(Uniform &u)
 {
 	Uniform found;
-	if (Uniforms.size() > 0)
+	if (Uniforms.size() > 0) //if it needs to check
 	{
 		int temp = std::find(Uniforms.begin(), Uniforms.end(), u) - Uniforms.begin() - 1;
 		found = Uniforms[temp];
 	}
 	if (found != u)
 	{
-		Uniforms.push_back(u);
+		Uniforms.push_back(u); //if new
 		return 0;
 	}
 	else
 	{
-		return found.addFloatArr(u);
+		return found.setFloatArr(u._data); //overwrites Data!!
 	}
 }
 
@@ -209,7 +209,8 @@ void Shader::setupUniform(Uniform * uniform)
 
 void Shader::updateUniform(Uniform * uniform, unsigned setIndex)
 {
-	glUniform1fv(uniform->pos, uniform->_data[setIndex]._size, uniform->_data[setIndex]._ptr); //error Handling
+	float* tempData = uniform->_data;
+	glUniform1fv(uniform->pos, sizeof(tempData), tempData); //error Handling
 }
 
 void Shader::makeShader(ShaderCode* code)

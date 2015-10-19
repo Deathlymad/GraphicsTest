@@ -57,7 +57,7 @@ GLFWmonitor* Screen::getMonitor(unsigned short monitorID)
 void Screen::createWindow(int width, int height, std::string title, char flags)
 {
 	if (flags == 0)
-		flags = 152;
+		flags = char(152);
 
 	char tempVal = ((flags & 192) >> 6) + 1;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, tempVal);

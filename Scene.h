@@ -1,4 +1,5 @@
 #include "EngineObject.h"
+#include "Camera.h"
 
 #pragma once
 class Scene

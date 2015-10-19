@@ -44,28 +44,38 @@ public: //Public structures
 	class Uniform
 	{
 	public:
-		struct FloatArr //varying amount of floats that are going to be copied
-		{
-			FloatArr(float* ptr, size_t size) : _ptr(ptr), _size(size){}
-			float* _ptr;
-			size_t _size;
-		};
-		typedef std::vector<FloatArr> UniformSet; //all possible Uniform Values depending on the Object
-	
-
 		std::string _name;
-		UniformSet _data;
-			GLuint pos;
+		float* _data;
+		GLuint pos;
 
 		Uniform() : _name("emptyUniform"), _data(), pos(-1) {}
-		Uniform(std::string name, UniformSet data) : _name(name), _data(data), pos(-1) {}
-		Uniform(std::string name, FloatArr data) : _name(name), _data(), pos(-1) { _data.push_back(data); }
+		Uniform(std::string name, float* data) : _name(name), _data(nullptr), pos(-1)
+		{
+			_data = (float*)malloc(sizeof(data)); //copies Data in case the origianl gets deleted
+			for (size_t i = 0; i < (sizeof(data) / 4) - 1; i++)
+				_data[i] = data[i];
+		}
+		Uniform(std::string name, float data) : _name(name), _data(nullptr), pos(-1)
+		{
+			_data = (float*)malloc(sizeof(float)); //copies Data in case the origianl gets deleted
+			_data[0] = data;
+		}
 
-		int addFloatArr(FloatArr data) { _data.push_back(data); return _data.size() - 1; }
-		int addFloatArr(Uniform &u) { if (*this == u) { _data.insert(_data.end(), u._data.begin(), u._data.end()); return _data.size() - 1; } else return -1; }
+		int setFloatArr(float* data)
+		{
+			free(_data);
+			_data = (float*)malloc(sizeof(data)); //copies Data in case the origianl gets deleted
+			for (size_t i = 0; i < (sizeof(data) / 4) - 1; i++)
+				_data[i] = data[i];
+			return (sizeof(_data) / 4) - 1; //should return last element
+		}
 
 		bool operator==(Uniform other) { return _name == other._name; } //that should suffice
 		bool operator!=(Uniform other) { return _name != other._name; } //that should suffice
+		~Uniform()
+		{
+			free(_data);
+		}
 	};
 public:
 	//construction / destruction
