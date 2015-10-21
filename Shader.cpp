@@ -60,21 +60,8 @@ void Shader::addShader(ShaderCode &code)
 }
 int Shader::addUniform(Uniform &u)
 {
-	Uniform found;
-	if (Uniforms.size() > 0) //if it needs to check
-	{
-		int temp = std::find(Uniforms.begin(), Uniforms.end(), u) - Uniforms.begin() - 1;
-		found = Uniforms[temp];
-	}
-	if (found != u)
-	{
-		Uniforms.push_back(u); //if new
-		return 0;
-	}
-	else
-	{
-		return found.setFloatArr(u._data); //overwrites Data!!
-	}
+	Uniforms.push_back(u);
+	return Uniforms.size() - 1;
 }
 
 
@@ -143,15 +130,18 @@ void Shader::build()
 void Shader::bind()
 {
 	std::string err = checkProgram();
+
+	setUniforms();
+
 	if (err == "")
 		glUseProgram(program);
 	else
 		std::cout << "OpenGL Shader " << err << std::endl;
 }
-void Shader::setUniforms(unsigned i /*Set Index*/)
+void Shader::setUniforms()
 {
 	for (size_t i = 0; i < Uniforms.size(); i++)
-		updateUniform(&Uniforms[i], i);
+		updateUniform(&Uniforms[i]);
 }
 
 
@@ -207,7 +197,7 @@ void Shader::setupUniform(Uniform * uniform)
 	uniform->pos = glGetUniformLocation(program, uniform->_name.c_str()); //Error Handling?
 }
 
-void Shader::updateUniform(Uniform * uniform, unsigned setIndex)
+void Shader::updateUniform(Uniform * uniform)
 {
 	float* tempData = uniform->_data;
 	glUniform1fv(uniform->pos, sizeof(tempData), tempData); //error Handling

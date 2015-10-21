@@ -1,18 +1,27 @@
-#include<GLFW\glfw3.h> //needed for defines
+#include <glm\gtc\matrix_transform.hpp>
 #include "Camera.h"
 #include "Shader.h"
+#include<GLFW\glfw3.h> //needed for defines
 
 float Camera::speed = 0.005f;
 glm::vec3 Camera::YAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 
 Camera::Camera()
 {
+	pos = glm::vec3(0, 0, 0);
+	forward = glm::vec3(0, 0, -1);
+	up = glm::vec3(0, 1, 0);
+}
+
+void Camera::update()
+{
+	View = glm::lookAt( pos, pos + forward, up);
 }
 
 void Camera::registerUniforms(Shader * s)
 {
-	s->addUniform(Shader::Uniform("proj", &projection[0][0]));
-	Shader::Uniform("View", &projection[0][0]); //compute View Matrix
+	s->addUniform(Shader::Uniform("proj", &projection[0][0], 16));
+	s->addUniform(Shader::Uniform("View", &View[0][0], 16));
 }
 
 

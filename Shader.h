@@ -48,11 +48,11 @@ public: //Public structures
 		float* _data;
 		GLuint pos;
 
-		Uniform() : _name("emptyUniform"), _data(), pos(-1) {}
-		Uniform(std::string name, float* data) : _name(name), _data(nullptr), pos(-1)
+		Uniform() : _name("emptyUniform"), _data(nullptr), pos(-1) {}
+		Uniform(std::string name, float* data, unsigned size) : _name(name), _data(nullptr), pos(-1)
 		{
-			_data = (float*)malloc(sizeof(data)); //copies Data in case the origianl gets deleted
-			for (size_t i = 0; i < (sizeof(data) / 4) - 1; i++)
+			_data = (float*)malloc(size * 4); //copies Data in case the origianl gets deleted
+			for (size_t i = 0; i < size; i++)
 				_data[i] = data[i];
 		}
 		Uniform(std::string name, float data) : _name(name), _data(nullptr), pos(-1)
@@ -74,7 +74,8 @@ public: //Public structures
 		bool operator!=(Uniform other) { return _name != other._name; } //that should suffice
 		~Uniform()
 		{
-			free(_data);
+			if (_data != nullptr)
+				free(_data);
 		}
 	};
 public:
@@ -93,7 +94,7 @@ public:
 	void load();
 	void build();
 	void bind();
-	void setUniforms(unsigned);
+	void setUniforms();
 	
 	//operators
 	Shader operator= (Shader);
@@ -110,7 +111,7 @@ private:
 
 	//functions
 	void setupUniform(Uniform*);
-	void updateUniform(Uniform*, unsigned);
+	void updateUniform(Uniform*);
 	void makeShader(ShaderCode*);
 	std::string checkProgram();
 	GLenum getShaderType(ShaderType);

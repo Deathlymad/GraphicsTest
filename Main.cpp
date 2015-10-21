@@ -28,10 +28,12 @@
 #include "Screen.h"
 #include "KeyMap.h"
 #include "Clock.h"
+#include "Camera.h"
 
 Screen* s;
 Shader* ambient;
 Mesh* m;
+Camera* c;
 
 void initGraphics()
 {
@@ -51,11 +53,14 @@ void initGraphics()
 	ambient = new Shader("forward_ambient_vs.glsl", "forward_ambient_fs.glsl");
 
 	m = new Mesh("assets/mesh/stein_einfach.obj");
+
+	c = new Camera();
+	c->registerUniforms(ambient);
 }
 
 int main()
 {
-	Clock MainLoop( initGraphics, [] {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); ambient->bind(); m->Draw(); s->updateScreen(); });
+	Clock MainLoop(initGraphics, [] {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); c->update(); ambient->bind(); m->Draw(); s->updateScreen(); });
 
 	MainLoop.run();
 
