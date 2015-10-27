@@ -26,6 +26,10 @@ InputHandler::InputHandler(Screen* s)
 
 InputHandler::InputHandler()
 {
+	Handles.push_back(this);
+
+	x = 0;
+	y = 0;
 }
 
 

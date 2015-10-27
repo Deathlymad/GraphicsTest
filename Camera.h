@@ -3,6 +3,7 @@
 #pragma once
 #include "EngineObject.h"
 #include "InputHandler.h"
+#include "KeyMap.h"
 
 class Shader;
 
@@ -15,18 +16,19 @@ public:
 
 	void update();
 
+	void registerKeyBinds(KeyMap*);
 	void registerUniforms(Shader*);
 
 	~Camera();
 protected:
-	void onKeyPress(char button, char action, char mods);
-	void onMouseMove(double x, double y);
+	void onMouseMove(double x, double y); //possibly should be moved
 private:
 	glm::vec3 pos;
 	glm::vec3 forward;
 	glm::vec3 up;
 
 	glm::mat4 View;
+	float ViewMatPtr[16];
 	glm::mat4 projection;
 
 	double XAngle, YAngle;

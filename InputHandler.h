@@ -10,7 +10,6 @@ class InputHandler //abstract
 public:
 	InputHandler(Screen* s);
 	InputHandler();
-	//needs to acceps a collection of InputType too
 
 	static void registerCallbacks(GLFWwindow*);
 

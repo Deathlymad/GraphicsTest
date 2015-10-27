@@ -60,13 +60,15 @@ void initGraphics()
 
 int main()
 {
+
 	Clock MainLoop(initGraphics, [] {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); c->update(); ambient->bind(); m->Draw(); s->updateScreen(); });
 
 	MainLoop.run();
 
-	while (!s) {} //waiting for object handles to construct
-	KeyMap k = KeyMap(s); //working O.o
+	while (!s || !c) {} //waiting for object handles to construct
+	KeyMap k = KeyMap(s);
 	k.addKeyBind(0, [&MainLoop](unsigned short) {MainLoop.shutdown(); });
+	c->registerKeyBinds(&k);
 
 	while (MainLoop.isRunning())
 		std::cout << "FPS: " << MainLoop.getLastTPS() << std::endl;

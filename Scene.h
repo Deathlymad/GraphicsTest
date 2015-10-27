@@ -9,7 +9,7 @@ class Scene
 public:
 	Scene();
 
-	void init(Shader*);
+	void init(Shader*, KeyMap*);
 	void update(Shader*);
 	void render(Shader*);
 

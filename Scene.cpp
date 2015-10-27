@@ -7,10 +7,10 @@ Scene::Scene()
 }
 
 
-void Scene::init(Shader* s)
+void Scene::init(Shader* s, KeyMap* k)
 {
 	View.registerUniforms(s);
-	
+	View.registerKeyBinds(k);
 }
 
 void Scene::update(Shader*)

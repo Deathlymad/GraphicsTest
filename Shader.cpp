@@ -61,6 +61,7 @@ void Shader::addShader(ShaderCode &code)
 int Shader::addUniform(Uniform &u)
 {
 	Uniforms.push_back(u);
+
 	return Uniforms.size() - 1;
 }
 
@@ -192,15 +193,41 @@ bool Shader::operator==(std::vector<ShaderCode> Shaders)
 
 
 
-void Shader::setupUniform(Uniform * uniform)
+void Shader::setupUniform(Uniform * uniform) //needs to be called
 {
 	uniform->pos = glGetUniformLocation(program, uniform->_name.c_str()); //Error Handling?
 }
 
 void Shader::updateUniform(Uniform * uniform)
 {
+	if (uniform->pos == -1)
+		setupUniform(uniform);
+
 	float* tempData = uniform->_data;
-	glUniform1fv(uniform->pos, sizeof(tempData), tempData); //error Handling
+	char size = uniform->_size;
+	switch (size)
+	{
+	case 1:
+		glUniform1fv(uniform->pos, 1, tempData); //error Handling
+		break;
+	case 2:
+		glUniform2fv(uniform->pos, 1, tempData); //error Handling
+		break;
+	case 3:
+		glUniform3fv(uniform->pos, 1, tempData); //error Handling
+		break;
+	case 4:
+		glUniform4fv(uniform->pos, 1, tempData); //error Handling
+		break;
+	case 9:
+		glUniformMatrix3fv(uniform->pos, 1, false, tempData); //error Handling
+		break;
+	case 16:
+		glUniformMatrix4fv(uniform->pos, 1, false, tempData); //error Handling
+		break;
+	default:
+		break;
+	}
 }
 
 void Shader::makeShader(ShaderCode* code)

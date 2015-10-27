@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <iostream>
 
 #define PRAGMALIB
 #ifndef GLEW
@@ -11,6 +12,8 @@
 		#pragma comment(lib, "GLU32.lib")
 	#endif
 #endif
+
+//#define ARRAY_SIZE (sizeof(myArray)/sizeof(*myArray))
 
 #pragma once
 class Shader
@@ -45,37 +48,32 @@ public: //Public structures
 	{
 	public:
 		std::string _name;
-		float* _data;
+		float* _data; //does not allocate in itself!!!
+		unsigned _size; //just to make sure sizeof seems derpy...
 		GLuint pos;
 
-		Uniform() : _name("emptyUniform"), _data(nullptr), pos(-1) {}
-		Uniform(std::string name, float* data, unsigned size) : _name(name), _data(nullptr), pos(-1)
+		Uniform() : _name("emptyUniform"), _data(nullptr), _size(0), pos(-1) {}
+		Uniform(std::string name, float* data, unsigned size) : _name(name), _data(nullptr), _size(0), pos(-1)
 		{
-			_data = (float*)malloc(size * 4); //copies Data in case the origianl gets deleted
-			for (size_t i = 0; i < size; i++)
-				_data[i] = data[i];
-		}
-		Uniform(std::string name, float data) : _name(name), _data(nullptr), pos(-1)
-		{
-			_data = (float*)malloc(sizeof(float)); //copies Data in case the origianl gets deleted
-			_data[0] = data;
+			if (data)
+			{
+				_data = data;
+				_size = size;
+			}
 		}
 
-		int setFloatArr(float* data)
+		void setFloatArr(float* data, unsigned size)
 		{
-			free(_data);
-			_data = (float*)malloc(sizeof(data)); //copies Data in case the origianl gets deleted
-			for (size_t i = 0; i < (sizeof(data) / 4) - 1; i++)
-				_data[i] = data[i];
-			return (sizeof(_data) / 4) - 1; //should return last element
+			_data = data;
+			_size = size;
 		}
 
 		bool operator==(Uniform other) { return _name == other._name; } //that should suffice
 		bool operator!=(Uniform other) { return _name != other._name; } //that should suffice
 		~Uniform()
 		{
-			if (_data != nullptr)
-				free(_data);
+			_data = nullptr;
+			_size = 0;
 		}
 	};
 public:
