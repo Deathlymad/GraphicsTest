@@ -8,14 +8,13 @@ glm::vec3 Camera::YAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 
 Camera::Camera() : InputHandler(), EngineObject()
 {
-	pos = glm::vec3(0, 0, 0);
+	pos = glm::vec3(0, 0, -5);
 	forward = glm::vec3(0, 0, -1);
 	up = glm::vec3(0, 1, 0);
 }
 
 void Camera::update()
 {
-	//View = glm::mat4(1.0f);
 	View = glm::lookAt( pos, pos + forward, up);
 	if (ViewMatPtr)
 	{
@@ -26,14 +25,14 @@ void Camera::update()
 	}
 }
 
-void Camera::registerKeyBinds(KeyMap * k) //crashing Vectos can't be resolved, maybe they didn't like copying, also this == 0x00000000
+void Camera::registerKeyBinds(KeyMap * k)
 {
 	if (!this)
 		return;
-	k->addKeyBind(87, [this](unsigned short) {pos += speed * forward; });//W
-	k->addKeyBind(83, [this](unsigned short) {pos -= speed * forward; });//S
-	k->addKeyBind(65, [this](unsigned short) {pos += glm::cross(up, forward) * speed; });//A
-	k->addKeyBind(68, [this](unsigned short) {pos += glm::cross(forward, up) * speed; });//D
+	//k->addKeyBind(87, [this](unsigned short) {pos += speed * forward; }, "Move Forward");//W
+	k->addKeyBind(83, [this](unsigned short) {pos -= speed * forward; }, "Move Backward");//S
+	//k->addKeyBind(65, [this](unsigned short) {pos += glm::normalize(glm::cross(up, forward)) * speed; }, "Strafe Left");//A
+	//k->addKeyBind(68, [this](unsigned short) {pos += glm::normalize(glm::cross(forward, up)) * speed; }, "Strafe Right");//D
 }
 
 void Camera::registerUniforms(Shader * s)
@@ -48,10 +47,10 @@ Camera::~Camera()
 	delete[16](&ViewMatPtr[0]);
 }
 
-void Camera::onMouseMove(double dX, double dY)
+void Camera::onMouseMove(double dY, double dX)
 {
 	//computing X rotation
-	XAngle += dX;
+	XAngle += dX * 0.0000005;
 
 	glm::vec3 HorizontalAxis = glm::normalize(glm::cross(YAxis, forward));
 
@@ -63,7 +62,7 @@ void Camera::onMouseMove(double dX, double dY)
 	up = glm::normalize(glm::cross(HorizontalAxis, forward));
 
 	//computing Y rotation
-	YAngle += dY;
+	YAngle += dY * 0.0000005;
 
 	HorizontalAxis = glm::normalize(glm::cross(YAxis, forward));
 
@@ -80,4 +79,7 @@ void Camera::onMouseMove(double dX, double dY)
 		XAngle -= 360;
 	if (YAngle >= 360)
 		YAngle -= 360;
+
+	forward = glm::normalize(forward);
+	up = glm::normalize(up); // just to make sure
 }

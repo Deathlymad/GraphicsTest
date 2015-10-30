@@ -1,5 +1,5 @@
 Short Term:
-Add Name for each KeyBind
+fix movement calculation
 
 Long Term:
 Texturen

@@ -11,28 +11,105 @@
 
 #include "KeyMap.h"
 
-KeyMap::KeyMap(Screen* s) : InputHandler(s), KeyBindings()
+KeyMap::KeyMap(Screen* s) : InputHandler(s), UpdateTick(false)
 {}
 
-void KeyMap::addKeyBind( unsigned short key, std::function<void(unsigned short)> Func)
+KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), UpdateTick(false)
 {
-	KeyBindings[key] = Func;
+
+}
+
+void KeyMap::addKeyBind( unsigned short key, std::function<void(unsigned short)> Func, std::string name)
+{
+	KeyBind k;
+	k.key = key;
+	k.callback = Func;
+	k.name = name;
+	k.isPressed = false;
+	int newPos = find(key, &KeyBindings, 0, KeyBindings.size());
+	KeyBindings.insert(KeyBindings.begin() + newPos, k);
 }
 
 void KeyMap::onKeyPress(unsigned short key)
 {
-	if (KeyBindings[key] != nullptr)
-	{ 
-		auto temp = KeyBindings[key];
-		temp(key);
-	}
+	KeyBind temp = KeyBindings[find(key, &KeyBindings, 0, KeyBindings.size())];
+
+	temp.callback(key);
 }
 
 KeyMap::~KeyMap()
 {
+	UpdateTick = false;
+	if (KeyTick.joinable())
+		KeyTick.join();
 }
 
 void KeyMap::onKeyPress(char button, char action, char mods)
 {
-	onKeyPress(button | (mods << 8));
+	unsigned short key = button | (mods << 8);
+	size_t pos= find(key, &KeyBindings, 0, KeyBindings.size());
+	if (pos >= KeyBindings.size())
+		return;
+	if (key != KeyBindings[pos].key)
+		return;
+	if (action == GLFW_PRESS)
+		KeyBindings[pos].isPressed = true;
+	if (action == GLFW_RELEASE)
+		KeyBindings[pos].isPressed = false;
+}
+
+size_t KeyMap::find(unsigned short key, std::vector<KeyBind>* arr, int min, int max)
+{
+	if (min > max) {
+		return min;
+	}
+	else if (arr->size() == 0)
+		return 0;
+	else {
+		unsigned int mid = (min + max) / 2;
+			if (mid >= arr->size())
+				return arr->size();
+		int comp = (*arr)[mid].key - key;
+		if (comp == 0) {
+			return mid;
+		}
+		else if (comp < 0) {
+			return find(key, arr, mid + 1, max);
+		}
+		else {
+			return find(key, arr, min, mid - 1);
+		}
+	}
+	/*
+	if (max > min)
+	{
+		int pos = floor((max - min)/2) + min;
+
+		if (arr->size() < min)
+			return -1;
+
+		//recursion
+		if ( (*arr)[pos].key < key)
+			return find(key, arr, pos, max);
+		else if ((*arr)[pos].key > key)
+			return find(key, arr, min, pos + 1);
+		else
+			return pos;
+	}
+	else
+		return min;
+		*/
+}
+
+void KeyMap::updateKeyMap(KeyMap * k)
+{
+	while (k->UpdateTick)
+	{
+		std::vector<KeyBind>* Bindings = &(k->KeyBindings);
+		for (size_t i = 0; i < Bindings->size(); i++)
+		{
+			if ((*Bindings)[i].isPressed)
+				k->onKeyPress((*Bindings)[i].key);
+		}
+	}
 }

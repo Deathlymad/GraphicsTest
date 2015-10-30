@@ -67,8 +67,10 @@ int main()
 
 	while (!s || !c) {} //waiting for object handles to construct
 	KeyMap k = KeyMap(s);
-	k.addKeyBind(0, [&MainLoop](unsigned short) {MainLoop.shutdown(); });
 	c->registerKeyBinds(&k);
+	k.addKeyBind(0, [&MainLoop](unsigned short) {MainLoop.shutdown(); }, "Shutdown");
+
+	k.launchKeyMap();
 
 	while (MainLoop.isRunning())
 		std::cout << "FPS: " << MainLoop.getLastTPS() << std::endl;
