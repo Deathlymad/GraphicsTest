@@ -23,6 +23,8 @@ public:
 protected:
 	void onMouseMove(double x, double y); //possibly should be moved
 private:
+	void move(unsigned short key);
+
 	glm::vec3 pos;
 	glm::vec3 forward;
 	glm::vec3 up;

@@ -3,6 +3,7 @@
 #include <thread>
 #include <functional>
 
+#include "Clock.h"
 #include "InputHandler.h"
 
 #pragma once
@@ -19,7 +20,7 @@ public:
 	KeyMap(Screen* s);
 	KeyMap(KeyMap&);
 
-	void launchKeyMap() { UpdateTick = true; KeyTick = std::thread(updateKeyMap, this);}
+	void launchKeyMap() { KeyTick.run(); }
 
 	void addKeyBind( unsigned short key, std::function<void(unsigned short)> Func, std::string name);
 
@@ -35,6 +36,5 @@ private:
 
 	static void updateKeyMap(KeyMap*);
 
-	std::thread KeyTick;
-	bool UpdateTick;
+	Clock KeyTick;
 };

@@ -72,6 +72,6 @@ int main()
 
 	k.launchKeyMap();
 
-	while (MainLoop.isRunning())
-		std::cout << "FPS: " << MainLoop.getLastTPS() << std::endl;
+	while (MainLoop.isRunning()) {}
+		//std::cout << "FPS: " << MainLoop.getLastTPS() << std::endl;
 }

@@ -29,10 +29,10 @@ void Camera::registerKeyBinds(KeyMap * k)
 {
 	if (!this)
 		return;
-	//k->addKeyBind(87, [this](unsigned short) {pos += speed * forward; }, "Move Forward");//W
-	k->addKeyBind(83, [this](unsigned short) {pos -= speed * forward; }, "Move Backward");//S
-	//k->addKeyBind(65, [this](unsigned short) {pos += glm::normalize(glm::cross(up, forward)) * speed; }, "Strafe Left");//A
-	//k->addKeyBind(68, [this](unsigned short) {pos += glm::normalize(glm::cross(forward, up)) * speed; }, "Strafe Right");//D
+	k->addKeyBind(87, [this](unsigned short key) { move(key); }, "Move Forward");//W
+	k->addKeyBind(83, [this](unsigned short key) { move(key); }, "Move Backward");//S
+	k->addKeyBind(65, [this](unsigned short key) { move(key); }, "Strafe Left");//A
+	k->addKeyBind(68, [this](unsigned short key) { move(key); }, "Strafe Right");//D
 }
 
 void Camera::registerUniforms(Shader * s)
@@ -50,7 +50,7 @@ Camera::~Camera()
 void Camera::onMouseMove(double dY, double dX)
 {
 	//computing X rotation
-	XAngle += dX * 0.0000005;
+	XAngle += dX * 0.00005;
 
 	glm::vec3 HorizontalAxis = glm::normalize(glm::cross(YAxis, forward));
 
@@ -62,7 +62,7 @@ void Camera::onMouseMove(double dY, double dX)
 	up = glm::normalize(glm::cross(HorizontalAxis, forward));
 
 	//computing Y rotation
-	YAngle += dY * 0.0000005;
+	YAngle += dY * 0.00005;
 
 	HorizontalAxis = glm::normalize(glm::cross(YAxis, forward));
 
@@ -73,13 +73,32 @@ void Camera::onMouseMove(double dY, double dX)
 
 
 	up = glm::normalize(glm::cross(forward, HorizontalAxis));
-	
+	/*
 	//keeping angles low
 	if (XAngle >= 360)
 		XAngle -= 360;
 	if (YAngle >= 360)
 		YAngle -= 360;
-
+	*/
 	forward = glm::normalize(forward);
 	up = glm::normalize(up); // just to make sure
+}
+
+void Camera::move(unsigned short key)
+{
+	switch (key)
+	{
+	case 65:
+		pos += glm::normalize(glm::cross(up, forward)) * 0.005f;
+		break;
+	case 68:
+		pos += glm::normalize(glm::cross(forward, up)) * 0.005f;
+		break;
+	case 83:
+		pos -= 0.005f * forward; //not working
+		break;
+	case 87:
+		pos += 0.005f * forward; //not working
+		break;
+	}
 }

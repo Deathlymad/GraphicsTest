@@ -32,7 +32,7 @@ void Clock::update()
 		func();
 		currentTicks++;
 
-		std::this_thread::sleep_for(milliseconds((int)std::floorf(16.666f)) - duration_cast<std::chrono::milliseconds>(system_clock::now() - lastTick));
+		std::this_thread::sleep_for(milliseconds((int)std::floorf(16.666f)) - duration_cast<std::chrono::milliseconds>(system_clock::now() - lastTick)); //should be made modifiable
 
 
 		if (duration_cast<milliseconds>(system_clock::now() - lastSec) >= milliseconds(1000))

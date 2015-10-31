@@ -11,10 +11,10 @@
 
 #include "KeyMap.h"
 
-KeyMap::KeyMap(Screen* s) : InputHandler(s), UpdateTick(false)
+KeyMap::KeyMap(Screen* s) : InputHandler(s), KeyTick([] {}, [this] {updateKeyMap(this); })
 {}
 
-KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), UpdateTick(false)
+KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), KeyTick([] {}, [this] {updateKeyMap(this); })
 {
 
 }
@@ -38,11 +38,7 @@ void KeyMap::onKeyPress(unsigned short key)
 }
 
 KeyMap::~KeyMap()
-{
-	UpdateTick = false;
-	if (KeyTick.joinable())
-		KeyTick.join();
-}
+{}
 
 void KeyMap::onKeyPress(char button, char action, char mods)
 {
@@ -103,13 +99,10 @@ size_t KeyMap::find(unsigned short key, std::vector<KeyBind>* arr, int min, int 
 
 void KeyMap::updateKeyMap(KeyMap * k)
 {
-	while (k->UpdateTick)
+	std::vector<KeyBind>* Bindings = &(k->KeyBindings);
+	for (size_t i = 0; i < Bindings->size(); i++)
 	{
-		std::vector<KeyBind>* Bindings = &(k->KeyBindings);
-		for (size_t i = 0; i < Bindings->size(); i++)
-		{
-			if ((*Bindings)[i].isPressed)
-				k->onKeyPress((*Bindings)[i].key);
-		}
+		if ((*Bindings)[i].isPressed)
+			k->onKeyPress((*Bindings)[i].key);
 	}
 }
