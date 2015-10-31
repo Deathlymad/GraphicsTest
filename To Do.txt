@@ -1,11 +1,15 @@
 Short Term:
-fix movement calculation
+fix projection
+make clock ticks modifiable
+Implement Scene Graph
+find the reason for a massive frame drop (frames still stable though just too low)
+make Aspect Ratio modifiable or dependent on Window Size
 
 Long Term:
 Texturen
 Physics
 OpenCL
-Recursive Objects
+Use Vulkan
 Automatische Threadauslastung und Speicheroptimierung
 komplette Abstrahierung von OpenGL Operationen und States in OOP
 Gamepad Joystick implementation

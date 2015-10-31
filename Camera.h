@@ -30,7 +30,7 @@ private:
 	glm::vec3 up;
 
 	glm::mat4 View;
-	float ViewMatPtr[16];
+	float ViewProjMatPtr[16];
 	glm::mat4 projection;
 
 	double XAngle, YAngle;

@@ -29,15 +29,17 @@
 #include "KeyMap.h"
 #include "Clock.h"
 #include "Camera.h"
+#include "Scene.h"
 
 Screen* s;
 Shader* ambient;
 Mesh* m;
 Camera* c;
+Scene* scene;
 
 void initGraphics()
 {
-	s = new Screen(1366, 768, "Test", char(154));
+	s = new Screen(800, 600, "Test", char(154));
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -52,7 +54,14 @@ void initGraphics()
 
 	ambient = new Shader("forward_ambient_vs.glsl", "forward_ambient_fs.glsl");
 
-	m = new Mesh("assets/mesh/stein_einfach.obj");
+	std::vector<glm::vec3> pos;
+	std::vector<unsigned int > i;
+
+	pos.insert(pos.begin(), {glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3( 0.0f, 1.0f, 0.0f), glm::vec3( 1.0f, -1.0f, 0.0f)});
+	i.insert(i.begin(), { 0, 1, 2});
+
+	m = new Mesh(pos, i);
+	//m = new Mesh("assets/mesh/stein_einfach.obj");
 
 	c = new Camera();
 	c->registerUniforms(ambient);
@@ -68,10 +77,10 @@ int main()
 	while (!s || !c) {} //waiting for object handles to construct
 	KeyMap k = KeyMap(s);
 	c->registerKeyBinds(&k);
-	k.addKeyBind(0, [&MainLoop](unsigned short) {MainLoop.shutdown(); }, "Shutdown");
+	k.addKeyBind(0, [&MainLoop](unsigned short) {MainLoop.shutdown(); }, "Shutdown"); //set Escape Key
 
 	k.launchKeyMap();
 
-	while (MainLoop.isRunning()) {}
-		//std::cout << "FPS: " << MainLoop.getLastTPS() << std::endl;
+	while (MainLoop.isRunning())
+		std::cout << "FPS: " << MainLoop.getLastTPS() << std::endl;
 }

@@ -11,16 +11,17 @@ Camera::Camera() : InputHandler(), EngineObject()
 	pos = glm::vec3(0, 0, -5);
 	forward = glm::vec3(0, 0, -1);
 	up = glm::vec3(0, 1, 0);
+	projection = glm::perspective(90.0f, (float) 800/600, 1.0f, 100.0f);
 }
 
 void Camera::update()
 {
-	View = glm::lookAt( pos, pos + forward, up);
-	if (ViewMatPtr)
+	View = projection * glm::lookAt(pos, pos + glm::normalize(forward), glm::normalize(up));
+	if (ViewProjMatPtr)
 	{
 		for (unsigned char i = 0; i < 16; i++) //writes memory
 		{
-			ViewMatPtr[i] = View[floor(i/4)][i - (floor(i / 4) * 4)];
+			ViewProjMatPtr[i] = View[floor(i/4)][i - (floor(i / 4) * 4)];
 		}
 	}
 }
@@ -38,50 +39,30 @@ void Camera::registerKeyBinds(KeyMap * k)
 void Camera::registerUniforms(Shader * s)
 {
 	//s->addUniform(Shader::Uniform("proj", &projection[0][0], 16));
-	s->addUniform(Shader::Uniform("View", ViewMatPtr, 16)); //leads to change in Position need to find out why
+	s->addUniform(Shader::Uniform("View", ViewProjMatPtr, 16)); //leads to change in Position need to find out why
 }
 
 
 Camera::~Camera()
 {
-	delete[16](&ViewMatPtr[0]);
+	delete[16](&ViewProjMatPtr[0]);
 }
 
 void Camera::onMouseMove(double dY, double dX)
 {
 	//computing X rotation
-	XAngle += dX * 0.00005;
+	XAngle += dX * -0.0005;
+	YAngle += dY * -0.0005;
 
 	glm::vec3 HorizontalAxis = glm::normalize(glm::cross(YAxis, forward));
 
+	//rotate forward
 	forward = glm::vec3(
 		cos(XAngle) * sin(YAngle),
 		sin(XAngle),
 		cos(XAngle) * cos(YAngle));
-
-	up = glm::normalize(glm::cross(HorizontalAxis, forward));
-
-	//computing Y rotation
-	YAngle += dY * 0.00005;
-
-	HorizontalAxis = glm::normalize(glm::cross(YAxis, forward));
-
-	forward = glm::vec3(
-		cos(XAngle) * sin(YAngle),
-		sin(XAngle),
-		cos(XAngle) * cos(YAngle));
-
-
+	
 	up = glm::normalize(glm::cross(forward, HorizontalAxis));
-	/*
-	//keeping angles low
-	if (XAngle >= 360)
-		XAngle -= 360;
-	if (YAngle >= 360)
-		YAngle -= 360;
-	*/
-	forward = glm::normalize(forward);
-	up = glm::normalize(up); // just to make sure
 }
 
 void Camera::move(unsigned short key)
@@ -89,16 +70,16 @@ void Camera::move(unsigned short key)
 	switch (key)
 	{
 	case 65:
-		pos += glm::normalize(glm::cross(up, forward)) * 0.005f;
+		pos += glm::normalize(glm::cross(forward, up)) * 0.05f;
 		break;
 	case 68:
-		pos += glm::normalize(glm::cross(forward, up)) * 0.005f;
+		pos += glm::normalize(glm::cross(up, forward)) * 0.05f;
 		break;
 	case 83:
-		pos -= 0.005f * forward; //not working
+		pos -= 0.05f * forward; //not working
 		break;
 	case 87:
-		pos += 0.005f * forward; //not working
+		pos += 0.05f * forward; //not working
 		break;
 	}
 }

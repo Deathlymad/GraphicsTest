@@ -50,7 +50,7 @@ GLFWmonitor* Screen::getMonitor(unsigned short monitorID)
 	else if (monitorID == 0)
 		return glfwGetPrimaryMonitor(); //0
 	else
-		return nullptr;
+		return nullptr; //actually uses the default screen in Fullscreen mode
 }
 
 
@@ -71,7 +71,7 @@ void Screen::createWindow(int width, int height, std::string title, char flags)
 		return;
 
 	std::cout << "Created Window" << std::endl;
-
+	
 	glfwSetInputMode(winHandle, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetInputMode(winHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
