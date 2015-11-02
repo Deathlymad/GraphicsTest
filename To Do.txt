@@ -6,10 +6,12 @@ find the reason for a massive frame drop (frames still stable though just too lo
 make Aspect Ratio modifiable or dependent on Window Size
 
 Long Term:
-Texturen
+Texturen (TextureAtlas)
 Physics
+Gamepad Joystick implementation
+Automatische Threadauslastung und Speicheroptimierung
+
+
 OpenCL
 Use Vulkan
-Automatische Threadauslastung und Speicheroptimierung
-komplette Abstrahierung von OpenGL Operationen und States in OOP
-Gamepad Joystick implementation
+komplette Abstrahierung von OpenGL Operationen und States in OOP //Vulkan?
