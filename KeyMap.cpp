@@ -11,10 +11,10 @@
 
 #include "KeyMap.h"
 
-KeyMap::KeyMap(Screen* s) : InputHandler(s), KeyTick([] {}, [this] {updateKeyMap(this); })
+KeyMap::KeyMap(Screen* s) : InputHandler(s), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
 {}
 
-KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), KeyTick([] {}, [this] {updateKeyMap(this); })
+KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
 {
 
 }

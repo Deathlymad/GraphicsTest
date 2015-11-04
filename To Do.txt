@@ -1,6 +1,4 @@
 Short Term:
-fix projection
-make clock ticks modifiable
 Implement Scene Graph
 find the reason for a massive frame drop (frames still stable though just too low)
 make Aspect Ratio modifiable or dependent on Window Size

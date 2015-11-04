@@ -39,7 +39,7 @@ Scene* scene;
 
 void initGraphics()
 {
-	s = new Screen(800, 600, "Test", char(154));
+	s = new Screen(1920, 1080, "Test", char(154));
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -70,7 +70,7 @@ void initGraphics()
 int main()
 {
 
-	Clock MainLoop(initGraphics, [] {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); c->update(); ambient->bind(); m->Draw(); s->updateScreen(); });
+	Clock MainLoop(initGraphics, [] {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); c->update(); ambient->bind(); m->Draw(); s->updateScreen(); }, 60);
 
 	MainLoop.run();
 

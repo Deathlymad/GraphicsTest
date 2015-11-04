@@ -11,7 +11,7 @@ Camera::Camera() : InputHandler(), EngineObject()
 	pos = glm::vec3(0, 0, -5);
 	forward = glm::vec3(0, 0, -1);
 	up = glm::vec3(0, 1, 0);
-	projection = glm::perspective(90.0f, (float) 800/600, 1.0f, 100.0f);
+	projection = glm::perspective(45.0f, (float) 4/3, 0.1f, 100.0f); 
 }
 
 void Camera::update()
@@ -70,10 +70,10 @@ void Camera::move(unsigned short key)
 	switch (key)
 	{
 	case 65:
-		pos += glm::normalize(glm::cross(forward, up)) * 0.05f;
+		pos += glm::normalize(glm::cross(up, forward)) * 0.05f;
 		break;
 	case 68:
-		pos += glm::normalize(glm::cross(up, forward)) * 0.05f;
+		pos += glm::normalize(glm::cross(forward, up)) * 0.05f;
 		break;
 	case 83:
 		pos -= 0.05f * forward; //not working

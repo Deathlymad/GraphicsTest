@@ -152,7 +152,7 @@ TextureAtlas::TextureAtlas(std::vector<std::string> Files):Texture()
 
 void TextureAtlas::load(std::string fileName, unsigned short x, unsigned short y)
 {
-	if ( bitX == 0 && bitX == x && bitY == 0 && bitY == y)
+	if ( bitX == 0 && bitX == x && bitY == 0 && bitY == y) //WTF
 	{
 		Texture::load( fileName);
 		bitX = x;

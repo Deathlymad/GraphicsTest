@@ -8,7 +8,7 @@ using namespace std::chrono;
 class Clock
 {
 public:
-	Clock(std::function<void()>, std::function<void()>);
+	Clock(std::function<void()>, std::function<void()>, unsigned int);
 
 	unsigned int getLastTPS() { return lastTicks; }
 
@@ -24,6 +24,7 @@ private:
 	//Loop Variables
 	bool running;
 
+	float tickRatio;
 	unsigned short currentTicks = 0; //tps
 	unsigned short lastTicks = 0;
 	system_clock::time_point lastSec = std::chrono::system_clock::now();  //used to update TPS
