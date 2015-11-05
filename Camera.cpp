@@ -11,7 +11,9 @@ Camera::Camera() : InputHandler(), EngineObject()
 	pos = glm::vec3(0, 0, -5);
 	forward = glm::vec3(0, 0, -1);
 	up = glm::vec3(0, 1, 0);
-	projection = glm::perspective(45.0f, (float) 4/3, 0.1f, 100.0f); 
+	FoV = 45.0f;
+	Aspect = 4 / 3;
+	projection = glm::perspective( FoV, Aspect, 0.1f, 100.0f); 
 }
 
 void Camera::update()
@@ -24,6 +26,18 @@ void Camera::update()
 			ViewProjMatPtr[i] = View[floor(i/4)][i - (floor(i / 4) * 4)];
 		}
 	}
+}
+
+void Camera::setFoV(float fov)
+{
+	FoV = fov;
+	projection = glm::perspective(FoV, Aspect, 0.1f, 100.0f);
+}
+
+void Camera::setAspect(float aspect)
+{
+	Aspect = aspect;
+	projection = glm::perspective(FoV, Aspect, 0.1f, 100.0f);
 }
 
 void Camera::registerKeyBinds(KeyMap * k)

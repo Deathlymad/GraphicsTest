@@ -25,6 +25,9 @@ public:
 		f(winHandle);
 	}
 
+	int getWidth() { return Width; }
+	int getHeight() { return Height; }
+
 	~Screen();
 private:
 	int Width, Height;

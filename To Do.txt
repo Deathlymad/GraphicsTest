@@ -1,7 +1,7 @@
 Short Term:
 Implement Scene Graph
-find the reason for a massive frame drop (frames still stable though just too low)
-make Aspect Ratio modifiable or dependent on Window Size
+implement Shaders
+fix Bug that Triangle is not displaying properly without moving
 
 Long Term:
 Texturen (TextureAtlas)
@@ -9,7 +9,7 @@ Physics
 Gamepad Joystick implementation
 Automatische Threadauslastung und Speicheroptimierung
 
-
+Very Long Term:
 OpenCL
 Use Vulkan
 komplette Abstrahierung von OpenGL Operationen und States in OOP //Vulkan?

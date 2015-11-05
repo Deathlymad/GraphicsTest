@@ -65,6 +65,7 @@ void initGraphics()
 
 	c = new Camera();
 	c->registerUniforms(ambient);
+	c->setAspect(s->getWidth()/s->getHeight());
 }
 
 int main()

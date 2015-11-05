@@ -16,6 +16,9 @@ public:
 
 	void update();
 
+	void setFoV(float);
+	void setAspect(float);
+
 	void registerKeyBinds(KeyMap*);
 	void registerUniforms(Shader*);
 
@@ -30,8 +33,10 @@ private:
 	glm::vec3 up;
 
 	glm::mat4 View;
-	float ViewProjMatPtr[16];
+	float FoV;
+	float Aspect;
 	glm::mat4 projection;
+	float ViewProjMatPtr[16];
 
 	double XAngle, YAngle;
 
