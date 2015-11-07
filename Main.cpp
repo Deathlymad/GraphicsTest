@@ -30,6 +30,7 @@
 #include "Clock.h"
 #include "Camera.h"
 #include "Scene.h"
+#include "ModelRenderer.h"
 
 Screen* s;
 Shader* ambient;
@@ -39,7 +40,7 @@ Scene* scene;
 
 void initGraphics()
 {
-	s = new Screen(1920, 1080, "Test", char(154));
+	s = new Screen(1366, 768, "Test", char(154));
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -54,32 +55,22 @@ void initGraphics()
 
 	ambient = new Shader("forward_ambient_vs.glsl", "forward_ambient_fs.glsl");
 
-	std::vector<glm::vec3> pos;
-	std::vector<unsigned int > i;
-
-	pos.insert(pos.begin(), {glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3( 0.0f, 1.0f, 0.0f), glm::vec3( 1.0f, -1.0f, 0.0f)});
-	i.insert(i.begin(), { 0, 1, 2});
-
-	m = new Mesh(pos, i);
-	//m = new Mesh("assets/mesh/stein_einfach.obj");
-
-	c = new Camera();
-	c->registerUniforms(ambient);
-	c->setAspect(s->getWidth()/s->getHeight());
+	scene = new Scene();
+	scene->addObj(new ModelRenderer("assets/mesh/stein_einfach.obj",""));
 }
 
 int main()
 {
 
-	Clock MainLoop(initGraphics, [] {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); c->update(); ambient->bind(); m->Draw(); s->updateScreen(); }, 60);
+	Clock MainLoop(initGraphics, [] { scene->update(); scene->render(ambient); s->updateScreen(); }, 60);
 
 	MainLoop.run();
 
-	while (!s || !c) {} //waiting for object handles to construct
-	KeyMap k = KeyMap(s);
-	c->registerKeyBinds(&k);
-	k.addKeyBind(0, [&MainLoop](unsigned short) {MainLoop.shutdown(); }, "Shutdown"); //set Escape Key
+	while (!scene) {} //waiting for object handles to construct
 
+	KeyMap k = KeyMap(s);
+	k.addKeyBind(0, [&MainLoop](unsigned short) {MainLoop.shutdown(); }, "Shutdown"); //set Escape Key
+	scene->init(ambient, &k);
 	k.launchKeyMap();
 
 	while (MainLoop.isRunning())

@@ -1,16 +1,19 @@
 #include <vector>
 
+class Shader;
 #pragma once
 class EngineObject
 {
 public:
 	EngineObject();
 
-	void update();
-	void render();
+	void add(EngineObject* obj) { children.push_back(obj); }
+
+	virtual void update();
+	virtual void render(Shader*);
 
 	~EngineObject();
 private:
-	std::vector<EngineObject> children;
+	std::vector<EngineObject*> children;
 };
 

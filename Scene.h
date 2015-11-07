@@ -9,8 +9,12 @@ class Scene
 public:
 	Scene();
 
+	void addObj(EngineObject* obj) { root.add(obj); }
+
 	void init(Shader*, KeyMap*);
-	void update(Shader*);
+	void init(Shader*);
+	void init(KeyMap*);
+	void update();
 	void render(Shader*);
 
 	~Scene();

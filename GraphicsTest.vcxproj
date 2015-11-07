@@ -157,6 +157,7 @@
     <ClCompile Include="KeyMap.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="ModelRenderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="iofunctions.h" />
     <ClInclude Include="KeyMap.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Shader.h" />

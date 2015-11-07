@@ -1,5 +1,4 @@
 Short Term:
-Implement Scene Graph
 implement Shaders
 fix Bug that Triangle is not displaying properly without moving
 
