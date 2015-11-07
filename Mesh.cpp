@@ -68,12 +68,15 @@ Mesh::Mesh ( std::string file)
 			continue;
 		}
 	}
-
+	pts = v;
+	ind = in;
 	glDownload(v, in);
 }
 
 Mesh::Mesh(  std::vector<glm::vec3> &vec, std::vector < unsigned int> &i)
 {
+	pts = vec;
+	ind = i;
 	glDownload( vec, i);
 }
 
