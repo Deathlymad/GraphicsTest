@@ -24,8 +24,8 @@ public:
 		ID = 0;
 		f = "";
 		this->tex = &tex[0][0]; 
-		texX = tex.size();
-		texY = tex[0].size();
+		texX = (unsigned short)tex.size();
+		texY = (unsigned short)tex[0].size();
 	}
 
 	Texture( std::string fileName);
@@ -71,8 +71,8 @@ public:
 		ID = 0;
 		f = "";
 		this->tex = &tex[0][0]; 
-		texX = tex.size();
-		texY = tex[0].size();
+		texX = (unsigned short)tex.size();
+		texY = (unsigned short)tex[0].size();
 		this->bitX = bitX; 
 		this->bitY = bitY; 
 	}

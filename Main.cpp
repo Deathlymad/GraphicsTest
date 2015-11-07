@@ -31,11 +31,13 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "ModelRenderer.h"
+#include "Light.h"
 
 Screen* s;
-Shader* ambient;
+Shader* ambient, *directional;
 Mesh* m;
 Camera* c;
+DirectionalLight Dir;
 Scene* scene;
 
 void initGraphics()
@@ -54,24 +56,48 @@ void initGraphics()
 	glEnable(GL_ALPHA_TEST);
 
 	ambient = new Shader("forward_ambient_vs.glsl", "forward_ambient_fs.glsl");
+	Dir = DirectionalLight( glm::vec3(0.0f, 0.0f, 1.0f), 1000.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	Dir.writeUniform("Light");
 
 	scene = new Scene();
 	scene->addObj(new ModelRenderer("assets/mesh/stein_einfach.obj",""));
 }
 
+void multipassRender()
+{
+	scene->render(ambient);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+	glDepthMask(GL_FALSE);
+	glDepthFunc(GL_LEQUAL);
+
+	scene->render(Dir.getShader());
+
+	glDepthFunc(GL_LESS);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+
+	s->updateScreen();
+}
+
 int main()
 {
 
-	Clock MainLoop(initGraphics, [] { scene->update(); scene->render(ambient); s->updateScreen(); }, 60);
+	Clock MainLoop(initGraphics, multipassRender, 60);
+	Clock UpdateLoop([] {}, [] { scene->update(); }, 20);
 
 	MainLoop.run();
 
 	while (!scene) {} //waiting for object handles to construct
 
 	KeyMap k = KeyMap(s);
-	k.addKeyBind(0, [&MainLoop](unsigned short) {MainLoop.shutdown(); }, "Shutdown"); //set Escape Key
+	k.addKeyBind(0, [&MainLoop, &UpdateLoop](unsigned short) {MainLoop.shutdown(); UpdateLoop.shutdown(); }, "Shutdown"); //set Escape Key
 	scene->init(ambient, &k);
 	k.launchKeyMap();
+	scene->init(Dir.getShader());
+
+	UpdateLoop.run();
 
 	while (MainLoop.isRunning())
 		std::cout << "FPS: " << MainLoop.getLastTPS() << std::endl;

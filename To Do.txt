@@ -1,6 +1,6 @@
 Short Term:
-implement Shaders
-fix Bug that Triangle is not displaying properly without moving
+add Normals...
+fix Bug that Object is not displaying properly without moving
 
 Long Term:
 Texturen (TextureAtlas)

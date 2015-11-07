@@ -13,6 +13,7 @@ Camera::Camera() : InputHandler(), EngineObject()
 	up = glm::vec3(0, 1, 0);
 	FoV = 45.0f;
 	Aspect = 4 / 3;
+	View = glm::mat4();
 	projection = glm::perspective( FoV, Aspect, 0.1f, 100.0f); 
 }
 
@@ -52,7 +53,6 @@ void Camera::registerKeyBinds(KeyMap * k)
 
 void Camera::registerUniforms(Shader * s)
 {
-	//s->addUniform(Shader::Uniform("proj", &projection[0][0], 16));
 	s->addUniform(Shader::Uniform("View", ViewProjMatPtr, 16)); //leads to change in Position need to find out why
 }
 

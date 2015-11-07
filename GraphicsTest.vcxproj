@@ -155,6 +155,7 @@
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="iofunctions.cpp" />
     <ClCompile Include="KeyMap.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="iofunctions.h" />
     <ClInclude Include="KeyMap.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="Scene.h" />
