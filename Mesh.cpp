@@ -10,6 +10,7 @@
 		#pragma comment(lib, "GLU32.lib")
 	#endif
 #endif
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "iofunctions.h"
 
@@ -106,6 +107,13 @@ void Mesh::glDownload(  std::vector<glm::vec3>& v, std::vector < unsigned int>& 
 	if (v.size() == 0)
 		return;
 
+	std::vector <glm::vec3> norm;
+	for (unsigned int h = 0; h < i.size() / 3; h++)
+	{
+		unsigned int j = h * 3;
+		norm.push_back( glm::normalize(glm::cross(v[i[h]] - v[i[h + 1]], v[i[h+2]] - v[i[h + 1]])));
+	}
+
 	std::vector<float> temp;
 	temp.clear();
 	for (unsigned int i = 0; i < v.size(); i++)
@@ -114,6 +122,12 @@ void Mesh::glDownload(  std::vector<glm::vec3>& v, std::vector < unsigned int>& 
 		temp.push_back(v[i].y);
 		temp.push_back(v[i].z);
 	}
+	for (unsigned int i = 0; i < norm.size(); i++)
+	{
+		temp.push_back(norm[i].x);
+		temp.push_back(norm[i].y);
+		temp.push_back(norm[i].z);
+	}
 
 	glBindBuffer( GL_ARRAY_BUFFER, vbo);
 	glBufferData( GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
@@ -121,6 +135,7 @@ void Mesh::glDownload(  std::vector<glm::vec3>& v, std::vector < unsigned int>& 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_DYNAMIC_DRAW);
 	indices = i.size();
+	vecs = v.size();
 }
 
 void Mesh::Draw()
@@ -135,6 +150,8 @@ void Mesh::Draw()
 	glEnableVertexAttribArray( 0); //TODO dynamic VAO
 
 	glVertexAttribPointer( 0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 12 /*stride*/, 0 /*offset*/); //Pos
+	int temp = vecs*4;
+	glVertexAttribPointer( 1 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 12 /*stride*/, (GLvoid*) temp /*offset*/); //Pos
 	
 
 	glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);

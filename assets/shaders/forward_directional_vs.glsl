@@ -1,8 +1,8 @@
 #version 330
 
 layout (location = 0) in vec3 pos;
-layout (location = 1) in vec2 TexCoord;
-layout (location = 2) in vec3 Normal;
+layout (location = 1) in vec3 Normal;
+layout (location = 2) in vec2 TexCoord;
 
 out vec2 texCoord;
 out vec3 normal;

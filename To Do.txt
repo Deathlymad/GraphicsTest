@@ -1,7 +1,7 @@
 Short Term:
-Use MutEx
-add normals
+fix normals
 fix Bug that Object is not displaying properly without moving
+Implement pausing the thread with mutex
 
 Long Term:
 Texturen (TextureAtlas)

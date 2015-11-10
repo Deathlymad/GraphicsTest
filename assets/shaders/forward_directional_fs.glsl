@@ -57,5 +57,5 @@ vec4 calcDirectionalLight( DirectionalLight directional, vec3 normal)
 
 void main()
 {
-	gl_FragColor = /* calcDirectionalLight( Light, normal) */ vec4(0.0, 0.0, 1.0, 1.0);
+	gl_FragColor = vec4(normal, 1.0)/* calcDirectionalLight( Light, normal) vec4(0.0, 0.0, 1.0, 1.0 )*/;
 }

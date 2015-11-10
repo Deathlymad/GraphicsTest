@@ -1,6 +1,7 @@
 #include <chrono>
 #include <functional>
 #include <thread>
+#include <mutex>
 
 using namespace std::chrono;
 
@@ -13,7 +14,7 @@ public:
 	unsigned int getLastTPS() { return lastTicks; }
 
 	void run();
-
+	
 	bool isRunning() { return running; }
 	void shutdown() { running = false; }
 

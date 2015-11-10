@@ -39,6 +39,7 @@ Mesh* m;
 Camera* c;
 DirectionalLight Dir;
 Scene* scene;
+Clock* MainLoop;
 
 void initGraphics()
 {
@@ -70,7 +71,7 @@ void multipassRender()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
 	glDepthMask(GL_FALSE);
-	glDepthFunc(GL_LEQUAL);
+	glDepthFunc(GL_EQUAL);
 
 	scene->render(Dir.getShader());
 
@@ -84,21 +85,16 @@ void multipassRender()
 int main()
 {
 
-	Clock MainLoop(initGraphics, multipassRender, 60);
+	MainLoop = new Clock(initGraphics, multipassRender, 60);
+	while (!scene) {} //can be done Better
 	Clock UpdateLoop([] {}, [] { scene->update(); }, 20);
-
-	MainLoop.run();
-
-	while (!scene) {} //waiting for object handles to construct
-
+	
 	KeyMap k = KeyMap(s);
-	k.addKeyBind(0, [&MainLoop, &UpdateLoop](unsigned short) {MainLoop.shutdown(); UpdateLoop.shutdown(); }, "Shutdown"); //set Escape Key
+	k.addKeyBind(0, [ &UpdateLoop](unsigned short) {MainLoop->shutdown(); UpdateLoop.shutdown(); }, "Shutdown"); //set Escape Key
 	scene->init(ambient, &k);
 	k.launchKeyMap();
 	scene->init(Dir.getShader());
 
-	UpdateLoop.run();
-
-	while (MainLoop.isRunning())
-		std::cout << "FPS: " << MainLoop.getLastTPS() << std::endl;
+	while (MainLoop->isRunning())
+		std::cout << "FPS: " << MainLoop->getLastTPS() << std::endl;
 }
