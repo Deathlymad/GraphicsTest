@@ -45,7 +45,7 @@ void initGraphics()
 {
 	s = new Screen(1366, 768, "Test", char(154));
 
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 	glFrontFace(GL_CCW); //defines the Front face having counterclockwise vertices for culling
 	glCullFace(GL_BACK); //Deletes the Backface
@@ -68,14 +68,15 @@ void multipassRender()
 {
 	scene->render(ambient);
 	
+	
 	//needs to pause Update for the passes since depth would change
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
 	glDepthMask(GL_FALSE);
-	glDepthFunc(GL_LEQUAL);
+	glDepthFunc(GL_EQUAL);
 
 	scene->render(Dir.getShader());
-
+	
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
@@ -96,6 +97,5 @@ int main()
 	k.launchKeyMap();
 	scene->init(Dir.getShader());
 
-	while (MainLoop->isRunning())
-		std::cout << "FPS: " << MainLoop->getLastTPS() << std::endl;
+	while (MainLoop->isRunning()) {}
 }

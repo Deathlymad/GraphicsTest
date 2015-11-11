@@ -6,11 +6,11 @@ layout (location = 1) in vec3 Normal;
 out vec3 normal;
 out vec3 world_Pos;
 
-uniform mat4 Matrix;
+uniform mat4 View;
 
 void main()
 {
    normal = Normal;
    world_Pos = pos;
-   gl_Position = Matrix * vec4( pos, 1);
+   gl_Position = View * vec4( pos, 1);
 }

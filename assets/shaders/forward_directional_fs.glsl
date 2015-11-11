@@ -25,8 +25,8 @@ vec4 calcLight(BaseLight base, vec3 direction, vec3 nor)
 {
     float diffuseFactor = dot(nor, -direction);
     
-    vec4 diffuseColor = vec4(0,0,0,0);
-    vec4 specularColor = vec4(0,0,0,0);
+    vec4 diffuseColor = vec4(0,0,0,1);
+    vec4 specularColor = vec4(0,0,0,1);
     
     if(diffuseFactor > 0)
     {
@@ -56,5 +56,9 @@ vec4 calcDirectionalLight( DirectionalLight directional, vec3 nor)
 
 void main()
 {
-		gl_FragColor = calcDirectionalLight(Light, normal);
+	vec4 temp = calcDirectionalLight(Light, normal);
+	if (temp.x <= 0.2 && temp.x >= 0.0)
+	temp.x = temp.x + 0.1;
+	temp += normal;
+	gl_FragColor = temp;
 }

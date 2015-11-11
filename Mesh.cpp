@@ -16,8 +16,6 @@
 
 Mesh::Mesh() : vao(-1), ibo(-1)
 {
-	vbo[0] = -1;
-	vbo[1] = -1;
 }
 
 Mesh::Mesh ( std::string file)
@@ -94,7 +92,7 @@ void Mesh::initGL( unsigned char flag)
 		
 	if (flag & 2)
 	{
-		glGenBuffers( 2, vbo);
+		glGenBuffers( 2, &vbo[0]);
 	}
 	if (flag & 1)
 	{
@@ -102,9 +100,9 @@ void Mesh::initGL( unsigned char flag)
 	}
 }
 
-void Mesh::glDownload(  std::vector<glm::vec3>& v, std::vector < unsigned int>& i)
+void Mesh::glDownload(std::vector<glm::vec3>& v, std::vector < unsigned int>& i)
 {
-	initGL(!glIsBuffer(vbo[0]) << 1 | !glIsBuffer(vbo[1]) << 1 | !glIsBuffer(ibo) | !glIsVertexArray(vao) << 2);
+	initGL(!glIsBuffer(vbo[0]) << 1 | !glIsBuffer(ibo) | !glIsVertexArray(vao) << 2);
 
 	if (v.size() == 0)
 		return;
@@ -113,7 +111,7 @@ void Mesh::glDownload(  std::vector<glm::vec3>& v, std::vector < unsigned int>& 
 	for (unsigned int h = 0; h < i.size() / 3; h++)
 	{
 		unsigned int j = h * 3;
-		norm.push_back( glm::normalize(glm::cross(v[i[h]] - v[i[h + 1]], v[i[h+2]] - v[i[h + 1]])));
+		norm.push_back(glm::normalize(glm::cross(v[i[h]] - v[i[h + 1]], v[i[h + 2]] - v[i[h + 1]])));
 	}
 
 	std::vector<float> temp;
@@ -124,10 +122,8 @@ void Mesh::glDownload(  std::vector<glm::vec3>& v, std::vector < unsigned int>& 
 		temp.push_back(v[i].y);
 		temp.push_back(v[i].z);
 	}
-	glBindBuffer( GL_ARRAY_BUFFER, vbo[0]); //contains Vertices
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]); //contains Vertices
 	glBufferData( GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
-	glVertexAttribPointer( 0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, 0 /*offset*/); //Pos
-	glEnableVertexAttribArray( 0); //TODO dynamic VAO
 	temp.clear();
 	for (unsigned int i = 0; i < norm.size(); i++)
 	{
@@ -137,8 +133,8 @@ void Mesh::glDownload(  std::vector<glm::vec3>& v, std::vector < unsigned int>& 
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]); //contains Normals
 	glBufferData(GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
-	glVertexAttribPointer( 1 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, 0 /*offset*/); //Normals
-	glEnableVertexAttribArray( 1);
+	//glVertexAttribPointer( 1 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, 0 /*offset*/); //Normals
+	//glEnableVertexAttribArray( 1);
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_DYNAMIC_DRAW);
@@ -148,28 +144,36 @@ void Mesh::glDownload(  std::vector<glm::vec3>& v, std::vector < unsigned int>& 
 
 void Mesh::Draw()
 {
-	initGL(!glIsBuffer(vbo[0]) << 1 | !glIsBuffer(vbo[1]) << 1 | !glIsBuffer(ibo) | !glIsVertexArray(vao) << 2);
+	initGL(!glIsBuffer(vbo[0]) << 1 | !glIsBuffer(ibo) | !glIsVertexArray(vao) << 2);
 	glBindVertexArray( vao);
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 	//vec2 = 8 vec3 = 12 vec4 = 16
 
 
+	glEnableVertexAttribArray(0); //TODO dynamic VAO
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 12 /*stride*/, 0 /*offset*/); //Pos
+
+
+	glEnableVertexAttribArray(1); //TODO dynamic VAO
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 12 /*stride*/, 0 /*offset*/); //Pos
 
 	glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
+
+	glDisableVertexAttribArray( 0 );
+	glDisableVertexAttribArray( 1 );
 	//Wireframe Shader
 	//glDrawElements( GL_LINE_STRIP, indices, GL_UNSIGNED_INT, 0);  //for debug purposes
 
 }
 Mesh::~Mesh(void)
 {
-	glDisableVertexAttribArray( 1 );
-	glDisableVertexAttribArray( 0 );
 	if (glIsVertexArray(vao))
 		glDeleteVertexArrays( 1, &vao);
 	if (glIsBuffer(vao))
-		glDeleteBuffers( 2, vbo);
+		glDeleteBuffers( 2, &vbo[0]);
 	if (glIsBuffer(vao))
 		glDeleteBuffers( 1, &ibo);
 }
