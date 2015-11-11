@@ -1,6 +1,5 @@
 #version 330
 
-in vec2 texCoord;
 in vec3 world_Pos;
 in vec3 normal;
 
@@ -22,9 +21,9 @@ uniform float specularExponent;
 
 uniform DirectionalLight Light;
 
-vec4 calcLight( BaseLight base, vec3 direction, vec3 normal)
+vec4 calcLight(BaseLight base, vec3 direction, vec3 nor)
 {
-	float diffuseFactor = dot(normal, -direction);
+    float diffuseFactor = dot(nor, -direction);
     
     vec4 diffuseColor = vec4(0,0,0,0);
     vec4 specularColor = vec4(0,0,0,0);
@@ -34,10 +33,10 @@ vec4 calcLight( BaseLight base, vec3 direction, vec3 normal)
         diffuseColor = vec4(base.color, 1.0) * base.intensity * diffuseFactor;
         
         vec3 directionToEye = normalize(EyePos - world_Pos);
-        //vec3 reflectDirection = normalize(reflect(direction, normal));
+        //vec3 reflectDirection = normalize(reflect(direction, nor));
         vec3 halfDirection = normalize(directionToEye - direction);
         
-        float specularFactor = dot(halfDirection, normal);
+        float specularFactor = dot(halfDirection, nor);
         //float specularFactor = dot(directionToEye, reflectDirection);
         specularFactor = pow(specularFactor, specularExponent);
         
@@ -50,12 +49,12 @@ vec4 calcLight( BaseLight base, vec3 direction, vec3 normal)
     return diffuseColor + specularColor;
 }
 
-vec4 calcDirectionalLight( DirectionalLight directional, vec3 normal)
+vec4 calcDirectionalLight( DirectionalLight directional, vec3 nor)
 {
-	return calcLight( directional.base, -normalize(directional.direction), normalize(normal));
+	return calcLight( directional.base, normalize(directional.direction), normalize(nor));
 }
 
 void main()
 {
-	gl_FragColor = vec4(normal, 1.0)/* calcDirectionalLight( Light, normal) vec4(0.0, 0.0, 1.0, 1.0 )*/;
+		gl_FragColor = calcDirectionalLight(Light, normal);
 }

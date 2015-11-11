@@ -67,18 +67,19 @@ void initGraphics()
 void multipassRender()
 {
 	scene->render(ambient);
-
+	
+	//needs to pause Update for the passes since depth would change
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
 	glDepthMask(GL_FALSE);
-	glDepthFunc(GL_EQUAL);
+	glDepthFunc(GL_LEQUAL);
 
 	scene->render(Dir.getShader());
 
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
-
+	
 	s->updateScreen();
 }
 

@@ -18,7 +18,7 @@ private:
 	void glDownload(  std::vector<glm::vec3>&, std::vector < unsigned int>&);
 		
 	unsigned int vao;
-	unsigned int vbo; // new interleaving vvvfn v = Vertex, f = faceID, n = normal (accessed by face as index)
+	unsigned int vbo[2]; // new interleaving vvvfn v = Vertex, f = faceID, n = normal (accessed by face as index)
 	unsigned int ibo;
 
 	unsigned int vecs;
