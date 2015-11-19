@@ -1,7 +1,9 @@
 #include <chrono>
 #include <functional>
+#include <iostream>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 
 using namespace std::chrono;
 
@@ -15,6 +17,7 @@ public:
 
 	void run();
 	
+
 	bool isRunning() { return running; }
 	void shutdown() { running = false; }
 

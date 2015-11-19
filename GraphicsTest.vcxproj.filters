@@ -69,6 +69,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="RenderingEngine.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">
@@ -111,6 +114,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ExclusiveObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingEngine.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

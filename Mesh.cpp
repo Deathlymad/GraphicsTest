@@ -14,7 +14,7 @@
 
 #include "iofunctions.h"
 
-Mesh::Mesh() : vao(-1), ibo(-1)
+Mesh::Mesh() : vao(-1), vbo(-1), ibo(-1)
 {
 }
 
@@ -92,7 +92,7 @@ void Mesh::initGL( unsigned char flag)
 		
 	if (flag & 2)
 	{
-		glGenBuffers( 2, &vbo[0]);
+		glGenBuffers( 1, &vbo);
 	}
 	if (flag & 1)
 	{
@@ -102,7 +102,7 @@ void Mesh::initGL( unsigned char flag)
 
 void Mesh::glDownload(std::vector<glm::vec3>& v, std::vector < unsigned int>& i)
 {
-	initGL(!glIsBuffer(vbo[0]) << 1 | !glIsBuffer(ibo) | !glIsVertexArray(vao) << 2);
+	initGL(!glIsBuffer(vbo) << 1 | !glIsBuffer(ibo) | !glIsVertexArray(vao) << 2);
 
 	if (v.size() == 0)
 		return;
@@ -122,43 +122,38 @@ void Mesh::glDownload(std::vector<glm::vec3>& v, std::vector < unsigned int>& i)
 		temp.push_back(v[i].y);
 		temp.push_back(v[i].z);
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]); //contains Vertices
-	glBufferData( GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
-	temp.clear();
 	for (unsigned int i = 0; i < norm.size(); i++)
 	{
 		temp.push_back(norm[i].x);
 		temp.push_back(norm[i].y);
 		temp.push_back(norm[i].z);
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]); //contains Normals
-	glBufferData(GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
-	//glVertexAttribPointer( 1 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, 0 /*offset*/); //Normals
-	//glEnableVertexAttribArray( 1);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo); //contains Vertices
+	glBufferData( GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
+	temp.clear();
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_DYNAMIC_DRAW);
 	indices = i.size();
-	vecs = v.size();
+	vecs = v.size() * 12;
 }
 
 void Mesh::Draw()
 {
-	initGL(!glIsBuffer(vbo[0]) << 1 | !glIsBuffer(ibo) | !glIsVertexArray(vao) << 2);
+	initGL(!glIsBuffer(vbo) << 1 | !glIsBuffer(ibo) | !glIsVertexArray(vao) << 2);
 	glBindVertexArray( vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 	//vec2 = 8 vec3 = 12 vec4 = 16
 
 
 	glEnableVertexAttribArray(0); //TODO dynamic VAO
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 12 /*stride*/, 0 /*offset*/); //Pos
+	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, 0 /*offset*/); //Pos
 
 
 	glEnableVertexAttribArray(1); //TODO dynamic VAO
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 12 /*stride*/, 0 /*offset*/); //Pos
+	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, (void*)vecs/*offset*/); //Pos
 
 	glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
 
@@ -173,7 +168,7 @@ Mesh::~Mesh(void)
 	if (glIsVertexArray(vao))
 		glDeleteVertexArrays( 1, &vao);
 	if (glIsBuffer(vao))
-		glDeleteBuffers( 2, &vbo[0]);
+		glDeleteBuffers( 1, &vbo);
 	if (glIsBuffer(vao))
 		glDeleteBuffers( 1, &ibo);
 }

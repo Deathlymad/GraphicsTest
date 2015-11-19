@@ -21,15 +21,12 @@ Clock::~Clock()
 
 void Clock::update()
 {
-	std::mutex m;
-	m.lock();
 	init();
-	m.unlock();
 	lastSec = system_clock::now();
 	while (running)
 	{
 		lastTick = std::chrono::system_clock::now();
-
+		
 		//mutex Check
 		func();
 		currentTicks++;

@@ -1,7 +1,7 @@
 Short Term:
-fix normals
-fix Bug that Object is not displaying properly without moving
-Implement pausing the thread with mutex
+fix Light Calculation
+improve asynchrounous movement
+fix Bug that Object is not displaying properly without moving once
 
 Long Term:
 Texturen (TextureAtlas)

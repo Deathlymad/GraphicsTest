@@ -22,6 +22,8 @@ public:
 
 	void handleWindow(std::function<void(GLFWwindow*)> f)
 	{
+		if (this == nullptr)
+			return;
 		f(winHandle);
 	}
 
