@@ -1,9 +1,9 @@
 Short Term:
 fix Light Calculation
-improve asynchrounous movement
 fix Bug that Object is not displaying properly without moving once
 
 Long Term:
+Create World
 Texturen (TextureAtlas)
 Physics
 Gamepad Joystick implementation

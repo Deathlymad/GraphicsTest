@@ -2,7 +2,7 @@
 #include <GL\glew.h>
 
 
-Scene::Scene()
+Scene::Scene() : root(), View()
 {
 }
 
@@ -31,7 +31,6 @@ void Scene::update()
 
 void Scene::render(Shader* s)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	root.render(s);
 }
 

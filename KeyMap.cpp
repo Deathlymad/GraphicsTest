@@ -11,12 +11,16 @@
 
 #include "KeyMap.h"
 
-KeyMap::KeyMap(Screen* s) : InputHandler(s), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
+KeyMap::KeyMap(Screen* s) : InputHandler(s, InfoHandle::KeyPress), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
 {}
 
 KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
 {
 
+}
+
+KeyMap::KeyMap() : InputHandler(InfoHandle::KeyPress), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
+{
 }
 
 void KeyMap::addKeyBind( unsigned short key, std::function<void(unsigned short)> Func, std::string name)
@@ -35,6 +39,12 @@ void KeyMap::onKeyPress(unsigned short key)
 	KeyBind temp = KeyBindings[find(key, &KeyBindings, 0, KeyBindings.size())];
 
 	temp.callback(key);
+}
+
+KeyMap & KeyMap::operator=(KeyMap & k)
+{
+	KeyBindings = k.KeyBindings;
+	return *this;
 }
 
 KeyMap::~KeyMap()

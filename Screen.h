@@ -2,6 +2,7 @@
 #include <string>
 
 struct GLFWwindow;
+struct GLFWmonitor;
 
 
 #pragma once
@@ -22,10 +23,10 @@ public:
 
 	void handleWindow(std::function<void(GLFWwindow*)> f)
 	{
-		if (this == nullptr)
-			return;
 		f(winHandle);
 	}
+
+	void makeCurrent();
 
 	int getWidth() { return Width; }
 	int getHeight() { return Height; }

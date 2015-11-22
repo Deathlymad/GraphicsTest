@@ -156,6 +156,11 @@ void Screen::updateScreen()
 	glfwPollEvents();
 }
 
+void Screen::makeCurrent()
+{
+	glfwMakeContextCurrent(winHandle);
+}
+
 Screen::~Screen()
 {
 	glfwDestroyWindow(winHandle);

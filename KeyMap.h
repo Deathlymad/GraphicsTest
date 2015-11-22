@@ -19,12 +19,15 @@ class KeyMap : InputHandler
 public:
 	KeyMap(Screen* s);
 	KeyMap(KeyMap&);
+	KeyMap();
 
 	void launchKeyMap() { KeyTick.run(); }
 
 	void addKeyBind( unsigned short key, std::function<void(unsigned short)> Func, std::string name);
 
 	void onKeyPress( unsigned short);
+
+	KeyMap& operator = (KeyMap&);
 
 	~KeyMap();
 protected:

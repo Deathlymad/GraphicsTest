@@ -9,7 +9,10 @@ class Scene
 public:
 	Scene();
 
-	void addObj(EngineObject* obj) { root.add(obj); }
+	void addObj(EngineObject* obj)
+	{
+		root.add(obj); //could lead to class slicing
+	}
 
 	void init(Shader*, KeyMap*);
 	void init(Shader*);

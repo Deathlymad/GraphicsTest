@@ -2,8 +2,9 @@
 
 
 
-EngineObject::EngineObject()
+EngineObject::EngineObject() : children()
 {
+	children.clear();
 }
 
 void EngineObject::update()

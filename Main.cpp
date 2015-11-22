@@ -34,23 +34,18 @@
 #include "ModelRenderer.h"
 #include "Light.h"
 
+#include "Game.h"
+
 Screen* s;
 Shader* ambient, *directional;
 Mesh* m;
-Camera* c;
 DirectionalLight Dir;
 Scene* scene;
 Clock* MainLoop, *UpdateLoop;
 KeyMap*  map;
 
-std::mutex mut; 
-std::condition_variable cond;
-bool waiting = false;
-
 void initGraphics()
 {
-	std::unique_lock<std::mutex> lk (mut);
-
 	s = new Screen(1366, 768, "Test", char(154));
 
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
@@ -69,11 +64,8 @@ void initGraphics()
 	Dir.writeUniform("Light");
 
 	scene = new Scene();
-	scene->addObj(new ModelRenderer("assets/mesh/stein_einfach.obj",""));
+	scene->addObj( new ModelRenderer("assets/mesh/stein_einfach.obj",""));
 
-	lk.release();
-	waiting = true;
-	cond.notify_all();
 }
 
 void multipassRender()
@@ -107,9 +99,16 @@ void initKeys()
 
 int main()
 {
+	Game Test;
+
+	Test.Start();
+
+	Test.~Game();
+
+	/*
 	UpdateLoop = new Clock(initKeys, [] { scene->update(); }, 60); //needs to be as fast as the thread
 
 	MainLoop = new Clock(initGraphics, multipassRender, 60);
 
-	while (MainLoop->isRunning()) {}
+	while (MainLoop->isRunning()) {}*/
 }

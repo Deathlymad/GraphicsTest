@@ -152,6 +152,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="EngineObject.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="iofunctions.cpp" />
     <ClCompile Include="KeyMap.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Clock.h" />
     <ClInclude Include="EngineObject.h" />
     <ClInclude Include="ExclusiveObject.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="iofunctions.h" />
     <ClInclude Include="KeyMap.h" />
