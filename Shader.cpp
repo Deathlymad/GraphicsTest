@@ -91,7 +91,7 @@ void Shader::build()
 			if (shader != -1) //check if it is a valid shader
 				glDetachShader(program, shader); //detaches Shader, DOES NO DELETE
 		attached = 0; //resets counter
-	}
+	} else
 
 	for (ShaderCode shader : Code)
 	{
@@ -104,7 +104,7 @@ void Shader::build()
 	}
 
 	if (attached > 0)
-		glLinkProgram(program); //FS Shader not compiled...
+		glLinkProgram(program);
 	else
 		std::cout << "OpenGL Program " << "NO SHADERS ATTACHED." << std::endl;
 
@@ -147,7 +147,7 @@ void Shader::setUniforms()
 
 
 
-Shader Shader::operator=(Shader other)
+Shader& Shader::operator=(Shader& other)
 {
 	Code = other.Code;
 	load(); //handles the Shader changes
@@ -155,7 +155,7 @@ Shader Shader::operator=(Shader other)
 	return *this;
 }
 
-Shader Shader::operator=(std::vector<ShaderCode> Shaders)
+Shader& Shader::operator=(std::vector<ShaderCode> Shaders)
 {
 	Code = Shaders;
 	load();
@@ -163,7 +163,7 @@ Shader Shader::operator=(std::vector<ShaderCode> Shaders)
 	return *this;
 }
 
-bool Shader::operator==(Shader other)
+bool Shader::operator==(Shader& other)
 {
 	if (Code.size() != other.Code.size())
 		return false;
@@ -173,7 +173,7 @@ bool Shader::operator==(Shader other)
 	return program == other.program;
 }
 
-bool Shader::operator==(ShaderCode contained)
+bool Shader::operator==(ShaderCode& contained)
 {
 	
 	ShaderCode res = *std::find(Code.begin(), Code.end(), contained)._Ptr;
@@ -240,10 +240,10 @@ void Shader::makeShader(ShaderCode* code)
 	{
 		int type = 0;
 		glGetShaderiv(code->pos, GL_SHADER_TYPE, &type); //if there is already a Shader, check if it has the right type
-		if (type != code->_type)
+		if (type != getShaderType(code->_type))
 		{
 			glDeleteShader(code->pos); //clear Shader if it is of the wrong Type (issues with programs created from it?!)
-			code->pos = glCreateShader(code->_type); //recreate Shader of right Type
+			code->pos = glCreateShader(getShaderType(code->_type)); //recreate Shader of right Type
 		}
 	}//if there is a Shader created with the right type then it is going to be rewritten but not recreated should reduce memory
 	
@@ -263,7 +263,7 @@ void Shader::makeShader(ShaderCode* code)
 
 	glGetShaderiv(code->pos, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
-	{ //not compiling, no error Log....
+	{ //not compiling
 		GLint maxLength = 0;
 		glGetShaderiv(code->pos, GL_INFO_LOG_LENGTH, &maxLength);
 		if (maxLength > 1)

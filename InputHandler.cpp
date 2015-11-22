@@ -53,9 +53,10 @@ InputHandler::~InputHandler()
 
 void InputHandler::keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
-	
 	for (InputHandler* handle : Handles)
 	{
+		if (handle->handles.size() == 0)
+			continue;
 		if (std::find(handle->handles.begin(), handle->handles.end(), InfoHandle::KeyPress) != handle->handles.end())
 			handle->onKeyPress(key, action, mods);
 	}
@@ -65,6 +66,8 @@ void InputHandler::cursorPosCallback(GLFWwindow * window, double xpos, double yp
 {
 	for (InputHandler* handle : Handles)
 	{
+		if (handle->handles.size() == 0)
+			continue;
 		if (std::find(handle->handles.begin(), handle->handles.end(), InfoHandle::MouseMove) != handle->handles.end())
 		{
 			handle->onMouseMove(xpos - handle->x, ypos - handle->y);
@@ -77,6 +80,10 @@ void InputHandler::cursorPosCallback(GLFWwindow * window, double xpos, double yp
 void InputHandler::mouseButtonCallback(GLFWwindow * window, int button, int action, int mods)
 {
 	for (InputHandler* handle : Handles)
+	{
+		if (handle->handles.size() == 0)
+			continue;
 		if (std::find(handle->handles.begin(), handle->handles.end(), InfoHandle::MouseMove) != handle->handles.end())
 			handle->onMouseButton(button, action, mods);
+	}
 }

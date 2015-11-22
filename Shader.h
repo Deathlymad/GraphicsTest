@@ -95,10 +95,10 @@ public:
 	void setUniforms();
 	
 	//operators
-	Shader operator= (Shader);
-	Shader operator= (std::vector<ShaderCode>);
-	bool operator== (Shader);
-	bool operator== (ShaderCode);
+	Shader& operator= (Shader&);
+	Shader& operator= (std::vector<ShaderCode>);
+	bool operator== (Shader&);
+	bool operator== (ShaderCode&);
 	bool operator== (std::vector<ShaderCode>);
 private:
 	//variables
