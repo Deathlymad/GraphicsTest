@@ -1,4 +1,5 @@
 Short Term:
+Add Light To Object Tree
 fix Light Calculation
 fix Bug that Object is not displaying properly without moving once
 

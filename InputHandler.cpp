@@ -14,27 +14,29 @@
 bool InputHandler::registered = false;
 std::vector<InputHandler*> InputHandler::Handles;
 
-InputHandler::InputHandler(Screen * s, InfoHandle i)
+InputHandler::InputHandler(Screen * s)
 {
 	if (!registered)
 		s->handleWindow(registerCallbacks);
-	Handles.push_back(this);
+	pos = Handles.size();
+	Handles.insert(Handles.begin() + pos, this);
 
 	x = 0;
 	y = 0;
-
-	pos = handles.size();
-	handles.push_back(i);
 }
 
-InputHandler::InputHandler(InfoHandle i)
+InputHandler::InputHandler()
 {
-	Handles.push_back(this);
+	pos = Handles.size();
+	Handles.insert(Handles.begin() + pos, this);
 
 	x = 0;
 	y = 0;
-	pos = handles.size();
-	handles.push_back(i);
+}
+
+InputHandler::~InputHandler()
+{
+	Handles.erase(Handles.begin() + pos);
 }
 
 /*GLFW Callback Functions*/
@@ -46,44 +48,24 @@ void InputHandler::registerCallbacks(GLFWwindow* w)
 	glfwSetMouseButtonCallback(w, mouseButtonCallback);
 }
 
-InputHandler::~InputHandler()
-{
-	Handles.erase(Handles.begin() + pos);
-}
-
 void InputHandler::keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
 	for (InputHandler* handle : Handles)
-	{
-		if (handle->handles.size() == 0)
-			continue;
-		if (std::find(handle->handles.begin(), handle->handles.end(), InfoHandle::KeyPress) != handle->handles.end())
-			handle->onKeyPress(key, action, mods);
-	}
+		handle->onKeyPress(key, action, mods);
 }
 
 void InputHandler::cursorPosCallback(GLFWwindow * window, double xpos, double ypos)
 {
 	for (InputHandler* handle : Handles)
 	{
-		if (handle->handles.size() == 0)
-			continue;
-		if (std::find(handle->handles.begin(), handle->handles.end(), InfoHandle::MouseMove) != handle->handles.end())
-		{
-			handle->onMouseMove(xpos - handle->x, ypos - handle->y);
-			handle->x = xpos;
-			handle->y = ypos;
-		}
+		handle->onMouseMove(xpos - handle->x, ypos - handle->y);
+		handle->x = xpos;
+		handle->y = ypos;
 	}
 }
 
 void InputHandler::mouseButtonCallback(GLFWwindow * window, int button, int action, int mods)
 {
 	for (InputHandler* handle : Handles)
-	{
-		if (handle->handles.size() == 0)
-			continue;
-		if (std::find(handle->handles.begin(), handle->handles.end(), InfoHandle::MouseMove) != handle->handles.end())
-			handle->onMouseButton(button, action, mods);
-	}
+		handle->onMouseButton(button, action, mods);
 }

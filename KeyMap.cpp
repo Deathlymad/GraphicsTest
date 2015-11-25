@@ -11,7 +11,7 @@
 
 #include "KeyMap.h"
 
-KeyMap::KeyMap(Screen* s) : InputHandler(s, InfoHandle::KeyPress), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
+KeyMap::KeyMap(Screen* s) : InputHandler(s), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
 {}
 
 KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
@@ -19,7 +19,7 @@ KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), KeyTick
 
 }
 
-KeyMap::KeyMap() : InputHandler(InfoHandle::KeyPress), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
+KeyMap::KeyMap() : InputHandler(), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
 {
 }
 

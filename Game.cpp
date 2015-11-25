@@ -5,6 +5,7 @@
 Game::Game() : screen(1366, 768, "Test", char(154)), GraphicEngine(), UpdateThread([] {}, [this] {update(); }, 60)
 {
 	GraphicEngine = RenderingEngine(&screen);
+	screen.handleWindow(InputHandler::registerCallbacks);
 	KeyMaps.push_back(KeyMap(&screen));
 	setupKeyMap(KeyMaps[0]);
 	running = false;

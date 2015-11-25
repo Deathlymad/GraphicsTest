@@ -6,7 +6,7 @@
 float Camera::speed = 0.05f;
 glm::vec3 Camera::YAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 
-Camera::Camera() : InputHandler(InfoHandle::MouseMove), EngineObject()
+Camera::Camera() : InputHandler(), EngineObject()
 {
 	pos = glm::vec3(0, 0, -5);
 	forward = glm::vec3(0, 0, -1);
