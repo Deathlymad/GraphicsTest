@@ -6,8 +6,8 @@ Game::Game() : screen(1366, 768, "Test", char(154)), GraphicEngine(), UpdateThre
 {
 	GraphicEngine = RenderingEngine(&screen);
 	screen.handleWindow(InputHandler::registerCallbacks);
-	KeyMaps.push_back(KeyMap(&screen));
-	setupKeyMap(KeyMaps[0]);
+	KeyMaps.push_back(new KeyMap(&screen));
+	setupKeyMap(*KeyMaps[0]);
 	running = false;
 }
 
@@ -21,7 +21,7 @@ void Game::Run()
 {
 	buildWorld();
 	
-	KeyMaps[0].launchKeyMap();
+	KeyMaps[0]->launchKeyMap();
 
 	while (running)
 	{
@@ -48,9 +48,9 @@ void Game::update()
 KeyMap & Game::addKeyMap()
 {
 	unsigned int temp = KeyMaps.size();
-	KeyMaps.insert( KeyMaps.begin() + temp, KeyMap());
-	setupKeyMap(KeyMaps[temp]);
-	return KeyMaps[temp];
+	KeyMaps.insert( KeyMaps.begin() + temp, new KeyMap());
+	setupKeyMap(*KeyMaps[temp]);
+	return *KeyMaps[temp];
 }
 
 

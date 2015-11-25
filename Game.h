@@ -24,7 +24,7 @@ private:
 	void buildWorld(); //kind of like post init here are all the complex world objects created
 	void setupKeyMap(KeyMap&);
 
-	std::vector<KeyMap> KeyMaps;
+	std::vector<KeyMap*> KeyMaps;
 	RenderingEngine GraphicEngine;
 	Screen screen;
 	Scene world; //needs to be extended and changed
