@@ -10,31 +10,44 @@ RenderingEngine::RenderingEngine(Screen* screen) : ThreadExclusiveObject<Renderi
 
 void RenderingEngine::render(Scene * s)
 {
-	RenderingEngine* ptr = (RenderingEngine*)malloc(sizeof(RenderingEngine));
-	claim(*ptr);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	s->render(&ambient);
+	s->render(&ambient); //generates depth buffer
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+	glDepthMask(false);
+	glDepthFunc(GL_EQUAL);
+
+	s->render(&ambient); //color is 0 all the time somehow i should fix this sometime
 
 	for (BaseLight* light : Lights)
-		multipassRender(s, light->getShader());
+	{
+		light->writeUniform("Light");
+		s->render(light->getShader());
+	}
+
+	glDepthFunc(GL_LESS);
+	glDepthMask(true);
+	glDisable(GL_BLEND);
 
 	screen->updateScreen();
-	unclaim(*ptr);
 }
 
-void RenderingEngine::registerGraphicObject(BaseLight *)
+void RenderingEngine::registerGraphicObject(BaseLight * b)
 {
+	Lights.push_back(b);
 }
 
 
 RenderingEngine::~RenderingEngine()
 {
+	screen = nullptr;
 }
 
 void RenderingEngine::setupInitialEngineState()
 {
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 	glFrontFace(GL_CCW); //defines the Front face having counterclockwise vertices for culling
 	glCullFace(GL_BACK); //Deletes the Backface
@@ -44,18 +57,4 @@ void RenderingEngine::setupInitialEngineState()
 	glEnable(GL_DEPTH_TEST); //Enables Depth Test for Fragments
 	glAlphaFunc(GL_LESS, 1);
 	glEnable(GL_ALPHA_TEST);
-}
-
-void RenderingEngine::multipassRender(Scene* scene, Shader * shader)
-{
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_ONE, GL_ONE);
-	glDepthMask(GL_FALSE);
-	glDepthFunc(GL_LEQUAL);
-
-	scene->render(shader);
-
-	glDepthFunc(GL_LESS);
-	glDepthMask(GL_TRUE);
-	glDisable(GL_BLEND);
 }

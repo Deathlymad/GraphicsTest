@@ -24,7 +24,7 @@ void Camera::update()
 	{
 		for (unsigned char i = 0; i < 16; i++) //writes memory
 		{
-			ViewProjMatPtr[i] = View[floor(i/4)][i - (floor(i / 4) * 4)];
+			ViewProjMatPtr[i] = View[floorf(i/4)][i - (floorf(i / 4) * 4)];
 		}
 	}
 }
@@ -59,7 +59,8 @@ void Camera::registerUniforms(Shader * s)
 
 Camera::~Camera()
 {
-	delete[16](ViewProjMatPtr);
+	//if (ViewProjMatPtr)
+		//delete(ViewProjMatPtr); //errors
 }
 
 void Camera::onMouseMove(double dY, double dX)

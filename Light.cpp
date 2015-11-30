@@ -20,7 +20,9 @@ void BaseLight::writeUniform( std::string name)
 DirectionalLight::DirectionalLight( glm::vec3 c, float i, glm::vec3 dir) : BaseLight( c, i)
 {
 	normal = dir;
-	shader = new Shader( "forward_directional_vs.glsl", "forward_directional_fs.glsl");
+	if (!DirForwardShader)
+		DirForwardShader =new Shader( "forward_directional_vs.glsl", "forward_directional_fs.glsl");
+	shader = DirForwardShader;
 }
 
 void DirectionalLight::writeUniform( std::string name)

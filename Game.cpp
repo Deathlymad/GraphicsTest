@@ -60,10 +60,12 @@ Game::~Game()
 
 void Game::buildWorld()
 {
-	DirectionalLight Dir = DirectionalLight(glm::vec3(1.0f, 1.0f, 1.0f), 1000.0f, glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)));
-	Dir.writeUniform("Light");
+	DirectionalLight* Dir = new DirectionalLight(glm::vec3(1.0f, 1.0f, 1.0f), 1000.0f, glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)));
+	Dir->writeUniform("Light");
 
-	world.addObj( new ModelRenderer("assets/mesh/stein_einfach.obj", ""));
+	GraphicEngine.registerGraphicObject(Dir);
+
+	world.addObj( new ModelRenderer("assets/mesh/stein_einfach.obj", "assets/mesh/tex1.bmp"));
 }
 
 void Game::setupKeyMap(KeyMap &k)

@@ -163,5 +163,5 @@ void Screen::makeCurrent()
 
 Screen::~Screen()
 {
-	glfwDestroyWindow(winHandle);
+	//glfwDestroyWindow(winHandle);
 }

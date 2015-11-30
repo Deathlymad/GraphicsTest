@@ -33,8 +33,6 @@ public:
 private:
 	void setupInitialEngineState();
 
-	void multipassRender(Scene*, Shader*);
-
 	Screen* screen;
 
 	Shader ambient;
