@@ -1,20 +1,19 @@
 Short Term:
 Add Light To Object Tree
 fix multipass flickering
-fix ambient multipass
 add cleanup for all Graphic classes
 fix Light Calculation
-finish Texturen (TextureAtlas)
 fix Bug that Object is not displaying properly without moving once
+finish Textures (TextureAtlas), bmp is not working...
 add texture to shaders
+fix ambient multipass
 
 Long Term:
 Create World
 Physics
-Gamepad Joystick implementation
-autonomous Threadauslastung und Speicheroptimierung
+autonomous Threadusage and memory optimization
 
 Very Long Term:
+Gamepad Joystick implementation
 OpenCL
 Use Vulkan
-komplette Abstrahierung von OpenGL Operationen und States in OOP //Vulkan?

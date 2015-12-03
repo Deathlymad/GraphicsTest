@@ -6,7 +6,7 @@
 float Camera::speed = 0.05f;
 glm::vec3 Camera::YAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 
-Camera::Camera() : InputHandler(), EngineObject()
+Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr()
 {
 	pos = glm::vec3(0, 0, -5);
 	forward = glm::vec3(0, 0, -1);
@@ -14,7 +14,11 @@ Camera::Camera() : InputHandler(), EngineObject()
 	FoV = 45.0f;
 	Aspect = 4 / 3;
 	View = glm::mat4();
-	projection = glm::perspective( FoV, Aspect, 0.1f, 100.0f); 
+	projection = glm::perspective( FoV, Aspect, 0.1f, 100.0f);
+	for (unsigned char i = 0; i < 16; i++) //writes initial matrix memory
+	{
+		ViewProjMatPtr[i] = projection[floorf(i / 4)][i - (floorf(i / 4) * 4)];
+	}
 }
 
 void Camera::update()
@@ -54,6 +58,7 @@ void Camera::registerKeyBinds(KeyMap * k)
 void Camera::registerUniforms(Shader * s)
 {
 	s->addUniform(Shader::Uniform("View", ViewProjMatPtr, 16)); //leads to change in Position need to find out why
+	View = projection * glm::lookAt(pos, pos + glm::normalize(forward), glm::normalize(up));
 }
 
 

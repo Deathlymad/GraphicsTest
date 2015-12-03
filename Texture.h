@@ -50,15 +50,15 @@ public:
 
 	TextureAtlas operator + (Texture);
 protected:
-	GLuint ID;
+	GLuint ID; //TextureID
 
-	std::string f;
-	char* tex;
-	unsigned short texX, texY;
+	std::string f; //filename
+	char* tex; //Texture Memory
+	unsigned short texX, texY; //size
 	bool isLoaded;
 
-	unsigned char pos;
-	static std::vector<Texture*> SamplerList; //TODO improved sorting update
+	unsigned char pos; //Sampler Count
+	static std::vector<Texture*> SamplerList; //TODO improved sorting update, might not be necessary due to textureAtlas
 };
 
 class TextureAtlas:Texture
@@ -81,7 +81,7 @@ public:
 
 	void load(std::string, unsigned short, unsigned short);
 
-	void bind(); //TODO: Download of Uniform
+	void bind();
 	
 	TextureAtlas operator + (Texture);	//TODO: add Merging
 private:

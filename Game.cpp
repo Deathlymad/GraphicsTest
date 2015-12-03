@@ -58,14 +58,13 @@ Game::~Game()
 {
 }
 
-void Game::buildWorld()
+void Game::buildWorld() //Lazy Implementation
 {
 	DirectionalLight* Dir = new DirectionalLight(glm::vec3(1.0f, 1.0f, 1.0f), 1000.0f, glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)));
-	Dir->writeUniform("Light");
-
+	
 	GraphicEngine.registerGraphicObject(Dir);
 
-	world.addObj( new ModelRenderer("assets/mesh/stein_einfach.obj", "assets/mesh/tex1.bmp"));
+	world.addObj( new ModelRenderer("assets/mesh/stein_einfach.obj", "assets/textures/tex1.bmp"));
 }
 
 void Game::setupKeyMap(KeyMap &k)

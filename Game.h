@@ -21,7 +21,7 @@ public:
 
 	~Game();
 private:
-	void buildWorld(); //kind of like post init here are all the complex world objects created
+	virtual void buildWorld(); //kind of like post init here are all the world objects created
 	void setupKeyMap(KeyMap&);
 
 	std::vector<KeyMap*> KeyMaps;

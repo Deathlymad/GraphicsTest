@@ -1,5 +1,6 @@
 #include <GL\glew.h>
 #include <iostream>
+#include "Shader.h"
 #include "Texture.h"
 #include "bmp.h"
 
@@ -9,12 +10,17 @@ std::vector<Texture*> Texture::SamplerList = std::vector<Texture*>();
 
 Texture::Texture( std::string fileName)
 {
-	Texture();
+	isLoaded = false;
+	ID = 0;
+	tex = nullptr;
+	texX = 0;
+	texY = 0;
+
 	f = fileName;
 
 	load(fileName);
 	pos = SamplerList.size();
-	SamplerList.push_back(this); //TODO: fill holes, search algorithms allow deletion
+	SamplerList.push_back(this); //TODO: fill holes, algorithms allow deletion
 }
 
 void Texture::setTexture( std::string File)
@@ -91,7 +97,8 @@ void Texture::glDownload()
 void Texture::bind()
 {
 	glBindTexture( GL_TEXTURE_2D, ID);
-	std::cout << "OpenGL Texture Binding " << std::to_string(glGetError()) << std::endl;
+	GLuint err = glGetError();
+	std::cout << "OpenGL Texture Binding " << std::to_string(err) << std::endl; //needs to be removed
 }
 
 std::vector<std::vector<char>> mergeTexData( std::vector<std::vector<char>> tex1, std::vector<std::vector<char>> tex2, unsigned int partX, unsigned int partY, unsigned short partsPerLine)
@@ -165,7 +172,10 @@ void TextureAtlas::load(std::string fileName, unsigned short x, unsigned short y
 void TextureAtlas::bind()
 {
 	Texture::bind();
-	//TODO: Download of Uniform
+	//bitX
+	//bitY
+	//partAmtX
+	//partAmtY
 }
 	
 TextureAtlas TextureAtlas::operator + (Texture t)
