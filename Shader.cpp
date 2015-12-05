@@ -96,7 +96,7 @@ void Shader::build()
 	for (ShaderCode shader : Code)
 	{
 		//should check Shader values
-		glAttachShader(program, shader.pos);
+		glAttachShader(program, shader.pos.get());
 		int ShaderCount = 0;
 		glGetProgramiv(program, GL_ATTACHED_SHADERS, &ShaderCount); //might turn out t be slow since it querries operations and wait for them
 		if (ShaderCount > attached) //used for Error catching
@@ -232,18 +232,18 @@ void Shader::updateUniform(Uniform * uniform)
 
 void Shader::makeShader(ShaderCode* code)
 {
-	if (!glIsShader(code->pos))
+	if (!glIsShader(code->pos.get()))
 	{
-		code->pos = glCreateShader(getShaderType(code->_type)); //no Shader existent; creating
+		code->pos.get() = glCreateShader(getShaderType(code->_type)); //no Shader existent; creating
 	}
 	else
 	{
 		int type = 0;
-		glGetShaderiv(code->pos, GL_SHADER_TYPE, &type); //if there is already a Shader, check if it has the right type
+		glGetShaderiv(code->pos.get(), GL_SHADER_TYPE, &type); //if there is already a Shader, check if it has the right type
 		if (type != getShaderType(code->_type))
 		{
-			glDeleteShader(code->pos); //clear Shader if it is of the wrong Type (issues with programs created from it?!)
-			code->pos = glCreateShader(getShaderType(code->_type)); //recreate Shader of right Type
+			glDeleteShader(code->pos.get()); //clear Shader if it is of the wrong Type (issues with programs created from it?!)
+			code->pos.get() = glCreateShader(getShaderType(code->_type)); //recreate Shader of right Type
 		}
 	}//if there is a Shader created with the right type then it is going to be rewritten but not recreated should reduce memory
 	
@@ -251,26 +251,26 @@ void Shader::makeShader(ShaderCode* code)
 	if (s.size() > 1)
 	{
 		const char *c_str = s.c_str();
-		glShaderSource(code->pos, 1, &c_str, NULL);
+		glShaderSource(code->pos.get(), 1, &c_str, NULL);
 	}
 	else
 		std::cout << "OpenGL Shader " << "Empty Source." << std::endl;
 
 	int compiled = 0;
-	glGetShaderiv(code->pos, GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(code->pos.get(), GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
-		glCompileShader(code->pos);
+		glCompileShader(code->pos.get());
 
-	glGetShaderiv(code->pos, GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(code->pos.get(), GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{ //not compiling
 		GLint maxLength = 0;
-		glGetShaderiv(code->pos, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetShaderiv(code->pos.get(), GL_INFO_LOG_LENGTH, &maxLength);
 		if (maxLength > 1)
 		{
 			//The maxLength includes the NULL character
 			std::vector<GLchar> infoLog = std::vector<GLchar>(maxLength);
-			glGetShaderInfoLog(code->pos, maxLength, NULL, &infoLog[0]);
+			glGetShaderInfoLog(code->pos.get(), maxLength, NULL, &infoLog[0]);
 			std::cout << "OpenGL Shader " << infoLog.data() << std::endl;
 		}
 	}

@@ -1,14 +1,21 @@
 #pragma once
 
+#include <functional>
+
 #include "Def.h"
 
 NSP_UTIL_BEG
 	
 	template <typename T>
-	class Ptr<T> {
+	class Ptr {
 	public:
 		Ptr<T>() : owned(false), ptr(nullptr) {}
 		Ptr<T>(T* data) : owned(true), ptr(data) {}
+		Ptr<T>(T data) : owned(true), ptr(nullptr)
+		{
+			ptr = new T;
+			*ptr = data;
+		}
 
 		void set(T& data)
 		{
@@ -55,7 +62,7 @@ NSP_UTIL_BEG
 		T* ptr;
 	};
 	template <typename T>
-	class CustomPtr<T> : Ptr<T> {
+	class CustomPtr : Ptr<T> {
 	public:
 		CustomPtr<T>(std::function<void(T*)> func) : Ptr<T>(), destruction(func) {}
 		CustomPtr<T>(std::function<void(T*)> func, T* data) : Ptr<T>(data), destruction(func) {}

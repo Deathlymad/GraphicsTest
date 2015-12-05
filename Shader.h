@@ -34,15 +34,15 @@ public: //Public structures
 	public:
 		ShaderType _type; //should be made private
 		std::string _path;
-		CustomPtr<GLuint> pos;
+		Ptr<GLuint> pos;
 
 		ShaderCode() : _type(TESSELATION_EVALUATION), _path(""), pos(-1) {}
 		ShaderCode(ShaderType type, std::string path) : _type(type), _path(path), pos(-1) {}
 		ShaderCode(ShaderType type, char* path) : _type(type), _path(path), pos(-1) {}
-		~ShaderCode() { if (glIsShader(pos.get())) glDeleteShader(pos); } //just don't leave stuff behind
+		~ShaderCode() { if (glIsShader(pos.get())) glDeleteShader(pos.get()); } //just don't leave stuff behind
 
 		ShaderCode operator=(ShaderCode other) { _type = other._type; _path = other._path; pos = other.pos; return *this; }
-		bool operator==(ShaderCode other) { return _type == other._type && _path == other._path && pos == other.pos; }
+		bool operator==(ShaderCode other) { return _type == other._type && _path == other._path && pos.get() == other.pos.get(); }
 		bool operator!=(ShaderCode other) { return !(*this == other); }
 	};
 
