@@ -12,14 +12,14 @@ void RenderingEngine::render(Scene * s)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	s->render(&ambient); //generates depth buffer
+	s->render(&ambient); //generates depth buffer //color is 0 all the time somehow i should fix this sometime
 
-	glEnable(GL_BLEND);
+	glEnable(GL_BLEND);  //setting up Multipassing
 	glBlendFunc(GL_ONE, GL_ONE);
 	glDepthMask(false);
 	glDepthFunc(GL_EQUAL);
 
-	s->render(&ambient); //color is 0 all the time somehow i should fix this sometime
+	s->render(&ambient); //ambient pass since the original run doesn't seem to write corretly'
 
 	for (BaseLight* light : Lights)
 	{
@@ -29,7 +29,7 @@ void RenderingEngine::render(Scene * s)
 
 	glDepthFunc(GL_LESS);
 	glDepthMask(true);
-	glDisable(GL_BLEND);
+	glDisable(GL_BLEND); //resetting to atandard State
 
 	screen->updateScreen();
 }

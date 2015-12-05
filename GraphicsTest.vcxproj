@@ -170,6 +170,7 @@
     <ClInclude Include="bmp.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Clock.h" />
+    <ClInclude Include="Def.h" />
     <ClInclude Include="EngineObject.h" />
     <ClInclude Include="ExclusiveObject.h" />
     <ClInclude Include="Game.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="To Do.txt" />

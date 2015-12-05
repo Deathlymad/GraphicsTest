@@ -64,8 +64,8 @@ void Camera::registerUniforms(Shader * s)
 
 Camera::~Camera()
 {
-	//if (ViewProjMatPtr)
-		//delete(ViewProjMatPtr); //errors
+	if (ViewProjMatPtr)
+		delete[16](ViewProjMatPtr); //errors
 }
 
 void Camera::onMouseMove(double dY, double dX)

@@ -13,7 +13,9 @@
 	#endif
 #endif
 
-//#define ARRAY_SIZE (sizeof(myArray)/sizeof(*myArray))
+#include "Util.h"
+
+NSP_UTIL
 
 #pragma once
 class Shader
@@ -32,12 +34,12 @@ public: //Public structures
 	public:
 		ShaderType _type; //should be made private
 		std::string _path;
-		GLuint pos;
+		CustomPtr<GLuint> pos;
 
 		ShaderCode() : _type(TESSELATION_EVALUATION), _path(""), pos(-1) {}
 		ShaderCode(ShaderType type, std::string path) : _type(type), _path(path), pos(-1) {}
 		ShaderCode(ShaderType type, char* path) : _type(type), _path(path), pos(-1) {}
-		~ShaderCode() { if (glIsShader(pos)) glDeleteShader(pos); } //just don't leave stuff behind
+		~ShaderCode() { if (glIsShader(pos.get())) glDeleteShader(pos); } //just don't leave stuff behind
 
 		ShaderCode operator=(ShaderCode other) { _type = other._type; _path = other._path; pos = other.pos; return *this; }
 		bool operator==(ShaderCode other) { return _type == other._type && _path == other._path && pos == other.pos; }

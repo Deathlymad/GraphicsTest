@@ -7,6 +7,7 @@ fix Bug that Object is not displaying properly without moving once
 finish Textures (TextureAtlas), bmp is not working...
 add texture to shaders
 fix ambient multipass
+add comments
 
 Long Term:
 Create World
