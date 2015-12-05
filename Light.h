@@ -83,7 +83,7 @@ public:
 
 private:
 	glm::vec3 normal;
-	static Shader* DirForwardShader; //should only create on program for each type of light running off different sets of variables
+	static Shader* DirForwardShader; //should only create on program.get() for each type of light running off different sets of variables
 };
 
 #pragma once

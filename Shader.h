@@ -52,7 +52,7 @@ public: //Public structures
 		std::string _name;
 		float* _data; //does not allocate in itself!!!
 		unsigned _size; //just to make sure sizeof seems derpy...
-		GLuint pos;
+		Ptr<GLuint> pos;
 
 		Uniform() : _name("emptyUniform"), _data(nullptr), _size(0), pos(-1) {}
 		Uniform(std::string name, float* data, unsigned size) : _name(name), _data(nullptr), _size(0), pos(-1)
@@ -105,7 +105,12 @@ public:
 private:
 	//variables
 	//OpenGL
-	GLuint program;
+	CustomPtr<GLuint> program;
+	void deleteProgram(GLuint* prgm)
+	{
+		if (glIsProgram(*prgm))
+			glDeleteProgram(*prgm);
+	}
 	std::vector<ShaderCode> Code; //contains Shader variable
 	std::vector<Uniform> Uniforms;
 

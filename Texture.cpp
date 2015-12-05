@@ -19,7 +19,7 @@ Texture::Texture( std::string fileName)
 	f = fileName;
 
 	load(fileName);
-	pos = SamplerList.size();
+	pos = (unsigned char)SamplerList.size();
 	SamplerList.push_back(this); //TODO: fill holes, algorithms allow deletion
 }
 

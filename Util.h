@@ -28,9 +28,15 @@ NSP_UTIL_BEG
 
 		T& get()
 		{
-			return *ptr;
+			if (ptr)
+				return *ptr;
+			else
+			{
+				T temp = NULL;
+				return temp;
+			}
 		}
-
+		
 		void operator=(Ptr<T> &other)
 		{
 			//takes over ownership
@@ -62,7 +68,7 @@ NSP_UTIL_BEG
 		T* ptr;
 	};
 	template <typename T>
-	class CustomPtr : Ptr<T> {
+	class CustomPtr : public Ptr<T> {
 	public:
 		CustomPtr<T>(std::function<void(T*)> func) : Ptr<T>(), destruction(func) {}
 		CustomPtr<T>(std::function<void(T*)> func, T* data) : Ptr<T>(data), destruction(func) {}
@@ -70,7 +76,7 @@ NSP_UTIL_BEG
 		void setPtr(T* p)
 		{
 			if (owned) //if owned it clears the Data
-				destrution(ptr);
+				destruction(ptr);
 
 			ptr = p;
 			owned = true;

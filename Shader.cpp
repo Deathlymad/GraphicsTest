@@ -6,49 +6,41 @@
 
 
 
-Shader::Shader()
+Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
 {
-	program = -1;
 	Code.clear();
 }
 
-Shader::Shader(std::string vertexPath, std::string fragPath)
+Shader::Shader(std::string vertexPath, std::string fragPath) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	std::vector<ShaderCode> temp;
 	temp.push_back(ShaderCode(VERTEX, vertexPath));
 	temp.push_back(ShaderCode(FRAGMENT, fragPath));
-	program = -1;
 	Code = temp;
 
 	load();
 	build();
 }
 
-Shader::Shader(ShaderCode ShaderArr[])
+Shader::Shader(ShaderCode ShaderArr[]) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	std::vector<ShaderCode> temp;
 	temp.insert(temp.begin(), sizeof(ShaderArr) / sizeof(ShaderCode), ShaderArr[0]);//copies Array in vector
-	program = -1;
 	Code = temp;
 
 	load();
 	build();
 }
 
-Shader::Shader(std::vector<ShaderCode> Shaders)
+Shader::Shader(std::vector<ShaderCode> Shaders) : program([this](GLuint* p) {deleteProgram(p); })
 {
-	program = -1;
 	Code = Shaders;
 
 	load();
 	build();
 }
 
-Shader::~Shader()
-{
-	if (glIsProgram(program))
-		glDeleteProgram(program);
-	program = -1;
+Shader::~Shader(){
 	Code.~vector();
 }
 
@@ -74,53 +66,53 @@ void Shader::load()
 }
 void Shader::build()
 {
-	if (!glIsProgram(program))
+	if (!glIsProgram(program.get()))
 	{
-		program = glCreateProgram(); //no Program existent creating
-	} //if there is a Program created with the right type then it is going to be rewritten but not recreated should reduce memory
+		program.set( new GLuint( glCreateProgram())); //no program.get() existent creating
+	} //if there is a program.get() created with the right type then it is going to be rewritten but not recreated should reduce memory
 
 	int attached = 0;
-	glGetProgramiv(program, GL_ATTACHED_SHADERS, &attached);
+	glGetProgramiv(program.get(), GL_ATTACHED_SHADERS, &attached);
 	if (attached) //in case old Shaders are attached
 	{
 		std::vector<GLuint> shaders = std::vector<GLuint>();
 		for (char i = 0; i < 16; i++) //write invaid numbers to seperate them
 			shaders.push_back(-1);
-		glGetAttachedShaders(program, 16, NULL, &shaders[0]); //get all Shaders attached to Program
+		glGetAttachedShaders(program.get(), 16, NULL, &shaders[0]); //get all Shaders attached to program.get()
 		for (GLuint shader : shaders)
 			if (shader != -1) //check if it is a valid shader
-				glDetachShader(program, shader); //detaches Shader, DOES NO DELETE
+				glDetachShader(program.get(), shader); //detaches Shader, DOES NO DELETE
 		attached = 0; //resets counter
 	} else
 
 	for (ShaderCode shader : Code)
 	{
 		//should check Shader values
-		glAttachShader(program, shader.pos.get());
+		glAttachShader(program.get(), shader.pos.get());
 		int ShaderCount = 0;
-		glGetProgramiv(program, GL_ATTACHED_SHADERS, &ShaderCount); //might turn out t be slow since it querries operations and wait for them
+		glGetProgramiv(program.get(), GL_ATTACHED_SHADERS, &ShaderCount); //might turn out t be slow since it querries operations and wait for them
 		if (ShaderCount > attached) //used for Error catching
 			attached++;
 	}
 
 	if (attached > 0)
-		glLinkProgram(program);
+		glLinkProgram(program.get());
 	else
-		std::cout << "OpenGL Program " << "NO SHADERS ATTACHED." << std::endl;
+		std::cout << "OpenGL program.get() " << "NO SHADERS ATTACHED." << std::endl;
 
 	GLint isLinked = 0;
-	glGetProgramiv(program, GL_LINK_STATUS, (int *)&isLinked);
+	glGetProgramiv(program.get(), GL_LINK_STATUS, (int *)&isLinked);
 	if (!isLinked)
 	{
 		GLint maxLength = 0;
-		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetProgramiv(program.get(), GL_INFO_LOG_LENGTH, &maxLength);
 
 		if (maxLength > 1)
 		{
 			//The maxLength includes the NULL character
 			std::vector<GLchar> infoLog = std::vector<GLchar>(maxLength);
-			glGetProgramInfoLog(program, maxLength, NULL, &infoLog[0]);
-			std::cout << "OpenGL Program " << infoLog.data() << std::endl;
+			glGetProgramInfoLog(program.get(), maxLength, NULL, &infoLog[0]);
+			std::cout << "OpenGL program.get() " << infoLog.data() << std::endl;
 		}
 	}
 
@@ -135,7 +127,7 @@ void Shader::bind()
 	setUniforms();
 
 	if (err == "")
-		glUseProgram(program);
+		glUseProgram(program.get());
 	else
 		std::cout << "OpenGL Shader " << err << std::endl;
 }
@@ -151,7 +143,7 @@ Shader& Shader::operator=(Shader& other)
 {
 	Code = other.Code;
 	load(); //handles the Shader changes
-	build();//handles the Shader changes on Program Level
+	build();//handles the Shader changes on program.get() Level
 	return *this;
 }
 
@@ -170,7 +162,7 @@ bool Shader::operator==(Shader& other)
 	for (size_t i = 0; i < Code.size(); i++)
 		if (Code[i] != other.Code[i])
 			return false;
-	return program == other.program;
+	return program.get() == other.program.get();
 }
 
 bool Shader::operator==(ShaderCode& contained)
@@ -195,12 +187,12 @@ bool Shader::operator==(std::vector<ShaderCode> Shaders)
 
 void Shader::setupUniform(Uniform * uniform) //needs to be called
 {
-	uniform->pos = glGetUniformLocation(program, uniform->_name.c_str()); //Error Handling?
+	uniform->pos.get() = glGetUniformLocation(program.get(), uniform->_name.c_str()); //Error Handling?
 }
 
 void Shader::updateUniform(Uniform * uniform)
 {
-	if (uniform->pos == -1)
+	if (uniform->pos.get() == -1)
 		setupUniform(uniform);
 
 	float* tempData = uniform->_data;
@@ -208,22 +200,22 @@ void Shader::updateUniform(Uniform * uniform)
 	switch (size)
 	{
 	case 1:
-		glUniform1fv(uniform->pos, 1, tempData); //error Handling
+		glUniform1fv(uniform->pos.get(), 1, tempData); //error Handling
 		break;
 	case 2:
-		glUniform2fv(uniform->pos, 1, tempData); //error Handling
+		glUniform2fv(uniform->pos.get(), 1, tempData); //error Handling
 		break;
 	case 3:
-		glUniform3fv(uniform->pos, 1, tempData); //error Handling
+		glUniform3fv(uniform->pos.get(), 1, tempData); //error Handling
 		break;
 	case 4:
-		glUniform4fv(uniform->pos, 1, tempData); //error Handling
+		glUniform4fv(uniform->pos.get(), 1, tempData); //error Handling
 		break;
 	case 9:
-		glUniformMatrix3fv(uniform->pos, 1, false, tempData); //error Handling
+		glUniformMatrix3fv(uniform->pos.get(), 1, false, tempData); //error Handling
 		break;
 	case 16:
-		glUniformMatrix4fv(uniform->pos, 1, false, tempData); //error Handling
+		glUniformMatrix4fv(uniform->pos.get(), 1, false, tempData); //error Handling
 		break;
 	default:
 		break;
@@ -242,7 +234,7 @@ void Shader::makeShader(ShaderCode* code)
 		glGetShaderiv(code->pos.get(), GL_SHADER_TYPE, &type); //if there is already a Shader, check if it has the right type
 		if (type != getShaderType(code->_type))
 		{
-			glDeleteShader(code->pos.get()); //clear Shader if it is of the wrong Type (issues with programs created from it?!)
+			glDeleteShader(code->pos.get()); //clear Shader if it is of the wrong Type (issues with program.get()s created from it?!)
 			code->pos.get() = glCreateShader(getShaderType(code->_type)); //recreate Shader of right Type
 		}
 	}//if there is a Shader created with the right type then it is going to be rewritten but not recreated should reduce memory
@@ -278,24 +270,24 @@ void Shader::makeShader(ShaderCode* code)
 
 std::string Shader::checkProgram()
 {
-	if (program == -1)
-		return "NO PROGRAM CREATED \n";
+	if (program.get() == -1)
+		return "NO program.get() CREATED \n";
 	std::string errText = "";
 	int res = 0;
-	glValidateProgram(program);
-	glGetProgramiv(program, GL_VALIDATE_STATUS, &res);
+	glValidateProgram(program.get());
+	glGetProgramiv(program.get(), GL_VALIDATE_STATUS, &res);
 	if (!res)
 	{
 		errText += "NOT LINKED \n";
 		int maxLength = 0;
-		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetProgramiv(program.get(), GL_INFO_LOG_LENGTH, &maxLength);
 
 		//The maxLength includes the NULL character
 		if (maxLength > 1)
 		{
 			std::string infoLog;
 			infoLog.resize(maxLength);
-			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+			glGetProgramInfoLog(program.get(), maxLength, &maxLength, &infoLog[0]);
 			errText += infoLog;
 		}
 	}
