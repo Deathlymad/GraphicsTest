@@ -4,7 +4,8 @@
 
 #include "Shader.h"
 
-
+const Shader::ShaderCode Shader::Light   = Shader::ShaderCode(FRAGMENT, "light.glsl");
+const Shader::ShaderCode Shader::Color   = Shader::ShaderCode(FRAGMENT, "color.glsl");
 
 Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
 {
@@ -13,10 +14,10 @@ Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
 
 Shader::Shader(std::string vertexPath, std::string fragPath) : program([this](GLuint* p) {deleteProgram(p); })
 {
-	std::vector<ShaderCode> temp;
-	temp.push_back(ShaderCode(VERTEX, vertexPath));
-	temp.push_back(ShaderCode(FRAGMENT, fragPath));
-	Code = temp;
+	Code.push_back(Light);
+	Code.push_back(Color);
+	Code.push_back(ShaderCode(VERTEX, vertexPath));
+	Code.push_back(ShaderCode(FRAGMENT, fragPath));
 
 	load();
 	build();
@@ -24,9 +25,9 @@ Shader::Shader(std::string vertexPath, std::string fragPath) : program([this](GL
 
 Shader::Shader(ShaderCode ShaderArr[]) : program([this](GLuint* p) {deleteProgram(p); })
 {
-	std::vector<ShaderCode> temp;
-	temp.insert(temp.begin(), sizeof(ShaderArr) / sizeof(ShaderCode), ShaderArr[0]);//copies Array in vector
-	Code = temp;
+	Code.push_back(Color);
+	Code.push_back(Light);
+	Code.insert(Code.begin() + 3, sizeof(ShaderArr) / sizeof(ShaderCode), ShaderArr[0]);//copies Array in vector
 
 	load();
 	build();
@@ -68,8 +69,8 @@ void Shader::build()
 {
 	if (!glIsProgram(program.get()))
 	{
-		program.set( new GLuint( glCreateProgram())); //no program.get() existent creating
-	} //if there is a program.get() created with the right type then it is going to be rewritten but not recreated should reduce memory
+		program.set( new GLuint( glCreateProgram())); //no Program existent creating
+	} //if there is a Program created with the right type then it is going to be rewritten but not recreated should reduce memory
 
 	int attached = 0;
 	glGetProgramiv(program.get(), GL_ATTACHED_SHADERS, &attached);
@@ -78,7 +79,7 @@ void Shader::build()
 		std::vector<GLuint> shaders = std::vector<GLuint>();
 		for (char i = 0; i < 16; i++) //write invaid numbers to seperate them
 			shaders.push_back(-1);
-		glGetAttachedShaders(program.get(), 16, NULL, &shaders[0]); //get all Shaders attached to program.get()
+		glGetAttachedShaders(program.get(), 16, NULL, &shaders[0]); //get all Shaders attached to Program
 		for (GLuint shader : shaders)
 			if (shader != -1) //check if it is a valid shader
 				glDetachShader(program.get(), shader); //detaches Shader, DOES NO DELETE
@@ -98,7 +99,7 @@ void Shader::build()
 	if (attached > 0)
 		glLinkProgram(program.get());
 	else
-		std::cout << "OpenGL program.get() " << "NO SHADERS ATTACHED." << std::endl;
+		std::cout << "OpenGL Program " << "NO SHADERS ATTACHED." << std::endl;
 
 	GLint isLinked = 0;
 	glGetProgramiv(program.get(), GL_LINK_STATUS, (int *)&isLinked);
@@ -112,7 +113,7 @@ void Shader::build()
 			//The maxLength includes the NULL character
 			std::vector<GLchar> infoLog = std::vector<GLchar>(maxLength);
 			glGetProgramInfoLog(program.get(), maxLength, NULL, &infoLog[0]);
-			std::cout << "OpenGL program.get() " << infoLog.data() << std::endl;
+			std::cout << "OpenGL Program " << infoLog.data() << std::endl;
 		}
 	}
 
@@ -143,7 +144,7 @@ Shader& Shader::operator=(Shader& other)
 {
 	Code = other.Code;
 	load(); //handles the Shader changes
-	build();//handles the Shader changes on program.get() Level
+	build();//handles the Shader changes on Program Level
 	return *this;
 }
 
@@ -234,7 +235,7 @@ void Shader::makeShader(ShaderCode* code)
 		glGetShaderiv(code->pos.get(), GL_SHADER_TYPE, &type); //if there is already a Shader, check if it has the right type
 		if (type != getShaderType(code->_type))
 		{
-			glDeleteShader(code->pos.get()); //clear Shader if it is of the wrong Type (issues with program.get()s created from it?!)
+			glDeleteShader(code->pos.get()); //clear Shader if it is of the wrong Type (issues with Programs created from it?!)
 			code->pos.get() = glCreateShader(getShaderType(code->_type)); //recreate Shader of right Type
 		}
 	}//if there is a Shader created with the right type then it is going to be rewritten but not recreated should reduce memory
@@ -271,7 +272,7 @@ void Shader::makeShader(ShaderCode* code)
 std::string Shader::checkProgram()
 {
 	if (program.get() == -1)
-		return "NO program.get() CREATED \n";
+		return "NO PROGRAM CREATED \n";
 	std::string errText = "";
 	int res = 0;
 	glValidateProgram(program.get());

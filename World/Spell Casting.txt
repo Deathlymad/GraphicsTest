@@ -1,0 +1,12 @@
+Skill / Spell Properties defining casting are:
+Target / Diretion
+Spell types
+Duration
+Cast Time
+Area of Effect
+
+Magic can be imagined as waves moving around a system of lines lines are directional (vectors basicly) lines can be cahnged and modified each wave may be modified
+
+Duration: mostly instant since spells are normally a ways of the shift of arcana and since that means a force directed against it it will grow increasingly hasrd to maintain
+Cast Time: dependent on the ompexity of the System
+AoE is dependent on the arcana concentration it will always try to even itself out so the more mana is used the bigger the AoE is

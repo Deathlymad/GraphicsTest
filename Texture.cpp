@@ -8,6 +8,8 @@ extern bool GraphicsInitialized;
 
 std::vector<Texture*> Texture::SamplerList = std::vector<Texture*>();
 
+GLuint Texture::last = -1;
+
 Texture::Texture( std::string fileName)
 {
 	isLoaded = false;
@@ -48,7 +50,7 @@ void Texture::load(std::string fileName)
 
 		isLoaded = true;
 	}
-	//add Texture existing Atlas
+	//add Texture to existing Atlas
  }
 
 std::vector<std::vector<char>> Texture::getTexData()
@@ -67,22 +69,14 @@ std::vector<std::vector<char>> Texture::getTexData()
 
 void Texture::glDownload()
 {
+	//set sampler to 0
+	glActiveTexture( GL_TEXTURE0);
     glGenTextures(1, &ID);
 
-	glActiveTexture( GL_TEXTURE0);
-	//set sampler to 0
 
     glBindTexture(GL_TEXTURE_2D, ID);
 
-    glTexImage2D(GL_TEXTURE_2D,
-                 0, 
-				 GL_RGB8,
-                 texX, 
-                 texY,
-                 0, 
-                 GL_RGB, 
-                 GL_UNSIGNED_BYTE, 
-                 tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texX, texY, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -96,9 +90,12 @@ void Texture::glDownload()
 
 void Texture::bind()
 {
-	glBindTexture( GL_TEXTURE_2D, ID);
-	GLuint err = glGetError();
-	std::cout << "OpenGL Texture Binding " << std::to_string(err) << std::endl; //needs to be removed
+	if (last != ID)
+	{
+		glBindTexture(GL_TEXTURE_2D, ID); //Errors 
+		last = ID;
+	}
+	GLenum err = glGetError();
 }
 
 std::vector<std::vector<char>> mergeTexData( std::vector<std::vector<char>> tex1, std::vector<std::vector<char>> tex2, unsigned int partX, unsigned int partY, unsigned short partsPerLine)

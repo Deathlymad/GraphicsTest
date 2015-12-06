@@ -4,8 +4,11 @@
 #include "EngineObject.h"
 #include "InputHandler.h"
 #include "KeyMap.h"
+#include "Util.h"
 
 class Shader;
+
+NSP_UTIL
 
 class Camera :
 	public InputHandler,
@@ -21,10 +24,10 @@ public:
 
 	void registerKeyBinds(KeyMap*);
 	void registerUniforms(Shader*);
+	void onMouseMove(double x, double y);
 
 	~Camera();
 protected:
-	void onMouseMove(double x, double y); //possibly should be moved
 private:
 	void move(unsigned short key);
 
@@ -36,7 +39,7 @@ private:
 	float FoV;
 	float Aspect;
 	glm::mat4 projection;
-	float ViewProjMatPtr[16];
+	Ptr<float> ViewProjMatPtr;
 
 	double XAngle, YAngle;
 

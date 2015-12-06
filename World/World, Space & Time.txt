@@ -1,0 +1,8 @@
+World is limited per instance
+if enabled world may connect to each other (the player changes the server as he is crossing borders)
+Space may be streched, compressed twisted but never torn
+Time is not linear and will split if timelines are broken 
+Paradoxes do not exist since every unnatural change in time will result into the split of the time line
+Magic is retained through timelines
+the aging of things is the breakdown of magical structure , therefor people die of old age
+Time may be affected by magic

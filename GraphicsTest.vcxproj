@@ -189,8 +189,21 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="To Do.txt" />
+    <Text Include="World\Death.txt" />
+    <Text Include="World\Dual Player System.txt" />
+    <Text Include="World\Elements &amp; Alchemy.txt" />
+    <Text Include="World\Gender.txt" />
+    <Text Include="World\Leben.txt" />
+    <Text Include="World\Magic.txt" />
+    <Text Include="World\Magomechanics.txt" />
+    <Text Include="World\Rassen.txt" />
+    <Text Include="World\Religion.txt" />
+    <Text Include="World\Skills.txt" />
+    <Text Include="World\Spell Casting.txt" />
+    <Text Include="World\World, Space &amp; Time.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\color.glsl" />
     <None Include="assets\shaders\forward_ambient_fs.glsl" />
     <None Include="assets\shaders\forward_ambient_vs.glsl" />
     <None Include="assets\shaders\forward_directional_fs.glsl" />
@@ -200,6 +213,8 @@
     <None Include="assets\shaders\forward_spot_fs.glsl" />
     <None Include="assets\shaders\forward_spot_vs.glsl" />
     <None Include="assets\shaders\fs.glsl" />
+    <None Include="assets\shaders\light.glsl" />
+    <None Include="assets\shaders\version.glsl" />
     <None Include="assets\shaders\vs.glsl" />
   </ItemGroup>
   <ItemGroup>

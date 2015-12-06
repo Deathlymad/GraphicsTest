@@ -121,5 +121,9 @@ private:
 	std::string checkProgram();
 	GLenum getShaderType(ShaderType);
 	std::string getShaderCode(std::string);
+
+	//common Shader Files, like libraries :D
+	const static ShaderCode Light;   //Contains the basic Light function
+	const static ShaderCode Color;   //Defines the Color Funtion to retreive fragment color from the texture, also defines the Uniforms
 };
 

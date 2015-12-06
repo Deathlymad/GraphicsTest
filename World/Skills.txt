@@ -1,0 +1,20 @@
+Skills are a shortcut or an aid in executing a task
+Skills are bound to the executors capabilities
+certain skills are unique for characters
+random combos can result in new skills
+skills can be activated, toggeled, triggered, passively activated or bound
+The unique Skills are based around one or two basic ideas based on each player
+there are compound skills
+not all skills can be used on oneself
+not all skills work with each other
+some skills require multiplay persons for aid. In that case not all people need to posess the Skill
+Skills improve if used
+regional effects may affect skills
+There are physicaly based abilities, magic based abilities and energy based abilities (incredably rare)
+
+
+The playing Style affects skills
+physical abilities require coordination, focusing, agility, speed and strenght
+Skills can be copied or "thought of" or invented
+Skills may be affected by surrounding people
+Skills might be dependent on own "emotions"

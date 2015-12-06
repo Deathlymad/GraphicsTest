@@ -59,6 +59,8 @@ protected:
 
 	unsigned char pos; //Sampler Count
 	static std::vector<Texture*> SamplerList; //TODO improved sorting update, might not be necessary due to textureAtlas
+
+	static GLuint last;
 };
 
 class TextureAtlas:Texture

@@ -17,7 +17,7 @@ NSP_UTIL_BEG
 			*ptr = data;
 		}
 
-		void set(T& data)
+		void set(T data)
 		{
 			setPtr(&data);
 		}
@@ -26,10 +26,25 @@ NSP_UTIL_BEG
 			setPtr(data);
 		}
 
+		void set(T data, int i)
+		{
+			ptr[i] = data;
+		}
+
 		T& get()
 		{
 			if (ptr)
 				return *ptr;
+			else
+			{
+				T temp = NULL;
+				return temp;
+			}
+		}
+		T& get(unsigned int i)
+		{
+			if (ptr)
+				return ptr[i];
 			else
 			{
 				T temp = NULL;
@@ -67,6 +82,7 @@ NSP_UTIL_BEG
 		bool owned;
 		T* ptr;
 	};
+	
 	template <typename T>
 	class CustomPtr : public Ptr<T> {
 	public:

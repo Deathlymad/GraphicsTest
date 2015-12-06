@@ -1,11 +1,8 @@
 Short Term:
-Add Light To Object Tree
 fix multipass flickering
-add cleanup for all Graphic classes
+add cleanup for ALL Graphic classes
 fix Light Calculation
-fix Bug that Object is not displaying properly without moving once
-finish Textures (TextureAtlas), bmp is not working...
-add texture to shaders
+finish Textures (TextureAtlas)
 fix ambient multipass
 add comments
 

@@ -6,7 +6,7 @@
 float Camera::speed = 0.05f;
 glm::vec3 Camera::YAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 
-Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr()
+Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr(new float[16])
 {
 	pos = glm::vec3(0, 0, -5);
 	forward = glm::vec3(0, 0, -1);
@@ -15,20 +15,21 @@ Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr()
 	Aspect = 4 / 3;
 	View = glm::mat4();
 	projection = glm::perspective( FoV, Aspect, 0.1f, 100.0f);
+	
 	for (unsigned char i = 0; i < 16; i++) //writes initial matrix memory
 	{
-		ViewProjMatPtr[i] = projection[floorf(i / 4)][i - (floorf(i / 4) * 4)];
+		ViewProjMatPtr.set(projection[floorf(i / 4)][i - (floorf(i / 4) * 4)], i);
 	}
 }
 
 void Camera::update()
 {
 	View = projection * glm::lookAt(pos, pos + glm::normalize(forward), glm::normalize(up));
-	if (ViewProjMatPtr)
+	if (ViewProjMatPtr.get() = -1)
 	{
 		for (unsigned char i = 0; i < 16; i++) //writes memory
 		{
-			ViewProjMatPtr[i] = View[floorf(i/4)][i - (floorf(i / 4) * 4)];
+			ViewProjMatPtr.set(View[floorf(i / 4)][i - (floorf(i / 4) * 4)], i);
 		}
 	}
 }
@@ -57,15 +58,13 @@ void Camera::registerKeyBinds(KeyMap * k)
 
 void Camera::registerUniforms(Shader * s)
 {
-	s->addUniform(Shader::Uniform("View", ViewProjMatPtr, 16)); //leads to change in Position need to find out why
+	s->addUniform(Shader::Uniform("View", &ViewProjMatPtr.get(), 16)); //leads to change in Position need to find out why
 	View = projection * glm::lookAt(pos, pos + glm::normalize(forward), glm::normalize(up));
 }
 
 
 Camera::~Camera()
 {
-	if (ViewProjMatPtr)
-		delete[16](ViewProjMatPtr); //errors
 }
 
 void Camera::onMouseMove(double dY, double dX)

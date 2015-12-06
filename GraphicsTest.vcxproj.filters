@@ -22,6 +22,9 @@
     <Filter Include="Ressourcendateien\Assets\Mesh">
       <UniqueIdentifier>{0f88661b-be69-4256-b6fd-51994b1c5cb6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ressourcendateien\World">
+      <UniqueIdentifier>{688e69c0-6d86-49ea-900a-393154bcf1c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Mesh.cpp">
@@ -139,6 +142,42 @@
     <Text Include="To Do.txt">
       <Filter>Ressourcendateien</Filter>
     </Text>
+    <Text Include="World\Death.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\Dual Player System.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\Elements &amp; Alchemy.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\Gender.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\Leben.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\Magic.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\Magomechanics.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\Rassen.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\Religion.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\Skills.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\Spell Casting.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="World\World, Space &amp; Time.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\forward_ambient_fs.glsl">
@@ -169,6 +208,15 @@
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
     <None Include="assets\shaders\vs.glsl">
+      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\color.glsl">
+      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\light.glsl">
+      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\version.glsl">
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
   </ItemGroup>

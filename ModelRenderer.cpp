@@ -10,7 +10,7 @@ ModelRenderer::ModelRenderer(std::string meshFile, std::string texFile) : Engine
 void ModelRenderer::render(Shader* s)
 {
 	s->bind();
-	//tex.bind();
+	tex.bind();
 	mesh.Draw();
 }
 
