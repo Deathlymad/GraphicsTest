@@ -114,7 +114,7 @@ void Mesh::glDownload(std::vector<Vertex>& v, std::vector < unsigned int>& i)
 	for (unsigned int i = 0; i < v.size(); i++)
 	{
 		float* d = v[i].getData();
-		for (size_t j = 0; j < 3; j++)
+		for (size_t j = 0; j < 8; j++)
 		{
 			temp.push_back(d[j]);
 		}
@@ -140,21 +140,21 @@ void Mesh::Draw()
 
 	//Vertices
 	glEnableVertexAttribArray(0); //TODO dynamic VAO
-	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, 0 /*offset*/); //Pos
+	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, 0 /*offset*/); //Pos
 	//TexCoords
-	//glEnableVertexAttribArray(1); //TODO dynamic VAO
-	//glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 2 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, (void*)12/*offset*/); //Tex
+	glEnableVertexAttribArray(1); //TODO dynamic VAO
+	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 2 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, (void*)12/*offset*/); //Tex
 	//normals
-	//glEnableVertexAttribArray(2); //TODO dynamic VAO
-	//glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, (void*)20/*offset*/); //Nor
+	glEnableVertexAttribArray(2); //TODO dynamic VAO
+	glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, (void*)20/*offset*/); //Nor
 
-	//glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
 	//Wireframe Shader
-	glDrawElements( GL_LINE_STRIP, indices, GL_UNSIGNED_INT, 0);  //for debug purposes
+	//glDrawElements( GL_LINE_STRIP, indices, GL_UNSIGNED_INT, 0);  //for debug purposes
 
 	glDisableVertexAttribArray( 0 );
-	//glDisableVertexAttribArray( 1 );
-	//glDisableVertexAttribArray( 2 );
+	glDisableVertexAttribArray( 1 );
+	glDisableVertexAttribArray( 2 );
 	
 
 }

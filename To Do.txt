@@ -5,6 +5,7 @@ add cleanup for ALL Graphic classes
 fix Light Calculation
 finish Textures (TextureAtlas)
 fix ambient multipass
+write dynamic VAO
 add comments
 
 Long Term:
