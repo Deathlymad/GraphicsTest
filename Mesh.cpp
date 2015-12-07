@@ -66,9 +66,9 @@ Mesh::Mesh ( std::string file)
 				io::strsep( s, temp[i], '/');
 				in.push_back(std::stoi(s[0]) - 1);
 				if (t.size() > 0)
-					v[std::stoi(s[0]) - 1].setNormal(v[std::stoi(s[0]) - 1].getNormal() + n[std::stoi(s[1]) - 1]);
+					v[std::stoi(s[0]) - 1].setTexCoord( t[std::stoi(s[1]) - 1]);
 				if(n.size() > 0)
-					v[std::stoi(s[0]) - 1].setNormal(v[std::stoi(s[0]) - 1].getNormal() + n[std::stoi(s[2]) - 1]);
+					v[std::stoi(s[0]) - 1].setNormal(v[std::stoi(s[0]) - 1].getNormal() + n[std::stoi(s[2]) - 1]); // need to renormalize
 			}
 			continue;
 		}
@@ -111,11 +111,13 @@ void Mesh::glDownload(std::vector<Vertex>& v, std::vector < unsigned int>& i)
 		return;
 
 	std::vector<float> temp;
-	temp.clear();
 	for (unsigned int i = 0; i < v.size(); i++)
 	{
 		float* d = v[i].getData();
-		temp.insert( temp.end(), d, d + (sizeof(d)/sizeof(float)));
+		for (size_t j = 0; j < 3; j++)
+		{
+			temp.push_back(d[j]);
+		}
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, vbo); //contains Vertices
 	glBufferData( GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
@@ -124,7 +126,7 @@ void Mesh::glDownload(std::vector<Vertex>& v, std::vector < unsigned int>& i)
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_DYNAMIC_DRAW);
 	indices = i.size();
-	vecs = v.size() * 12;
+	DataSize = v.size() * 12;
 }
 
 void Mesh::Draw()
@@ -136,20 +138,24 @@ void Mesh::Draw()
 
 	//vec2 = 8 vec3 = 12 vec4 = 16
 
-
+	//Vertices
 	glEnableVertexAttribArray(0); //TODO dynamic VAO
 	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, 0 /*offset*/); //Pos
+	//TexCoords
+	//glEnableVertexAttribArray(1); //TODO dynamic VAO
+	//glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 2 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, (void*)12/*offset*/); //Tex
+	//normals
+	//glEnableVertexAttribArray(2); //TODO dynamic VAO
+	//glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, (void*)20/*offset*/); //Nor
 
-
-	glEnableVertexAttribArray(1); //TODO dynamic VAO
-	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 0 /*stride*/, (void*)vecs/*offset*/); //Pos
-
-	glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
+	//glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
+	//Wireframe Shader
+	glDrawElements( GL_LINE_STRIP, indices, GL_UNSIGNED_INT, 0);  //for debug purposes
 
 	glDisableVertexAttribArray( 0 );
-	glDisableVertexAttribArray( 1 );
-	//Wireframe Shader
-	//glDrawElements( GL_LINE_STRIP, indices, GL_UNSIGNED_INT, 0);  //for debug purposes
+	//glDisableVertexAttribArray( 1 );
+	//glDisableVertexAttribArray( 2 );
+	
 
 }
 Mesh::~Mesh(void)

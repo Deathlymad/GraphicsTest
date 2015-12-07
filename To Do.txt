@@ -1,4 +1,5 @@
 Short Term:
+Cube isn't a cube... fix perspective
 fix multipass flickering
 add cleanup for ALL Graphic classes
 fix Light Calculation

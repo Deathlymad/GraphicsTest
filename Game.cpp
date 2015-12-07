@@ -64,7 +64,7 @@ void Game::buildWorld() //Lazy Implementation
 	
 	GraphicEngine.registerGraphicObject(Dir);
 
-	world.addObj( new ModelRenderer("assets/mesh/stein_einfach.obj", "assets/textures/tex1.bmp"));
+	world.addObj( new ModelRenderer("assets/mesh/Test_Block.obj", "assets/textures/tex1.bmp"));
 
 	
 }

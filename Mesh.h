@@ -44,7 +44,7 @@ private:
 	unsigned int vbo; // new interleaving vvvn v = Vertex, n = normal (accessed by face as index)
 	unsigned int ibo;
 
-	unsigned int vecs;
+	unsigned int DataSize;
 	unsigned int indices;
 	//needed for Physics later
 	std::vector<Vertex> pts;
