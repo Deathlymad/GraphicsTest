@@ -1,9 +1,39 @@
 #include <vector>
 #include <glm\common.hpp>
+#include "Util.h"
+
+NSP_UTIL
 
 #pragma once
 class Mesh
 {
+	class VertexArrayObject
+	{
+	public:
+		VertexArrayObject() : VAO( nullptr) {}
+		VertexArrayObject( int vec, int tex, int norm) : VAO( nullptr), bitset( vec | (tex << 1) | (norm << 2) ) {}
+		VertexArrayObject(unsigned char bitset) : VAO( nullptr), bitset(bitset) {}
+
+		void createVertexArray();
+		void bindVertexArray();
+		void disableVAO();
+
+		~VertexArrayObject();
+	private:
+		bool isVec() { return bitset & 1; }
+		bool isTex() { return bitset & 2; }
+		bool isNor() { return bitset & 4; }
+
+		void enableVec();
+		void disableVec();
+		void enableTex();
+		void disableTex();
+		void enableNor();
+		void disableNor();
+
+		Ptr<unsigned int> VAO;
+		unsigned char bitset;
+	};
 	class Vertex
 	{
 	public:
@@ -40,7 +70,7 @@ private:
 
 	void glDownload(  std::vector<Vertex>&, std::vector < unsigned int>&);
 		
-	unsigned int vao;
+	VertexArrayObject vao;
 	unsigned int vbo; // new interleaving vvvn v = Vertex, n = normal (accessed by face as index)
 	unsigned int ibo;
 

@@ -4,11 +4,12 @@
 
 ModelRenderer::ModelRenderer(std::string meshFile, std::string texFile) : EngineObject(), mesh(meshFile), tex(texFile)
 {
-	tex.glDownload();
 }
 
 void ModelRenderer::render(Shader* s)
 {
+	if (!tex.Loaded())
+		tex.glDownload();
 	s->bind();
 	tex.bind();
 	mesh.Draw();

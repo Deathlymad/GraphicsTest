@@ -1,4 +1,17 @@
-#include <GL\glew.h>
+
+#define PRAGMALIB
+#ifndef GLEW
+#define GLEW_STATIC
+#include <GL/glew.h>
+#ifdef PRAGMALIB
+#pragma comment(lib, "glew32s.lib")
+#pragma comment (lib, "OpenGL32.lib")
+#pragma comment(lib, "GLU32.lib")
+#endif
+#undef __glewActiveTexture
+#undef __glewGenerateMipmap
+#endif
+
 #include <iostream>
 #include "Shader.h"
 #include "Texture.h"
@@ -45,10 +58,6 @@ void Texture::load(std::string fileName)
 			texY = height;
 
 		tex = buffer;
-
-		glDownload();
-
-		isLoaded = true;
 	}
 	//add Texture to existing Atlas
  }
@@ -86,6 +95,8 @@ void Texture::glDownload()
 	glBindTexture( GL_TEXTURE_2D, ID);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
+
+	isLoaded = true;
 }
 
 void Texture::bind()

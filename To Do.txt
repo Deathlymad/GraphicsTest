@@ -2,10 +2,9 @@ Short Term:
 Cube isn't a cube... fix perspective
 fix multipass flickering
 add cleanup for ALL Graphic classes
-fix Light Calculation
+fix Light Calculation, finish writing lights
 finish Textures (TextureAtlas)
 fix ambient multipass
-write dynamic VAO
 add comments
 
 Long Term:

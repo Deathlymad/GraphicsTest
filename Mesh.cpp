@@ -16,11 +16,13 @@
 
 #include "iofunctions.h"
 
-Mesh::Mesh() : vao(-1), vbo(-1), ibo(-1)
+
+
+Mesh::Mesh() : vbo(-1), ibo(-1)
 {
 }
 
-Mesh::Mesh ( std::string file)
+Mesh::Mesh ( std::string file) : vbo(-1), ibo(-1)
 {
 	std::vector<Vertex> v;
 	std::vector<unsigned int> in;
@@ -77,7 +79,7 @@ Mesh::Mesh ( std::string file)
 	glDownload(v, in);
 }
 
-Mesh::Mesh(  std::vector<Vertex> &vec, std::vector < unsigned int> &i)
+Mesh::Mesh(  std::vector<Vertex> &vec, std::vector < unsigned int> &i) : vbo(-1), ibo(-1)
 {
 	pts = vec;
 	ind = i;
@@ -88,11 +90,6 @@ void Mesh::initGL( unsigned char flag)
 {
 	if (flag == 0)
 		return;
-	if (flag & 4)
-	{
-		glGenVertexArrays( 1, &vao);
-	}
-		
 	if (flag & 2)
 	{
 		glGenBuffers( 1, &vbo);
@@ -101,11 +98,13 @@ void Mesh::initGL( unsigned char flag)
 	{
 		glGenBuffers(1, &ibo);
 	}
+	vao = VertexArrayObject(true, true, true);
+	vao.createVertexArray();
 }
 
 void Mesh::glDownload(std::vector<Vertex>& v, std::vector < unsigned int>& i)
 {
-	initGL(!glIsBuffer(vbo) << 1 | !glIsBuffer(ibo) | !glIsVertexArray(vao) << 2);
+	initGL(!glIsBuffer(vbo) << 1 | !glIsBuffer(ibo));
 
 	if (v.size() == 0)
 		return;
@@ -131,39 +130,105 @@ void Mesh::glDownload(std::vector<Vertex>& v, std::vector < unsigned int>& i)
 
 void Mesh::Draw()
 {
-	initGL(!glIsBuffer(vbo) << 1 | !glIsBuffer(ibo) | !glIsVertexArray(vao) << 2);
-	glBindVertexArray( vao);
+	initGL(!glIsBuffer(vbo) << 1 | !glIsBuffer(ibo));
+	vao.bindVertexArray();
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 	//vec2 = 8 vec3 = 12 vec4 = 16
 
-	//Vertices
-	glEnableVertexAttribArray(0); //TODO dynamic VAO
-	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, 0 /*offset*/); //Pos
-	//TexCoords
-	glEnableVertexAttribArray(1); //TODO dynamic VAO
-	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 2 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, (void*)12/*offset*/); //Tex
-	//normals
-	glEnableVertexAttribArray(2); //TODO dynamic VAO
-	glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, (void*)20/*offset*/); //Nor
 
 	glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
+
+	vao.disableVAO();
 	//Wireframe Shader
 	//glDrawElements( GL_LINE_STRIP, indices, GL_UNSIGNED_INT, 0);  //for debug purposes
-
-	glDisableVertexAttribArray( 0 );
-	glDisableVertexAttribArray( 1 );
-	glDisableVertexAttribArray( 2 );
-	
-
 }
 Mesh::~Mesh(void)
 {
-	if (glIsVertexArray(vao))
-		glDeleteVertexArrays( 1, &vao);
-	if (glIsBuffer(vao))
+	if (glIsBuffer(vbo))
 		glDeleteBuffers( 1, &vbo);
-	if (glIsBuffer(vao))
+	if (glIsBuffer(ibo))
 		glDeleteBuffers( 1, &ibo);
+}
+
+void Mesh::VertexArrayObject::createVertexArray()
+{
+	GLuint temp = -1;
+	glGenVertexArrays(1, &temp);
+	VAO.set(new GLuint(temp));
+	glBindVertexArray(VAO.get());
+
+	if (isVec())
+		enableVec();
+	if (isTex())
+		enableTex();
+	if (isNor())
+		enableNor();
+
+	disableVAO();
+}
+
+void Mesh::VertexArrayObject::bindVertexArray()
+{
+	glBindVertexArray(VAO.get());
+
+	if (isVec())
+		enableVec();
+	if (isTex())
+		enableTex();
+	if (isNor())
+		enableNor();
+}
+
+void Mesh::VertexArrayObject::disableVAO()
+{
+	if (isVec())
+		disableVec();
+	if (isTex())
+		disableTex();
+	if (isNor())
+		disableNor();
+}
+
+Mesh::VertexArrayObject::~VertexArrayObject()
+{
+	if (glIsVertexArray(VAO.get()))
+		glDeleteVertexArrays(1, &VAO.get());
+}
+
+void Mesh::VertexArrayObject::enableVec()
+{
+	//Vertices
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, 0 /*offset*/); //Pos
+}
+
+void Mesh::VertexArrayObject::disableVec()
+{
+	glDisableVertexAttribArray(0);
+}
+
+void Mesh::VertexArrayObject::enableTex()
+{
+	//TexCoords
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 2 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, (void*)12/*offset*/); //Tex
+}
+
+void Mesh::VertexArrayObject::disableTex()
+{
+	glDisableVertexAttribArray(1);
+}
+
+void Mesh::VertexArrayObject::enableNor()
+{
+	//normals
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, (void*)20/*offset*/); //Nor
+}
+
+void Mesh::VertexArrayObject::disableNor()
+{
+	glDisableVertexAttribArray(2);
 }
