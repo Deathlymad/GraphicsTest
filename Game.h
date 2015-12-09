@@ -15,19 +15,21 @@ public:
 
 	void addObject(EngineObject&);
 
-	void update();
+	virtual void update();
 
 	KeyMap& addKeyMap();
 
 	~Game();
+protected:
+	RenderingEngine& getEngine() { return GraphicEngine; }
+	Scene world;
 private:
-	virtual void buildWorld(); //kind of like post init here are all the world objects created
+	virtual void buildWorld() {} //kind of like post init here are all the world objects created
 	void setupKeyMap(KeyMap&);
 
 	std::vector<KeyMap*> KeyMaps;
 	RenderingEngine GraphicEngine;
 	Screen screen;
-	Scene world; //needs to be extended and changed
 
 	Clock UpdateThread;
 

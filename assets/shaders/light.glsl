@@ -1,6 +1,9 @@
 #version 330
 
 
+in vec3 worldPos;
+in vec3 normal;
+
 uniform vec3 EyePos;
 uniform float specularIntensity;
 uniform float specularExponent;
@@ -11,7 +14,7 @@ struct BaseLight
 	float intensity;
 };
 
-vec4 calcLight(BaseLight base, vec3 direction, vec3 normal, vec3 worldPos)
+vec4 calcLight(BaseLight base, vec3 direction)
 {
     float diffuseFactor = dot(normal, -direction);
     

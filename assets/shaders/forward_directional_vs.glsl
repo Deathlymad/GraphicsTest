@@ -5,7 +5,7 @@ layout (location = 1) in vec2 tex;
 layout (location = 2) in vec3 Normal;
 
 out vec3 normal;
-out vec3 world_Pos;
+out vec3 worldPos;
 out vec2 texCoord;
 
 uniform mat4 View;
@@ -13,7 +13,7 @@ uniform mat4 View;
 void main()
 {
    normal = Normal;
-   world_Pos = pos;
+   worldPos = pos;
    texCoord = tex;
    gl_Position = View * vec4( pos, 1);
 }

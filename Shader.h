@@ -81,9 +81,9 @@ public: //Public structures
 public:
 	//construction / destruction
 	Shader();
-	Shader(std::string, std::string);
-	Shader(ShaderCode[]);
-	Shader(std::vector<ShaderCode>);
+	Shader(std::string, std::string, bool);
+	Shader(ShaderCode[], bool);
+	Shader(std::vector<ShaderCode>, bool);
 	~Shader();
 
 	//getter / setter

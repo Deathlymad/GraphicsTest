@@ -12,8 +12,9 @@ Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
 	Code.clear();
 }
 
-Shader::Shader(std::string vertexPath, std::string fragPath) : program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader(std::string vertexPath, std::string fragPath, bool l = false) : program([this](GLuint* p) {deleteProgram(p); })
 {
+	if (l)
 	Code.push_back(Light);
 	Code.push_back(Color);
 	Code.push_back(ShaderCode(VERTEX, vertexPath));
@@ -23,9 +24,10 @@ Shader::Shader(std::string vertexPath, std::string fragPath) : program([this](GL
 	build();
 }
 
-Shader::Shader(ShaderCode ShaderArr[]) : program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader(ShaderCode ShaderArr[], bool l = false) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code.push_back(Color);
+	if (l)
 	Code.push_back(Light);
 	Code.insert(Code.begin() + 3, sizeof(ShaderArr) / sizeof(ShaderCode), ShaderArr[0]);//copies Array in vector
 
@@ -33,9 +35,13 @@ Shader::Shader(ShaderCode ShaderArr[]) : program([this](GLuint* p) {deleteProgra
 	build();
 }
 
-Shader::Shader(std::vector<ShaderCode> Shaders) : program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader(std::vector<ShaderCode> Shaders, bool l = false) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code = Shaders;
+
+	Code.push_back(Color);
+	if (l)
+		Code.push_back(Light);
 
 	load();
 	build();
@@ -70,7 +76,7 @@ void Shader::build()
 	if (!glIsProgram(program.get()))
 	{
 		program.set( new GLuint( glCreateProgram())); //no Program existent creating
-	} //if there is a Program created with the right type then it is going to be rewritten but not recreated should reduce memory
+	}
 
 	int attached = 0;
 	glGetProgramiv(program.get(), GL_ATTACHED_SHADERS, &attached);

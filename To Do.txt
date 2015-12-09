@@ -1,11 +1,11 @@
 Short Term:
 Cube isn't a cube... fix perspective
-fix multipass flickering
 add cleanup for ALL Graphic classes
 fix Light Calculation, finish writing lights
 finish Textures (TextureAtlas)
-fix ambient multipass
+fix Light multipass
 add comments
+better solution to light include....
 
 Long Term:
 Create World

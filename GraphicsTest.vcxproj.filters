@@ -25,6 +25,9 @@
     <Filter Include="Ressourcendateien\World">
       <UniqueIdentifier>{688e69c0-6d86-49ea-900a-393154bcf1c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TestGame">
+      <UniqueIdentifier>{fe85f8b7-29fa-434f-8bc0-c34f8f2556ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Mesh.cpp">
@@ -76,6 +79,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGame.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -135,6 +141,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Def.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGame.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

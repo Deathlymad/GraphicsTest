@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "ModelRenderer.h"
 
 
 Game::Game() : screen(1366, 768, "Test", char(154)), GraphicEngine(), UpdateThread([] {}, [this] {update(); }, 60)
@@ -56,17 +55,6 @@ KeyMap & Game::addKeyMap()
 
 Game::~Game()
 {
-}
-
-void Game::buildWorld() //Lazy Implementation
-{
-	DirectionalLight* Dir = new DirectionalLight(glm::vec3(1.0f, 1.0f, 1.0f), 1000.0f, glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)));
-	
-	GraphicEngine.registerGraphicObject(Dir);
-
-	world.addObj( new ModelRenderer("assets/mesh/Test_Block.obj", "assets/textures/tex1.bmp"));
-
-	
 }
 
 void Game::setupKeyMap(KeyMap &k)

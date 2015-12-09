@@ -21,8 +21,8 @@ DirectionalLight::DirectionalLight( glm::vec3 c, float i, glm::vec3 dir) : BaseL
 {
 	normal = dir;
 	if (!DirForwardShader)
-		DirForwardShader =new Shader( "forward_directional_vs.glsl", "forward_directional_fs.glsl");
-	shader = DirForwardShader;
+		DirForwardShader =new Shader( "forward_directional_vs.glsl", "forward_directional_fs.glsl", true);
+	shader = new Shader("forward_ambient_vs.glsl", "forward_ambient_fs.glsl", false);
 }
 
 void DirectionalLight::writeUniform( std::string name)
@@ -36,7 +36,7 @@ PointLight::PointLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p) : BaseL
 	atten = a;
 	pos = p;
 	if (!PointForwardShader)
-		PointForwardShader = new Shader( "forward_point_vs.glsl",  "forward_point_fs.glsl");
+		PointForwardShader = new Shader( "forward_point_vs.glsl",  "forward_point_fs.glsl", true);
 	shader = PointForwardShader;
 }
 	
@@ -52,7 +52,7 @@ SpotLight::SpotLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p, glm::vec3
 	direction = glm::normalize(dir);
 	cutoff = cut;
 	if (!SpotForwardShader)
-		SpotForwardShader = new Shader( "forward_spot_vs.glsl", "forward_spot_fs.glsl");
+		SpotForwardShader = new Shader( "forward_spot_vs.glsl", "forward_spot_fs.glsl", true);
 	shader = SpotForwardShader;
 }
 	

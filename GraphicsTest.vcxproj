@@ -164,6 +164,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="TestGame.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -178,12 +179,14 @@
     <ClInclude Include="iofunctions.h" />
     <ClInclude Include="KeyMap.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="RenderingEngine.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="TestGame.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>

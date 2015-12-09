@@ -46,7 +46,7 @@ public:
 		this->m_intensity = intensity;
 	}
 
-	void writeUniform(std::string name);
+	virtual void writeUniform(std::string name);
 
 	Shader* getShader(){return shader;}
 protected:

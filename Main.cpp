@@ -1,10 +1,10 @@
-#include "Game.h"
+#include "TestGame.h"
 
 int main()
 {
-	Game Test;
+	TestGame Test;
 
 	Test.Start();
 
-	Test.~Game();
+	Test.~TestGame();
 }

@@ -11,21 +11,19 @@ struct DirectionalLight
 	vec3 direction;
 };
 
-
-in vec3 world_Pos;
-in vec3 normal;
 uniform DirectionalLight Light;
 
 
-vec4 calcLight(BaseLight base, vec3 direction, vec3 normal, vec3 worldPos);
-vec4 getColor();
+vec4 calcLight(BaseLight base, vec3 direction);
 
-vec4 calcDirectionalLight(DirectionalLight directionalLight, vec3 normal, vec3 worldPos)
+vec4 calcDirectionalLight(DirectionalLight directionalLight)
 {
-    return calcLight(directionalLight.base, -directionalLight.direction, normal, worldPos);
+    return calcLight(directionalLight.base, -directionalLight.direction);
 }
+
+vec4 getColor();
 
 void main()
 {
-	gl_FragColor = calcDirectionalLight(Light, normal, world_Pos) * getColor();
+	gl_FragColor =  calcDirectionalLight(Light) * getColor() ;//+ vec4(1.0, 0.0, 1.0, 1.0);
 }
