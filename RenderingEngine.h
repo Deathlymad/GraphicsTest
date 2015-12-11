@@ -6,6 +6,8 @@
 #include "Screen.h"
 #include "Shader.h"
 
+class Camera;
+
 #pragma once
 class RenderingEngine : ThreadExclusiveObject<RenderingEngine>
 {
@@ -18,6 +20,7 @@ public:
 	void render(Scene*);
 
 	void registerGraphicObject(BaseLight*);
+	void registerGraphicObject(Camera*);
 
 	RenderingEngine& operator= (RenderingEngine& engine)
 	{
@@ -34,6 +37,8 @@ private:
 	void setupInitialEngineState();
 
 	Screen* screen;
+
+	Camera* MainView; //needs way of showing several pictures (PIP) without several renderingengines
 
 	Shader ambient;
 	std::vector<BaseLight*> Lights;

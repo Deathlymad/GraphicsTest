@@ -3,7 +3,6 @@ Cube isn't a cube... fix perspective
 add cleanup for ALL Graphic classes
 fix Light Calculation, finish writing lights
 finish Textures (TextureAtlas)
-fix Light multipass
 add comments
 better solution to light include....
 

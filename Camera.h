@@ -6,7 +6,7 @@
 #include "KeyMap.h"
 #include "Util.h"
 
-class Shader;
+class RenderingEngine;
 
 NSP_UTIL
 
@@ -23,7 +23,7 @@ public:
 	void setAspect(float);
 
 	void registerKeyBinds(KeyMap*);
-	void registerUniforms(Shader*);
+	void registerUniform(Shader*);
 	void onMouseMove(double x, double y);
 
 	~Camera();

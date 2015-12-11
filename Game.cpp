@@ -19,7 +19,8 @@ void Game::Start()
 void Game::Run()
 {
 	buildWorld();
-	
+	world.init(&GraphicEngine);
+
 	KeyMaps[0]->launchKeyMap();
 
 	while (running)
@@ -60,6 +61,5 @@ Game::~Game()
 void Game::setupKeyMap(KeyMap &k)
 {
 	k.addKeyBind(0, [this](unsigned short) { Terminate(); }, "Shutdown");
-	GraphicEngine.initOnShaders([this](Shader* s) {world.init(s); });
-	world.init(&k);
+	world.init( &k);
 }

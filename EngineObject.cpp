@@ -1,22 +1,27 @@
 #include "EngineObject.h"
-
+#include "RenderingEngine.h"
+#include "KeyMap.h"
 
 
 EngineObject::EngineObject() : children()
+{}
+
+void EngineObject::init(RenderingEngine* r, KeyMap* k)
 {
-	children.clear();
+	for (EngineObject* child : children)
+		child->init(r, k);
 }
 
 void EngineObject::update()
 {
-	for (size_t i = 0; i < children.size(); i++)
-		children[i]->update();
+	for (EngineObject* child : children)
+		child->update();
 }
 
 void EngineObject::render(Shader* s)
 {
-	for (size_t i = 0; i < children.size(); i++)
-		children[i]->render(s);
+	for (EngineObject* child : children)
+		child->render(s);
 }
 
 

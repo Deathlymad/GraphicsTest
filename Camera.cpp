@@ -1,6 +1,7 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include "Camera.h"
 #include "Shader.h"
+#include "RenderingEngine.h"
 #include<GLFW\glfw3.h> //needed for defines
 
 float Camera::speed = 0.05f;
@@ -56,12 +57,10 @@ void Camera::registerKeyBinds(KeyMap * k)
 	k->addKeyBind(68, [this](unsigned short key) { move(key); }, "Strafe Right");//D
 }
 
-void Camera::registerUniforms(Shader * s)
+void Camera::registerUniform(Shader * s)
 {
 	s->addUniform(Shader::Uniform("View", &ViewProjMatPtr.get(), 16)); //leads to change in Position need to find out why
-	View = projection * glm::lookAt(pos, pos + glm::normalize(forward), glm::normalize(up));
 }
-
 
 Camera::~Camera()
 {

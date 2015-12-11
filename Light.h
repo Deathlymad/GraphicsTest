@@ -83,7 +83,6 @@ public:
 
 private:
 	glm::vec3 normal;
-	static Shader* DirForwardShader; //should only create on program.get() for each type of light running off different sets of variables
 };
 
 #pragma once
@@ -163,7 +162,6 @@ public:
 private:
 	Attenuation atten;
 	glm::vec3 pos;
-	static Shader* PointForwardShader;
 };
 
 #pragma once
@@ -183,5 +181,4 @@ public:
 private:
 	glm::vec3 direction;
 	float cutoff;
-	static Shader* SpotForwardShader;
 };

@@ -15,8 +15,8 @@ void TestGame::buildWorld()
 {
 	Dir = DirectionalLight(glm::vec3(1.0f, 1.0f, 1.0f), 1000.0f, glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)));
 	
-	Dir.writeUniform("Light");
 	getEngine().registerGraphicObject(&Dir);
+	Dir.writeUniform("Light");
 
 	world.addObj( new ModelRenderer("assets/mesh/Test_Block.obj", "assets/textures/tex1.bmp"));
 	world.addObj(&Dir);

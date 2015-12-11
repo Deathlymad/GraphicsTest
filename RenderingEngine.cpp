@@ -2,7 +2,7 @@
 
 
 
-RenderingEngine::RenderingEngine(Screen* screen) : ThreadExclusiveObject<RenderingEngine>(*this) , ambient("forward_directional_vs.glsl", "forward_directional_fs.glsl", true)
+RenderingEngine::RenderingEngine(Screen* screen) : ThreadExclusiveObject<RenderingEngine>(*this) , ambient("forward_ambient_vs.glsl", "forward_ambient_fs.glsl", false)
 {
 	this->screen = screen;
 	setupInitialEngineState();
@@ -20,7 +20,7 @@ void RenderingEngine::render(Scene * s)
 	glDepthFunc(GL_LEQUAL);
 
 	for (BaseLight* light : Lights)
-		s->render(Lights[0]->getShader());  //not working O.o
+		s->render(light->getShader());
 	
 	glDepthFunc(GL_LESS);
 	glDepthMask(true);
@@ -32,6 +32,14 @@ void RenderingEngine::render(Scene * s)
 void RenderingEngine::registerGraphicObject(BaseLight * b)
 {
 	Lights.push_back(b);
+	if (MainView)
+		MainView->registerUniform(b->getShader());
+}
+
+void RenderingEngine::registerGraphicObject(Camera * c)
+{
+	MainView = c;
+	initOnShaders([this](Shader* s) {MainView->registerUniform(s); });
 }
 
 

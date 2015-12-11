@@ -2,6 +2,7 @@
 #include "Camera.h"
 
 class Shader;
+class RenderingEngine;
 
 #pragma once
 class Scene
@@ -14,8 +15,8 @@ public:
 		root.add(obj); //could lead to class slicing
 	}
 
-	void init(Shader*, KeyMap*);
-	void init(Shader*);
+	void init(RenderingEngine*, KeyMap*);
+	void init(RenderingEngine*);
 	void init(KeyMap*);
 	void update();
 	void render(Shader*);
