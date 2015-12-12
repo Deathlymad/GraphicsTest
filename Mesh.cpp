@@ -1,4 +1,3 @@
-#include "Mesh.h"
 
 #define PRAGMALIB
 #ifndef GLEW
@@ -16,13 +15,14 @@
 
 #include "iofunctions.h"
 
+#include "Mesh.h"
 
 
-Mesh::Mesh() : vbo(-1), ibo(-1)
+Mesh::Mesh() : vbo([this](GLuint* buf) {deleteBuffer(buf); }), ibo([this](GLuint* buf) {deleteBuffer(buf); })
 {
 }
 
-Mesh::Mesh ( std::string file) : vbo(-1), ibo(-1)
+Mesh::Mesh ( std::string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }), ibo([this](GLuint* buf) {deleteBuffer(buf); })
 {
 	std::vector<Vertex> v;
 	std::vector<unsigned int> in;
@@ -79,7 +79,7 @@ Mesh::Mesh ( std::string file) : vbo(-1), ibo(-1)
 	glDownload(v, in);
 }
 
-Mesh::Mesh(  std::vector<Vertex> &vec, std::vector < unsigned int> &i) : vbo(-1), ibo(-1)
+Mesh::Mesh(  std::vector<Vertex> &vec, std::vector < unsigned int> &i) : vbo([this](GLuint* buf) {deleteBuffer(buf); }), ibo([this](GLuint* buf) {deleteBuffer(buf); })
 {
 	pts = vec;
 	ind = i;
@@ -88,15 +88,18 @@ Mesh::Mesh(  std::vector<Vertex> &vec, std::vector < unsigned int> &i) : vbo(-1)
 
 void Mesh::initGL( unsigned char flag)
 {
+	GLuint buf = 0;
 	if (flag == 0)
 		return;
 	if (flag & 2)
 	{
-		glGenBuffers( 1, &vbo);
+		glGenBuffers( 1, &buf);
+		vbo.set( new GLuint(buf));
 	}
 	if (flag & 1)
 	{
-		glGenBuffers(1, &ibo);
+		glGenBuffers(1, &buf);
+		ibo.set(new GLuint(buf));
 	}
 	vao = VertexArrayObject(true, true, true);
 	vao.createVertexArray();
@@ -104,7 +107,7 @@ void Mesh::initGL( unsigned char flag)
 
 void Mesh::glDownload(std::vector<Vertex>& v, std::vector < unsigned int>& i)
 {
-	initGL(!glIsBuffer(vbo) << 1 | !glIsBuffer(ibo));
+	initGL(!glIsBuffer( *(vbo.get())) << 1 | !glIsBuffer( *(ibo.get())));
 
 	if (v.size() == 0)
 		return;
@@ -118,22 +121,28 @@ void Mesh::glDownload(std::vector<Vertex>& v, std::vector < unsigned int>& i)
 			temp.push_back(d[j]);
 		}
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, vbo); //contains Vertices
+	glBindBuffer(GL_ARRAY_BUFFER, *(vbo.get())); //contains Vertices
 	glBufferData( GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
 	temp.clear();
 
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(ibo.get()));
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_DYNAMIC_DRAW);
 	indices = i.size();
 	DataSize = v.size() * 12;
 }
 
+void Mesh::deleteBuffer(GLuint * buf)
+{
+	if (glIsBuffer(*buf))
+		glDeleteBuffers(1, buf);
+}
+
 void Mesh::Draw()
 {
-	initGL(!glIsBuffer(vbo) << 1 | !glIsBuffer(ibo));
+	initGL(!glIsBuffer(*(vbo.get())) << 1 | !glIsBuffer(*(ibo.get())));
 	vao.bindVertexArray();
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBindBuffer(GL_ARRAY_BUFFER, *(vbo.get()));
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(ibo.get()));
 
 	//vec2 = 8 vec3 = 12 vec4 = 16
 
@@ -146,10 +155,6 @@ void Mesh::Draw()
 }
 Mesh::~Mesh(void)
 {
-	if (glIsBuffer(vbo))
-		glDeleteBuffers( 1, &vbo);
-	if (glIsBuffer(ibo))
-		glDeleteBuffers( 1, &ibo);
 }
 
 void Mesh::VertexArrayObject::createVertexArray()
@@ -157,7 +162,7 @@ void Mesh::VertexArrayObject::createVertexArray()
 	GLuint temp = -1;
 	glGenVertexArrays(1, &temp);
 	VAO.set(new GLuint(temp));
-	glBindVertexArray(VAO.get());
+	glBindVertexArray( *(VAO.get()));
 
 	if (isVec())
 		enableVec();
@@ -171,7 +176,7 @@ void Mesh::VertexArrayObject::createVertexArray()
 
 void Mesh::VertexArrayObject::bindVertexArray()
 {
-	glBindVertexArray(VAO.get());
+	glBindVertexArray( *(VAO.get()));
 
 	if (isVec())
 		enableVec();
@@ -193,8 +198,8 @@ void Mesh::VertexArrayObject::disableVAO()
 
 Mesh::VertexArrayObject::~VertexArrayObject()
 {
-	if (glIsVertexArray(VAO.get()))
-		glDeleteVertexArrays(1, &VAO.get());
+	if (glIsVertexArray( *(VAO.get())))
+		glDeleteVertexArrays(1, VAO.get());
 }
 
 void Mesh::VertexArrayObject::enableVec()

@@ -4,6 +4,8 @@
 
 NSP_UTIL
 
+typedef unsigned int GLuint;
+
 #pragma once
 class Mesh
 {
@@ -20,9 +22,9 @@ class Mesh
 
 		~VertexArrayObject();
 	private:
-		bool isVec() { return bitset & 1; }
-		bool isTex() { return bitset & 2; }
-		bool isNor() { return bitset & 4; }
+		bool isVec() { return (bitset & 1) == 1; }
+		bool isTex() { return (bitset & 2) == 1; }
+		bool isNor() { return (bitset & 4) == 1; }
 
 		void enableVec();
 		void disableVec();
@@ -68,11 +70,12 @@ public:
 private:
 	void initGL(unsigned char);
 
-	void glDownload(  std::vector<Vertex>&, std::vector < unsigned int>&);
-		
+	void glDownload(  std::vector<Vertex>&, std::vector <unsigned int>&);
+	
 	VertexArrayObject vao;
-	unsigned int vbo; // new interleaving vvvn v = Vertex, n = normal (accessed by face as index)
-	unsigned int ibo;
+	CustomPtr<GLuint> vbo;
+	CustomPtr<GLuint> ibo;
+	void deleteBuffer(GLuint* buf);
 
 	unsigned int DataSize;
 	unsigned int indices;

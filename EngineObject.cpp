@@ -8,20 +8,20 @@ EngineObject::EngineObject() : children()
 
 void EngineObject::init(RenderingEngine* r, KeyMap* k)
 {
-	for (EngineObject* child : children)
-		child->init(r, k);
+	for (unsigned int i = 0; i < children.size(); i++)
+		children[i]->init(r, k);
 }
 
 void EngineObject::update()
 {
-	for (EngineObject* child : children)
-		child->update();
+	for (unsigned int i = 0; i < children.size(); i++)
+		children[i]->update();
 }
 
 void EngineObject::render(Shader* s)
 {
-	for (EngineObject* child : children)
-		child->render(s);
+	for (unsigned int i = 0; i < children.size(); i++)
+		children[i]->render(s);
 }
 
 

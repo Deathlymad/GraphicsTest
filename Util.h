@@ -17,7 +17,7 @@ NSP_UTIL_BEG
 			*ptr = data;
 		}
 
-		void set(T data)
+		void set(T& data)
 		{
 			setPtr(&data);
 		}
@@ -31,25 +31,15 @@ NSP_UTIL_BEG
 			ptr[i] = data;
 		}
 
-		T& get()
+		T* get()
 		{
 			if (ptr)
-				return *ptr;
-			else
-			{
-				T temp = NULL;
-				return temp;
-			}
+				return ptr;
 		}
-		T& get(unsigned int i)
+		T* get(unsigned int i)
 		{
 			if (ptr)
-				return ptr[i];
-			else
-			{
-				T temp = NULL;
-				return temp;
-			}
+				return &ptr[i];
 		}
 		
 		void operator=(Ptr<T> &other)
@@ -88,11 +78,15 @@ NSP_UTIL_BEG
 	public:
 		CustomPtr<T>(std::function<void(T*)> func) : Ptr<T>(), destruction(func) {}
 		CustomPtr<T>(std::function<void(T*)> func, T* data) : Ptr<T>(data), destruction(func) {}
+
+		void setDestructor(std::function<void(T*)> des) { destruction = des; }
 	protected:
 		void setPtr(T* p)
 		{
-			if (owned) //if owned it clears the Data
+			if (owned && ptr) //if owned it clears the Data
+			{
 				destruction(ptr);
+			}
 
 			ptr = p;
 			owned = true;

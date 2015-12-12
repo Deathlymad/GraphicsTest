@@ -1,7 +1,5 @@
 Short Term:
 Cube isn't a cube... fix perspective
-add cleanup for ALL Graphic classes
-finish writing lights
 finish Textures (TextureAtlas)
 Add Object Transformation
 add comments

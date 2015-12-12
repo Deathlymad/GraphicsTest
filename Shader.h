@@ -34,12 +34,17 @@ public: //Public structures
 	public:
 		ShaderType _type; //should be made private
 		std::string _path;
-		Ptr<GLuint> pos;
+		CustomPtr<GLuint> pos;
+		void clearShader(GLuint* s)
+		{
+			if (glIsShader(*(pos.get())))
+				glDeleteShader(*(pos.get()));
+		}
 
-		ShaderCode() : _type(TESSELATION_EVALUATION), _path(""), pos(-1) {}
-		ShaderCode(ShaderType type, std::string path) : _type(type), _path(path), pos(-1) {}
-		ShaderCode(ShaderType type, char* path) : _type(type), _path(path), pos(-1) {}
-		~ShaderCode() { if (glIsShader(pos.get())) glDeleteShader(pos.get()); } //just don't leave stuff behind
+		ShaderCode() : _type(TESSELATION_EVALUATION), _path(""), pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
+		ShaderCode(ShaderType type, std::string path) : _type(type), _path(path), pos([this](GLuint* s) {}, new GLuint())
+		{ pos.setDestructor([this](GLuint* s) {clearShader(s); }); }
+		ShaderCode(ShaderType type, char* path) : _type(type), _path(path), pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
 
 		ShaderCode operator=(ShaderCode other) { _type = other._type; _path = other._path; pos = other.pos; return *this; }
 		bool operator==(ShaderCode other) { return _type == other._type && _path == other._path && pos.get() == other.pos.get(); }
@@ -111,6 +116,7 @@ private:
 		if (glIsProgram(*prgm))
 			glDeleteProgram(*prgm);
 	}
+
 	std::vector<ShaderCode> Code; //contains Shader variable
 	std::vector<Uniform> Uniforms;
 

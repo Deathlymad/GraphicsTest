@@ -21,7 +21,7 @@ Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr(new float[16])
 void Camera::update()
 {
 	View = projection * glm::lookAt(pos, pos + glm::normalize(forward), glm::normalize(up));
-	if (ViewProjMatPtr.get() = -1)
+	if (ViewProjMatPtr.get() != nullptr)
 	{
 		for (unsigned char i = 0; i < 16; i++) //writes memory
 		{
@@ -54,7 +54,7 @@ void Camera::registerKeyBinds(KeyMap * k)
 
 void Camera::registerUniform(Shader * s)
 {
-	s->addUniform(Shader::Uniform("ViewProj", &ViewProjMatPtr.get(), 16));
+	s->addUniform(Shader::Uniform("ViewProj", ViewProjMatPtr.get(), 16));
 	s->addUniform(Shader::Uniform("EyePos", &pos[0], 3));
 }
 
@@ -65,8 +65,8 @@ Camera::~Camera()
 void Camera::onMouseMove(double dY, double dX)
 {
 	//computing X rotation
-	XAngle += dX * -0.0005;
-	YAngle += dY * -0.0005;
+	XAngle += dX * -(speed / 100);
+	YAngle += dY * -(speed / 100);
 
 	glm::vec3 HorizontalAxis = glm::normalize(glm::cross(YAxis, forward));
 
@@ -84,16 +84,16 @@ void Camera::move(unsigned short key)
 	switch (key)
 	{
 	case 65:
-		pos += glm::normalize(glm::cross(up, forward)) * 0.05f;
+		pos += glm::normalize(glm::cross(up, forward)) * speed;
 		break;
 	case 68:
-		pos += glm::normalize(glm::cross(forward, up)) * 0.05f;
+		pos += glm::normalize(glm::cross(forward, up)) * speed;
 		break;
 	case 83:
-		pos -= 0.05f * forward; //not working
+		pos -= speed * forward; //not working
 		break;
 	case 87:
-		pos += 0.05f * forward; //not working
+		pos += speed * forward; //not working
 		break;
 	}
 }
