@@ -16,11 +16,6 @@ Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr(new float[16])
 	Aspect = 4 / 3;
 	View = glm::mat4();
 	projection = glm::perspective( FoV, Aspect, 0.1f, 100.0f);
-	
-	for (unsigned char i = 0; i < 16; i++) //writes initial matrix memory
-	{
-		ViewProjMatPtr.set(projection[floorf(i / 4)][i - (floorf(i / 4) * 4)], i);
-	}
 }
 
 void Camera::update()
@@ -59,7 +54,8 @@ void Camera::registerKeyBinds(KeyMap * k)
 
 void Camera::registerUniform(Shader * s)
 {
-	s->addUniform(Shader::Uniform("View", &ViewProjMatPtr.get(), 16)); //leads to change in Position need to find out why
+	s->addUniform(Shader::Uniform("ViewProj", &ViewProjMatPtr.get(), 16));
+	s->addUniform(Shader::Uniform("EyePos", &pos[0], 3));
 }
 
 Camera::~Camera()

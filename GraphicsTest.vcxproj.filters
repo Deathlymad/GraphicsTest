@@ -82,7 +82,7 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="TestGame.cpp">
-      <Filter>Quelldateien</Filter>
+      <Filter>TestGame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,11 +143,11 @@
     <ClInclude Include="Def.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TestGame.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGame.h">
+      <Filter>TestGame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +229,9 @@
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
     <None Include="assets\shaders\version.glsl">
+      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\vertex.glsl">
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
   </ItemGroup>

@@ -2,7 +2,7 @@
 
 
 
-RenderingEngine::RenderingEngine(Screen* screen) : ThreadExclusiveObject<RenderingEngine>(*this) , ambient("forward_ambient_vs.glsl", "forward_ambient_fs.glsl", false)
+RenderingEngine::RenderingEngine(Screen* screen) : ThreadExclusiveObject<RenderingEngine>(*this) , ambient("forward_ambient_vs.glsl", "forward_ambient_fs.glsl")
 {
 	this->screen = screen;
 	setupInitialEngineState();
@@ -12,12 +12,16 @@ void RenderingEngine::render(Scene * s)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	ambient.setUniforms();
+	for (BaseLight* light : Lights)
+		light->getShader()->setUniforms();
+
 	s->render(&ambient); //generates depth buffer
 	
 	glEnable(GL_BLEND);  //setting up Multipassing
 	glBlendFunc(GL_ONE, GL_ONE);
 	glDepthMask(false);
-	glDepthFunc(GL_LEQUAL);
+	glDepthFunc(GL_EQUAL);
 
 	for (BaseLight* light : Lights)
 		s->render(light->getShader());

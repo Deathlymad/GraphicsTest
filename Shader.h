@@ -81,9 +81,9 @@ public: //Public structures
 public:
 	//construction / destruction
 	Shader();
-	Shader(std::string, std::string, bool);
-	Shader(ShaderCode[], bool);
-	Shader(std::vector<ShaderCode>, bool);
+	Shader(std::string, std::string);
+	Shader(ShaderCode[]);
+	Shader(std::vector<ShaderCode>);
 	~Shader();
 
 	//getter / setter
@@ -125,5 +125,6 @@ private:
 	//common Shader Files, like libraries :D
 	const static ShaderCode Light;   //Contains the basic Light function
 	const static ShaderCode Color;   //Defines the Color Funtion to retreive fragment color from the texture, also defines the Uniforms
+	const static ShaderCode Vertex;
 };
 

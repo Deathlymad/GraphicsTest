@@ -208,7 +208,9 @@
   <ItemGroup>
     <None Include="assets\shaders\color.glsl" />
     <None Include="assets\shaders\forward_ambient_fs.glsl" />
-    <None Include="assets\shaders\forward_ambient_vs.glsl" />
+    <None Include="assets\shaders\forward_ambient_vs.glsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </None>
     <None Include="assets\shaders\forward_directional_fs.glsl" />
     <None Include="assets\shaders\forward_directional_vs.glsl" />
     <None Include="assets\shaders\forward_point_fs.glsl" />
@@ -218,6 +220,7 @@
     <None Include="assets\shaders\fs.glsl" />
     <None Include="assets\shaders\light.glsl" />
     <None Include="assets\shaders\version.glsl" />
+    <None Include="assets\shaders\vertex.glsl" />
     <None Include="assets\shaders\vs.glsl" />
   </ItemGroup>
   <ItemGroup>

@@ -1,10 +1,10 @@
 Short Term:
 Cube isn't a cube... fix perspective
 add cleanup for ALL Graphic classes
-fix Light Calculation, finish writing lights
+finish writing lights
 finish Textures (TextureAtlas)
+Add Object Transformation
 add comments
-better solution to light include....
 
 Long Term:
 Create World

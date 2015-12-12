@@ -4,6 +4,7 @@
 
 #include "Shader.h"
 
+const Shader::ShaderCode Shader::Vertex  = Shader::ShaderCode(VERTEX, "vertex.glsl");
 const Shader::ShaderCode Shader::Light   = Shader::ShaderCode(FRAGMENT, "light.glsl");
 const Shader::ShaderCode Shader::Color   = Shader::ShaderCode(FRAGMENT, "color.glsl");
 
@@ -12,11 +13,11 @@ Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
 	Code.clear();
 }
 
-Shader::Shader(std::string vertexPath, std::string fragPath, bool l = false) : program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader(std::string vertexPath, std::string fragPath) : program([this](GLuint* p) {deleteProgram(p); })
 {
-	if (l)
-	Code.push_back(Light);
+	Code.push_back(Vertex);
 	Code.push_back(Color);
+	Code.push_back(Light);
 	Code.push_back(ShaderCode(VERTEX, vertexPath));
 	Code.push_back(ShaderCode(FRAGMENT, fragPath));
 
@@ -24,10 +25,10 @@ Shader::Shader(std::string vertexPath, std::string fragPath, bool l = false) : p
 	build();
 }
 
-Shader::Shader(ShaderCode ShaderArr[], bool l = false) : program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader(ShaderCode ShaderArr[]) : program([this](GLuint* p) {deleteProgram(p); })
 {
+	Code.push_back(Vertex);
 	Code.push_back(Color);
-	if (l)
 	Code.push_back(Light);
 	Code.insert(Code.begin() + 3, sizeof(ShaderArr) / sizeof(ShaderCode), ShaderArr[0]);//copies Array in vector
 
@@ -35,13 +36,13 @@ Shader::Shader(ShaderCode ShaderArr[], bool l = false) : program([this](GLuint* 
 	build();
 }
 
-Shader::Shader(std::vector<ShaderCode> Shaders, bool l = false) : program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader(std::vector<ShaderCode> Shaders) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code = Shaders;
 
+	Code.push_back(Vertex);
 	Code.push_back(Color);
-	if (l)
-		Code.push_back(Light);
+	Code.push_back(Light);
 
 	load();
 	build();

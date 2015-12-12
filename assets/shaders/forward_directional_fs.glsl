@@ -1,5 +1,6 @@
 #version 330
 
+
 struct BaseLight
 {
 	vec3 color;
@@ -13,6 +14,9 @@ struct DirectionalLight
 
 uniform DirectionalLight Light;
 
+uniform float specularIntensity;
+uniform float specularExponent;
+
 
 vec4 calcLight(BaseLight base, vec3 direction);
 
@@ -20,5 +24,5 @@ vec4 getColor();
 
 void main()
 {
-	gl_FragColor = calcLight( Light.base, Light.direction);
+	gl_FragColor = calcLight(Light.base, Light.direction) * getColor();
 }

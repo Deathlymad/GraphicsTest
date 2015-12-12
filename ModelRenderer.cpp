@@ -1,17 +1,22 @@
 #include "ModelRenderer.h"
 #include "Shader.h"
+#include "RenderingEngine.h"
 
 
-ModelRenderer::ModelRenderer(std::string meshFile, std::string texFile) : EngineObject(), mesh(meshFile), tex(texFile), mat(2, 32)
+ModelRenderer::ModelRenderer(std::string meshFile, std::string texFile) : EngineObject(), mesh(meshFile), tex(texFile), mat(2, 1)
 {
+}
+
+void ModelRenderer::init(RenderingEngine * r, KeyMap * k)
+{
+	if (!tex.Loaded())
+		tex.glDownload();
+	if (!mat.isLoaded() && r)
+		r->initOnShaders([this](Shader* s) {mat.createUniforms(s); });
 }
 
 void ModelRenderer::render(Shader* s)
 {
-	if (!tex.Loaded()) //these only work on the first shader...
-		tex.glDownload();
-	if (!mat.isLoaded())
-		mat.createUniforms(s);
 	s->bind();
 	tex.bind();
 	mesh.Draw();

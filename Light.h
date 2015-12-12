@@ -26,6 +26,8 @@ public:
 	{
 	}
 	
+	void init(RenderingEngine*, KeyMap*);
+
 	glm::vec3 GetColor()
 	{
 		return m_color;
@@ -162,6 +164,7 @@ public:
 private:
 	Attenuation atten;
 	glm::vec3 pos;
+	float range;
 };
 
 #pragma once
