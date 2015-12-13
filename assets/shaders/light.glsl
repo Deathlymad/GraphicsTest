@@ -61,7 +61,7 @@ vec4 calcLight(BaseLight base, vec3 direction)
         }
     }
     
-    return difCol + specCol;
+    return difCol * specCol;
 }
 
 vec4 calcPointLight(PointLight pointLight)
@@ -88,9 +88,9 @@ vec4 calcSpotLight(SpotLight spotLight)
     
     vec4 color = vec4(0,0,0,0);
     
-    //if(spotFactor < spotLight.cutoff)
+    if(spotFactor < spotLight.cutoff)
     {
-		color = calcPointLight(spotLight.point);//* (1.0 - (1.0 - spotFactor)/(1.0 - spotLight.cutoff));
+		color = calcPointLight(spotLight.point) * (1.0 - (1.0 - spotFactor)/(1.0 - spotLight.cutoff));
     }
     
     return color;

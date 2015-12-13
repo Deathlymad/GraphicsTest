@@ -44,7 +44,10 @@ PointLight::PointLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p) : BaseL
 	float ex = a.getExponent();
 	float li = a.getLinear() / ex;
 	float co = a.getConstant() / ex;
-	range = (-li/2 + sqrt( (li * li)/4 - co)); //calculate point where equation returns 0
+	if (((li * li) / 4 - co) > 0)
+		range = (-li / 2 + sqrt((li * li) / 4 - co)); //calculate point where equation returns 0
+	else
+		range = 1000.0f;
 	shader = new Shader( "forward_point_vs.glsl",  "forward_point_fs.glsl");
 }
 	

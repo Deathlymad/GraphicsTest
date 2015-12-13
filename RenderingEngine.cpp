@@ -43,7 +43,7 @@ void RenderingEngine::registerGraphicObject(BaseLight * b)
 void RenderingEngine::registerGraphicObject(Camera * c)
 {
 	MainView = c;
-	initOnShaders([this](Shader* s) {MainView->registerUniform(s); });
+	initOnShaders([this](Shader* s) { if(MainView) MainView->registerUniform(s); });
 }
 
 

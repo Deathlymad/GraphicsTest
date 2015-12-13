@@ -28,26 +28,6 @@ public:
 	
 	void init(RenderingEngine*, KeyMap*);
 
-	glm::vec3 GetColor()
-	{
-		return m_color;
-	}
-
-	void SetColor(glm::vec3 color)
-	{
-		this->m_color = color;
-	}
-
-	float GetIntensity()
-	{
-		return m_intensity;
-	}
-
-	void SetIntensity(float intensity)
-	{
-		this->m_intensity = intensity;
-	}
-
 	virtual void writeUniform(std::string name);
 
 	Shader* getShader(){return shader;}
@@ -148,6 +128,13 @@ public:
 	void setAttenuation( Attenuation b)
 	{
 		atten = b;
+		float ex = atten.getExponent();
+		float li = atten.getLinear() / ex;
+		float co = atten.getConstant() / ex;
+		if (((li * li) / 4 - co) > 0)
+			range = (-li / 2 + sqrt((li * li) / 4 - co)); //calculate point where equation returns 0
+		else
+			range = 1000.0f;
 	}
 	Attenuation getAttenuation()
 	{

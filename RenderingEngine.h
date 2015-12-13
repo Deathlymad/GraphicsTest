@@ -38,7 +38,7 @@ private:
 
 	Screen* screen;
 
-	Camera* MainView; //needs way of showing several pictures (PIP) without several renderingengines
+	Camera* MainView; //needs way of showing several pictures (PIP, mirrors, etc.) without several renderingengines
 
 	Shader ambient;
 	std::vector<BaseLight*> Lights;
