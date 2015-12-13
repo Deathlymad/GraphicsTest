@@ -11,7 +11,6 @@
 	#undef __glewActiveTexture
 	#undef __glewGenerateMipmap
 #endif
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "iofunctions.h"
 
@@ -36,7 +35,7 @@ Mesh::Mesh ( std::string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }),
 	for(unsigned int i = 0; i<vec.size(); i++)
 	{
 		temp.clear();
-		if((vec[i].find_first_of('o') != std::string::npos)) continue; //Object type name irrelevant
+		if((vec[i].find_first_of('o') != std::string::npos)) continue; //Object typname irrelevant
 		if((vec[i].find_first_of('m') != std::string::npos)) continue; //Material Data may be used someday but not now
 		if((vec[i].find_first_of('s') != std::string::npos)) continue; //some other data
 		if((vec[i].find_first_of('#') != std::string::npos) || vec[i].size() < 3) continue; //Kommentarzeilen werden KOMPLETT ignoriert, auch wenn Kommentar am Ende steht! oder Leerzeilen oder Zeile hat weniger als 3 Zeichen => bestimmt sinnlos
@@ -88,18 +87,15 @@ Mesh::Mesh(  std::vector<Vertex> &vec, std::vector < unsigned int> &i) : vbo([th
 
 void Mesh::initGL( unsigned char flag)
 {
-	GLuint buf = 0;
 	if (flag == 0)
 		return;
 	if (flag & 2)
 	{
-		glGenBuffers( 1, &buf);
-		vbo.set( new GLuint(buf));
+		glGenBuffers( 1, vbo.get());
 	}
 	if (flag & 1)
 	{
-		glGenBuffers(1, &buf);
-		ibo.set(new GLuint(buf));
+		glGenBuffers(1, ibo.get());
 	}
 	vao = VertexArrayObject(true, true, true);
 	vao.createVertexArray();
@@ -153,6 +149,7 @@ void Mesh::Draw()
 	//Wireframe Shader
 	//glDrawElements( GL_LINE_STRIP, indices, GL_UNSIGNED_INT, 0);  //for debug purposes
 }
+
 Mesh::~Mesh(void)
 {
 }
@@ -206,7 +203,7 @@ void Mesh::VertexArrayObject::enableVec()
 {
 	//Vertices
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, 0 /*offset*/); //Pos
+	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getsize() /*stride*/, 0 /*offset*/); //Pos
 }
 
 void Mesh::VertexArrayObject::disableVec()
@@ -218,7 +215,7 @@ void Mesh::VertexArrayObject::enableTex()
 {
 	//TexCoords
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 2 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, (void*)12/*offset*/); //Tex
+	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 2 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getsize() /*stride*/, (void*)12/*offset*/); //Tex
 }
 
 void Mesh::VertexArrayObject::disableTex()
@@ -230,7 +227,7 @@ void Mesh::VertexArrayObject::enableNor()
 {
 	//normals
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, 32 /*stride*/, (void*)20/*offset*/); //Nor
+	glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getsize() /*stride*/, (void*)20/*offset*/); //Nor
 }
 
 void Mesh::VertexArrayObject::disableNor()

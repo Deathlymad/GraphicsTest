@@ -217,11 +217,9 @@
     <None Include="assets\shaders\forward_point_vs.glsl" />
     <None Include="assets\shaders\forward_spot_fs.glsl" />
     <None Include="assets\shaders\forward_spot_vs.glsl" />
-    <None Include="assets\shaders\fs.glsl" />
     <None Include="assets\shaders\light.glsl" />
     <None Include="assets\shaders\version.glsl" />
     <None Include="assets\shaders\vertex.glsl" />
-    <None Include="assets\shaders\vs.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="assets\mesh\Stein_einfach.obj">

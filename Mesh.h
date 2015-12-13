@@ -1,5 +1,6 @@
 #include <vector>
 #include <glm\common.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "Util.h"
 
 NSP_UTIL
@@ -22,9 +23,9 @@ class Mesh
 
 		~VertexArrayObject();
 	private:
-		bool isVec() { return (bitset & 1) == 1; }
-		bool isTex() { return (bitset & 2) == 1; }
-		bool isNor() { return (bitset & 4) == 1; }
+		bool isVec() { return (bitset & 1) != 0; }
+		bool isTex() { return (bitset & 2) != 0; }
+		bool isNor() { return (bitset & 4) != 0; }
 
 		void enableVec();
 		void disableVec();
@@ -32,6 +33,8 @@ class Mesh
 		void disableTex();
 		void enableNor();
 		void disableNor();
+
+		int getsize() { return (isVec() ? 12 : 0) + (isTex() ? 8 : 0) + (isNor() ? 12 : 0); }
 
 		Ptr<unsigned int> VAO;
 		unsigned char bitset;
@@ -54,6 +57,8 @@ class Mesh
 
 		float* getData()
 		{
+			glm::vec3 nor = glm::normalize(glm::vec3(data[5], data[6], data[7]));
+			data[5] = nor.x; data[6] = nor.y; data[7] = nor.z;
 			return data;
 		}
 	private:

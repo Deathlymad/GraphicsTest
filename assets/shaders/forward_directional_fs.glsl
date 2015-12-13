@@ -18,6 +18,8 @@ uniform float specularIntensity;
 uniform float specularExponent;
 
 
+in vec3 normal;
+
 vec4 calcLight(BaseLight base, vec3 direction);
 
 vec4 getColor();

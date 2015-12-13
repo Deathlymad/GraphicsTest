@@ -61,13 +61,13 @@ vec4 calcLight(BaseLight base, vec3 direction)
         }
     }
     
-    return difCol * (specCol/2);
+    return difCol + specCol;
 }
 
 vec4 calcPointLight(PointLight pointLight)
 {
     vec3 lightDirection = worldPos - pointLight.pos;
-    float distanceToPoint = abs(length(lightDirection));
+    float distanceToPoint = length(lightDirection);
     
     if(distanceToPoint > pointLight.range)
         return vec4(0,0,0,0);
@@ -84,13 +84,13 @@ vec4 calcPointLight(PointLight pointLight)
 vec4 calcSpotLight(SpotLight spotLight)
 {
     vec3 lightDirection = normalize(worldPos - spotLight.point.pos);
-    float spotFactor = dot(lightDirection, -spotLight.direction);
+    float spotFactor = abs(dot(lightDirection, spotLight.direction));
     
     vec4 color = vec4(0,0,0,0);
     
-    if(spotFactor > spotLight.cutoff)
+    //if(spotFactor < spotLight.cutoff)
     {
-        color = calcPointLight(spotLight.point) * (1.0 - (1.0 - spotFactor)/(1.0 - spotLight.cutoff));
+		color = calcPointLight(spotLight.point);//* (1.0 - (1.0 - spotFactor)/(1.0 - spotLight.cutoff));
     }
     
     return color;

@@ -10,6 +10,7 @@ public:
 private:
 	void buildWorld();
 
-	SpotLight spot;
+	PointLight spot;
+	DirectionalLight Dir;
 };
 

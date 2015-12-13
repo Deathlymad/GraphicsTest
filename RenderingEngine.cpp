@@ -16,18 +16,18 @@ void RenderingEngine::render(Scene * s)
 	for (BaseLight* light : Lights)
 		light->getShader()->setUniforms();
 
-	s->render(&ambient); //generates depth buffer
+	s->render(&ambient); //TO DO sync
 	
 	glEnable(GL_BLEND);  //setting up Multipassing
 	glBlendFunc(GL_ONE, GL_ONE);
-	glDepthMask(false);
+	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_EQUAL);
 
 	for (BaseLight* light : Lights)
 		s->render(light->getShader());
 	
 	glDepthFunc(GL_LESS);
-	glDepthMask(true);
+	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND); //resetting to standard State
 
 	screen->updateScreen();

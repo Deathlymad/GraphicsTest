@@ -216,12 +216,6 @@
     <None Include="assets\shaders\forward_spot_vs.glsl">
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
-    <None Include="assets\shaders\fs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\vs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
     <None Include="assets\shaders\color.glsl">
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
