@@ -8,9 +8,7 @@ public:
 	
 	~TestGame();
 private:
-	void buildWorld();
-
-	PointLight spot;
+	PointLight pt;
 	DirectionalLight Dir;
 };
 

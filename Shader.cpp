@@ -74,10 +74,8 @@ void Shader::load()
 }
 void Shader::build()
 {
-	if (!glIsProgram(*(program.get())))
-	{
+	if (!program.get() || !glIsProgram(*(program.get())))
 		program.set( new GLuint( glCreateProgram())); //no Program existent creating
-	}
 
 	int attached = 0;
 	glGetProgramiv(*(program.get()), GL_ATTACHED_SHADERS, &attached);

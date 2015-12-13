@@ -2,14 +2,14 @@
 
 
 
-Clock::Clock( std::function<void()> init, std::function<void()> f, unsigned int tps) : init(init), func(f), running(true), tickRatio(1000/tps)
+Clock::Clock( std::function<void()> init, std::function<void()> f, unsigned int tps) : init(init), func(f), running(false), tickRatio(1000/tps)
 {
-	running = true;
-	t = std::thread([this] {update(); });
 }
 
 void Clock::run()
 {
+	running = true;
+	t = std::thread([this] {update(); });
 }
 
 Clock::~Clock()

@@ -84,6 +84,9 @@
     <ClCompile Include="TestGame.cpp">
       <Filter>TestGame</Filter>
     </ClCompile>
+    <ClCompile Include="CoreEngine.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">
@@ -148,6 +151,9 @@
     </ClInclude>
     <ClInclude Include="TestGame.h">
       <Filter>TestGame</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreEngine.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

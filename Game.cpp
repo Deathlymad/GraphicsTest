@@ -1,33 +1,30 @@
 #include "Game.h"
+#include "Screen.h"
+#include "RenderingEngine.h"
 
 
-Game::Game() : screen(1366, 768, "Test", char(154)), GraphicEngine(), UpdateThread([] {}, [this] {update(); }, 60)
+Game::Game() : screen(1366, 768, "Test", char(154)), Engine(&screen, this)
 {
-	GraphicEngine = RenderingEngine(&screen);
 	screen.handleWindow(InputHandler::registerCallbacks);
 	KeyMaps.push_back(new KeyMap(&screen));
+
 	setupKeyMap(*KeyMaps[0]);
 	running = false;
 }
 
 void Game::Start()
 {
+	Engine.start();
 	running = true;
 	Run();
 }
 
 void Game::Run()
 {
-	buildWorld();
-	world.init(&GraphicEngine);
-
-	KeyMaps[0]->launchKeyMap();
-
 	while (running)
 	{
-		GraphicEngine.render(&world);
+		Engine.getGraphicEngine()->render(&world);
 	}
-	UpdateThread.shutdown();
 }
 
 void Game::Terminate()
@@ -38,6 +35,13 @@ void Game::Terminate()
 void Game::addObject(EngineObject & object)
 {
 	world.addObj(&object);
+}
+
+void Game::init()
+{
+	world.init(Engine.getGraphicEngine());
+	if (KeyMaps.size() > 0)
+		KeyMaps[0]->launchKeyMap();
 }
 
 void Game::update()
@@ -52,7 +56,6 @@ KeyMap & Game::addKeyMap()
 	setupKeyMap(*KeyMaps[temp]);
 	return *KeyMaps[temp];
 }
-
 
 Game::~Game()
 {

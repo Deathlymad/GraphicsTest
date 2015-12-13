@@ -1,22 +1,22 @@
 #include "RenderingEngine.h"
+#include "CoreEngine.h"
 
 
 
-RenderingEngine::RenderingEngine(Screen* screen) : ThreadExclusiveObject<RenderingEngine>(*this) , ambient("forward_ambient_vs.glsl", "forward_ambient_fs.glsl")
+RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* screen) : ThreadExclusiveObject<RenderingEngine>(*this) , ambient("forward_ambient_vs.glsl", "forward_ambient_fs.glsl")
 {
 	this->screen = screen;
+	_parent = parent;
 	setupInitialEngineState();
 }
 
 void RenderingEngine::render(Scene * s)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	std::lock_guard<std::mutex>(*(_parent->getLock()));
 
-	ambient.setUniforms();
-	for (BaseLight* light : Lights)
-		light->getShader()->setUniforms();
-
-	s->render(&ambient); //TO DO sync
+	s->render(&ambient);
 	
 	glEnable(GL_BLEND);  //setting up Multipassing
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -45,7 +45,6 @@ void RenderingEngine::registerGraphicObject(Camera * c)
 	MainView = c;
 	initOnShaders([this](Shader* s) { if(MainView) MainView->registerUniform(s); });
 }
-
 
 RenderingEngine::~RenderingEngine()
 {

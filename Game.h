@@ -1,7 +1,9 @@
 #include <vector>
-#include "RenderingEngine.h"
+#include "CoreEngine.h"
 #include "Scene.h"
 #include "KeyMap.h"
+
+class Screen;
 
 #pragma once
 class Game
@@ -15,23 +17,20 @@ public:
 
 	void addObject(EngineObject&);
 
+	virtual void init();
 	virtual void update();
 
 	KeyMap& addKeyMap();
 
 	~Game();
 protected:
-	RenderingEngine& getEngine() { return GraphicEngine; }
 	Scene world;
 private:
-	virtual void buildWorld() {} //kind of like post init here are all the world objects created
 	void setupKeyMap(KeyMap&);
 
 	std::vector<KeyMap*> KeyMaps;
-	RenderingEngine GraphicEngine;
 	Screen screen;
-
-	Clock UpdateThread;
+	CoreEngine Engine;
 
 	bool running;
 };
