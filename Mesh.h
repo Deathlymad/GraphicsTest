@@ -74,7 +74,6 @@ public:
 	~Mesh(void);
 private:
 	void initGL(unsigned char);
-
 	void glDownload(  std::vector<Vertex>&, std::vector <unsigned int>&);
 	
 	VertexArrayObject vao;
@@ -82,9 +81,5 @@ private:
 	CustomPtr<GLuint> ibo;
 	void deleteBuffer(GLuint* buf);
 
-	unsigned int DataSize;
 	unsigned int indices;
-	//needed for Physics later
-	std::vector<Vertex> pts;
-	std::vector<unsigned int> ind;
 };

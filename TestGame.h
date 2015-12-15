@@ -1,5 +1,8 @@
 #pragma once
 #include "Game.h"
+#include "ModelRenderer.h"
+
+
 class TestGame :
 	public Game
 {
@@ -10,5 +13,7 @@ public:
 private:
 	PointLight pt;
 	DirectionalLight Dir;
+
+	ModelRenderer obj;
 };
 

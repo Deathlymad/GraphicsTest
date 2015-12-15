@@ -3,28 +3,15 @@
 #include <GL\glew.h>
 
 
-Scene::Scene() : root(), View()
-{
-}
-
-
-void Scene::init(RenderingEngine* r, KeyMap* k)
+Scene::Scene(RenderingEngine* r) : root(), View()
 {
 	r->registerGraphicObject(&View);
-	View.registerKeyBinds(k);
-	root.init(r, k);
-}
-
-void Scene::init(RenderingEngine * r)
-{
-	r->registerGraphicObject(&View);
-	root.init(r, nullptr);
 }
 
 void Scene::init(KeyMap * k)
 {
 	View.registerKeyBinds(k);
-	root.init(nullptr, k);
+	root.init( k);
 }
 
 void Scene::update()

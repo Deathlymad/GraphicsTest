@@ -8,15 +8,13 @@ class RenderingEngine;
 class Scene
 {
 public:
-	Scene();
+	Scene(RenderingEngine*);
 
 	void addObj(EngineObject* obj)
 	{
 		root.add(obj); //could lead to class slicing
 	}
 
-	void init(RenderingEngine*, KeyMap*);
-	void init(RenderingEngine*);
 	void init(KeyMap*);
 	void update();
 	void render(Shader*);

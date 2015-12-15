@@ -23,14 +23,18 @@ public:
 	KeyMap& addKeyMap();
 
 	~Game();
+private: //context
+	Screen screen;
+	CoreEngine Engine;
+
 protected:
 	Scene world;
+
+	CoreEngine* getEngine() { return &Engine; }
 private:
 	void setupKeyMap(KeyMap&);
 
 	std::vector<KeyMap*> KeyMaps;
-	Screen screen;
-	CoreEngine Engine;
 
 	bool running;
 };

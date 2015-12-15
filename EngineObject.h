@@ -12,7 +12,7 @@ public:
 
 	void add(EngineObject* obj) { children.push_back(obj); }
 
-	virtual void init(RenderingEngine* r, KeyMap* k);
+	virtual void init( KeyMap* k);
 	virtual void update();
 	virtual void render(Shader*);
 

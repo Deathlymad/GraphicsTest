@@ -3,7 +3,7 @@
 #include "RenderingEngine.h"
 
 
-Game::Game() : screen(1366, 768, "Test", char(154)), Engine(&screen, this)
+Game::Game() : screen(1366, 768, "Test", char(154)), Engine(&screen, this), world(Engine.getGraphicEngine())
 {
 	screen.handleWindow(InputHandler::registerCallbacks);
 	KeyMaps.push_back(new KeyMap(&screen));
@@ -39,7 +39,6 @@ void Game::addObject(EngineObject & object)
 
 void Game::init()
 {
-	world.init(Engine.getGraphicEngine());
 	if (KeyMaps.size() > 0)
 		KeyMaps[0]->launchKeyMap();
 }

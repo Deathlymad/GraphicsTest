@@ -10,9 +10,10 @@ class KeyMap;
 class ModelRenderer : public EngineObject
 {
 public:
-	ModelRenderer( std::string, std::string);
+	ModelRenderer() {}
+	ModelRenderer( std::string, std::string, RenderingEngine*);
 
-	void init(RenderingEngine* r, KeyMap* k);
+	void init( KeyMap* k);
 	void render(Shader*);
 
 	~ModelRenderer();

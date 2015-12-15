@@ -17,11 +17,11 @@
 #include "Mesh.h"
 
 
-Mesh::Mesh() : vbo([this](GLuint* buf) {deleteBuffer(buf); }), ibo([this](GLuint* buf) {deleteBuffer(buf); })
+Mesh::Mesh() : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
 {
 }
 
-Mesh::Mesh ( std::string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }), ibo([this](GLuint* buf) {deleteBuffer(buf); })
+Mesh::Mesh ( std::string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
 {
 	std::vector<Vertex> v;
 	std::vector<unsigned int> in;
@@ -74,14 +74,11 @@ Mesh::Mesh ( std::string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }),
 			continue;
 		}
 	}
-	ind = in;
 	glDownload(v, in);
 }
 
-Mesh::Mesh(  std::vector<Vertex> &vec, std::vector < unsigned int> &i) : vbo([this](GLuint* buf) {deleteBuffer(buf); }), ibo([this](GLuint* buf) {deleteBuffer(buf); })
+Mesh::Mesh(  std::vector<Vertex> &vec, std::vector < unsigned int> &i) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
 {
-	pts = vec;
-	ind = i;
 	glDownload( vec, i);
 }
 
@@ -98,7 +95,6 @@ void Mesh::initGL( unsigned char flag)
 		glGenBuffers(1, ibo.get());
 	}
 	vao = VertexArrayObject(true, true, true);
-	vao.createVertexArray();
 }
 
 void Mesh::glDownload(std::vector<Vertex>& v, std::vector < unsigned int>& i)
@@ -118,13 +114,12 @@ void Mesh::glDownload(std::vector<Vertex>& v, std::vector < unsigned int>& i)
 		}
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, *(vbo.get())); //contains Vertices
-	glBufferData( GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
+	glBufferData( GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_STATIC_DRAW);
 	temp.clear();
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(ibo.get()));
-	glBufferData( GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_DYNAMIC_DRAW);
+	glBufferData( GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_STATIC_DRAW);
 	indices = i.size();
-	DataSize = v.size() * 12;
 }
 
 void Mesh::deleteBuffer(GLuint * buf)
@@ -135,7 +130,7 @@ void Mesh::deleteBuffer(GLuint * buf)
 
 void Mesh::Draw()
 {
-	initGL(!glIsBuffer(*(vbo.get())) << 1 | !glIsBuffer(*(ibo.get())));
+	vao.createVertexArray();
 	vao.bindVertexArray();
 	glBindBuffer(GL_ARRAY_BUFFER, *(vbo.get()));
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(ibo.get()));
@@ -157,18 +152,21 @@ Mesh::~Mesh(void)
 void Mesh::VertexArrayObject::createVertexArray()
 {
 	GLuint temp = -1;
-	glGenVertexArrays(1, &temp);
-	VAO.set(new GLuint(temp));
-	glBindVertexArray( *(VAO.get()));
+	if (!glIsVertexArray(*(VAO.get())))
+	{
+		glGenVertexArrays(1, &temp);
+		VAO.set(new GLuint(temp));
+		glBindVertexArray( *(VAO.get()));
 
-	if (isVec())
-		enableVec();
-	if (isTex())
-		enableTex();
-	if (isNor())
-		enableNor();
+		if (isVec())
+			enableVec();
+		if (isTex())
+			enableTex();
+		if (isNor())
+			enableNor();
 
-	disableVAO();
+		disableVAO();
+	}
 }
 
 void Mesh::VertexArrayObject::bindVertexArray()

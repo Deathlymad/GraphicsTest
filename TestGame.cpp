@@ -1,5 +1,4 @@
 #include "TestGame.h"
-#include "ModelRenderer.h"
 
 
 
@@ -10,10 +9,11 @@ TestGame::TestGame() : Game()
 
 	Dir = DirectionalLight(glm::vec3(0.1f, 0.0f, 0.3f), 10.0f, glm::normalize(glm::vec3( 1.0f, 1.0f,  1.0f)));
 	Dir.writeUniform("Light");
+	obj = ModelRenderer("assets/mesh/Test_Block.obj", "assets/textures/tex1.bmp", getEngine()->getGraphicEngine());
 
 	world.addObj(&pt);
 	world.addObj(&Dir);
-	world.addObj( new ModelRenderer("assets/mesh/Test_Block.obj", "assets/textures/tex1.bmp"));
+	world.addObj(&obj);
 }
 
 TestGame::~TestGame()

@@ -21,12 +21,13 @@ extern bool GraphicsInitialized;
 
 std::vector<Texture*> Texture::SamplerList = std::vector<Texture*>();
 
-GLuint Texture::last = -1;
+GLuint* Texture::last = nullptr;
 
-Texture::Texture( std::string fileName)
+void Texture::deleteTexture(GLuint* tex) { if (glIsTexture(*tex)) glDeleteTextures(1, tex); }
+
+Texture::Texture(std::string fileName) : ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
 {
 	isLoaded = false;
-	ID = 0;
 	tex = nullptr;
 	texX = 0;
 	texY = 0;
@@ -80,10 +81,11 @@ void Texture::glDownload()
 {
 	//set sampler to 0
 	glActiveTexture( GL_TEXTURE0);
-    glGenTextures(1, &ID);
+    glGenTextures(1, ID.get());
 
 
-    glBindTexture(GL_TEXTURE_2D, ID);
+
+    glBindTexture(GL_TEXTURE_2D, *(ID.get()));
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texX, texY, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
 
@@ -92,7 +94,7 @@ void Texture::glDownload()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	
-	glBindTexture( GL_TEXTURE_2D, ID);
+	glBindTexture( GL_TEXTURE_2D, *(ID.get()));
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -101,10 +103,10 @@ void Texture::glDownload()
 
 void Texture::bind()
 {
-	if (last != ID)
+	if (last != ID.get())
 	{
-		glBindTexture(GL_TEXTURE_2D, ID); //Errors 
-		last = ID;
+		glBindTexture(GL_TEXTURE_2D, *(ID.get())); //Errors 
+		last = ID.get();
 	}
 	GLenum err = glGetError();
 }

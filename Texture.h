@@ -1,7 +1,9 @@
 #include <vector>
+#include "Util.h"
 
 #pragma once
 
+NSP_UTIL
 
 typedef unsigned int GLuint;
 class TextureAtlas;
@@ -9,19 +11,17 @@ class TextureAtlas;
 class Texture
 {
 public:
-	Texture()
+	Texture() : ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
 	{
 		isLoaded = false;
-		ID = 0;
 		f = "";
 		tex = nullptr;
 		texX = 0;
 		texY = 0;
 	}
 
-	Texture( std::vector<std::vector<char>> tex)
+	Texture( std::vector<std::vector<char>> tex) : ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
 	{
-		ID = 0;
 		f = "";
 		this->tex = &tex[0][0]; 
 		texX = (unsigned short)tex.size();
@@ -50,7 +50,8 @@ public:
 
 	TextureAtlas operator + (Texture);
 protected:
-	GLuint ID; //TextureID
+	CustomPtr<GLuint> ID; //TextureID
+	void deleteTexture(GLuint* tex);
 
 	std::string f; //filename
 	char* tex; //Texture Memory
@@ -60,7 +61,7 @@ protected:
 	unsigned char pos; //Sampler Count
 	static std::vector<Texture*> SamplerList; //TODO improved sorting update, might not be necessary due to textureAtlas
 
-	static GLuint last;
+	static GLuint* last;
 };
 
 class TextureAtlas:Texture
@@ -70,7 +71,6 @@ public:
 
 	TextureAtlas( std::vector<std::vector<char>> tex,unsigned int bitX,unsigned int bitY)
 	{
-		ID = 0;
 		f = "";
 		this->tex = &tex[0][0]; 
 		texX = (unsigned short)tex.size();
