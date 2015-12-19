@@ -14,6 +14,7 @@ private:
 	PointLight pt;
 	DirectionalLight Dir;
 
+	Material m;
 	ModelRenderer obj;
 };
 

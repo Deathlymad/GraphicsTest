@@ -3,16 +3,16 @@
 #include "RenderingEngine.h"
 
 
-ModelRenderer::ModelRenderer(std::string meshFile, std::string texFile, RenderingEngine* r) : EngineObject(), mesh(meshFile), tex(texFile), mat(2, 1)
+ModelRenderer::ModelRenderer(std::string meshFile, std::string texFile) : EngineObject(), mesh(meshFile), tex(texFile), mat(2, 32)
 {
 	if (!tex.Loaded())
 		tex.glDownload();
-	if (!mat.isLoaded())
-		r->initOnShaders([this](Shader* s) {mat.createUniforms(s); });
 }
 
-void ModelRenderer::init( KeyMap * k)
+void ModelRenderer::init(RenderingEngine * r)
 {
+	if (!mat.isLoaded())
+		r->initOnShaders([this](Shader* s) {mat.createUniforms(s); });
 }
 
 void ModelRenderer::render(Shader* s)

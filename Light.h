@@ -13,29 +13,33 @@
 #include "EngineObject.h"
 #include "Shader.h"
 
+class RenderingEngine;
+
 #pragma once
-class BaseLight : public EngineObject
+class BaseLight :public EngineObject
 {
 public:
 
-	BaseLight():EngineObject(){}
+	BaseLight() {}
 
 	BaseLight( glm::vec3 c, float i);
+
+	virtual void render(Shader*);
 
 	~BaseLight(void)
 	{
 	}
 	
-	void init(RenderingEngine*, KeyMap*);
+	void init(RenderingEngine*);
 
-	virtual void writeUniform(std::string name);
+	virtual void createUniforms(std::string name);
 
 	Shader* getShader(){return shader;}
 protected:
 	Shader* shader;
 private:
-	glm::vec3 m_color;
-	float m_intensity;
+	glm::vec3 _color, *color;
+	float _intensity, *intensity;
 };
 
 #pragma once
@@ -47,16 +51,18 @@ public:
 
 	DirectionalLight( glm::vec3 c, float i, glm::vec3 dir);
 	
-	void writeUniform( std::string name);
+	virtual void createUniforms( std::string name);
+
+	virtual void render(Shader*);
 
 	void setNormal( glm::vec3 n)
 	{
-		normal = n;
+		_normal = n;
 	}
 
 	glm::vec3 getNormal()
 	{
-		return normal;
+		return _normal;
 	}
 
 	~DirectionalLight()
@@ -64,7 +70,7 @@ public:
 	}
 
 private:
-	glm::vec3 normal;
+	glm::vec3 _normal, *normal;
 };
 
 #pragma once
@@ -75,44 +81,51 @@ public:
 
 	Attenuation( float c, float l, float e)
 	{
-		constant = c;
-		linear = l;
-		exponent = e;
+		_constant = c;
+		_linear = l;
+		_exponent = e;
 	}
 	
-	void writeUniform( Shader* target, std::string name)
+	void createUniforms( Shader* target, std::string name)
 	{
-		target->addUniform(Shader::Uniform::Uniform(name + ".constant", &constant, 1));
-		target->addUniform(Shader::Uniform::Uniform(name + ".linear", &linear, 1));
-		target->addUniform(Shader::Uniform::Uniform(name + ".exponent", &exponent, 1));
+		target->addUniform(Shader::Uniform::Uniform(name + ".constant", constant, 1));
+		target->addUniform(Shader::Uniform::Uniform(name + ".linear", linear, 1));
+		target->addUniform(Shader::Uniform::Uniform(name + ".exponent", exponent, 1));
+	}
+	void writeUniforms()
+	{
+		*constant = _constant;
+		*linear = _linear;
+		*exponent = _exponent;
 	}
 
 	float getConstant()
 	{
-		return constant;
+		return _constant;
 	}
 	void setConstant(float c)
 	{
-		constant = c;
+		_constant = c;
 	}
 	float getLinear()
 	{
-		return linear;
+		return _linear;
 	}
 	void setLinear(float c)
 	{
-		linear = c;
+		_linear = c;
 	}
 	float getExponent()
 	{
-		return exponent;
+		return _exponent;
 	}
 	void setExponent(float c)
 	{
-		exponent = c;
+		_exponent = c;
 	}
 private:
-	float constant, linear, exponent;
+	float _constant, _linear, _exponent;
+	float* constant, *linear, *exponent;
 };
 
 #pragma once
@@ -123,7 +136,9 @@ public:
 
 	PointLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p);
 	
-	void writeUniform(std::string name);
+	virtual void createUniforms(std::string name);
+
+	virtual void render(Shader*);
 
 	void setAttenuation( Attenuation b)
 	{
@@ -132,26 +147,27 @@ public:
 		float li = atten.getLinear() / ex;
 		float co = atten.getConstant() / ex;
 		if (((li * li) / 4 - co) > 0)
-			range = (-li / 2 + sqrt((li * li) / 4 - co)); //calculate point where equation returns 0
+			_range = (-li / 2 + sqrt((li * li) / 4 - co)); //calculate point where equation returns 0
 		else
-			range = 1000.0f;
+			_range = 1000.0f;
 	}
+
 	Attenuation getAttenuation()
 	{
 		return atten;
 	}
 	void setPosition( glm::vec3 b)
 	{
-		pos = b;
+		_pos = b;
 	}
 	glm::vec3 getPosition()
 	{
-		return pos;
+		return _pos;
 	}
 private:
 	Attenuation atten;
-	glm::vec3 pos;
-	float range;
+	glm::vec3 _pos, *pos;
+	float _range, *range;
 };
 
 #pragma once
@@ -161,14 +177,16 @@ public:
 	SpotLight() : PointLight() {}
 	SpotLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p, glm::vec3 dir, float cut);
 	
-	void writeUniform(std::string name);
+	virtual void createUniforms(std::string name);
 
-	glm::vec3 getDirection(){ return direction;}
-	float getCutoff(){return cutoff;}
+	virtual void render(Shader*);
+
+	glm::vec3 getDirection(){ return _direction;}
+	float getCutoff(){return _cutoff;}
 
 	~SpotLight(){};
 	
 private:
-	glm::vec3 direction;
-	float cutoff;
+	glm::vec3 _direction, *direction;
+	float _cutoff, *cutoff;
 };

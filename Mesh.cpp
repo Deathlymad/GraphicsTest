@@ -152,7 +152,7 @@ Mesh::~Mesh(void)
 void Mesh::VertexArrayObject::createVertexArray()
 {
 	GLuint temp = -1;
-	if (!glIsVertexArray(*(VAO.get())))
+	if ( !VAO.get() || !glIsVertexArray(*(VAO.get())))
 	{
 		glGenVertexArrays(1, &temp);
 		VAO.set(new GLuint(temp));
@@ -193,8 +193,6 @@ void Mesh::VertexArrayObject::disableVAO()
 
 Mesh::VertexArrayObject::~VertexArrayObject()
 {
-	if (glIsVertexArray( *(VAO.get())))
-		glDeleteVertexArrays(1, VAO.get());
 }
 
 void Mesh::VertexArrayObject::enableVec()

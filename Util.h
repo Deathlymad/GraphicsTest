@@ -35,11 +35,15 @@ NSP_UTIL_BEG
 		{
 			if (ptr)
 				return ptr;
+			else
+				return nullptr;
 		}
 		T* get(unsigned int i)
 		{
 			if (ptr)
 				return &ptr[i];
+			else
+				return nullptr;
 		}
 		
 		void operator=(Ptr<T> &other)

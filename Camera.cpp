@@ -7,9 +7,9 @@
 float Camera::speed = 0.05f;
 glm::vec3 Camera::YAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 
-Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr(new float[16])
+Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr(nullptr)
 {
-	pos = glm::vec3(0, 0, -5);
+	_pos = glm::vec3(0, 0, -5);
 	forward = glm::vec3(0, 0, -1);
 	up = glm::vec3(0, 1, 0);
 	FoV = 45.0f;
@@ -20,12 +20,12 @@ Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr(new float[16])
 
 void Camera::update()
 {
-	View = projection * glm::lookAt(pos, pos + glm::normalize(forward), glm::normalize(up));
-	if (ViewProjMatPtr.get() != nullptr)
+	View = projection * glm::lookAt(_pos, _pos + glm::normalize(forward), glm::normalize(up));
+	if (ViewProjMatPtr != nullptr)
 	{
 		for (unsigned char i = 0; i < 16; i++) //writes memory
 		{
-			ViewProjMatPtr.set(View[floorf(i / 4)][i - (floorf(i / 4) * 4)], i);
+			ViewProjMatPtr[i] = (float) View[ (glm::tvec4<float, glm::precision::lowp>::length_type)floorf(i / 4)][(glm::tmat4x4<float, glm::precision::lowp>::length_type) (i - (floorf(i / 4) * 4))];
 		}
 	}
 }
@@ -54,8 +54,10 @@ void Camera::registerKeyBinds(KeyMap * k)
 
 void Camera::registerUniform(Shader * s)
 {
-	s->addUniform(Shader::Uniform("ViewProj", ViewProjMatPtr.get(), 16));
-	s->addUniform(Shader::Uniform("EyePos", &pos[0], 3));
+	s->addUniform(Shader::Uniform("ViewProj", ViewProjMatPtr, 16));
+	float* temp = nullptr;
+	s->addUniform(Shader::Uniform("EyePos", temp, 3));
+	pos = (glm::vec3*)temp;
 }
 
 Camera::~Camera()
@@ -65,8 +67,8 @@ Camera::~Camera()
 void Camera::onMouseMove(double dY, double dX)
 {
 	//computing X rotation
-	XAngle += dX * -(speed / 100);
-	YAngle += dY * -(speed / 100);
+	XAngle += dX * - (speed / 100);
+	YAngle += dY * - (speed / 100);
 
 	glm::vec3 HorizontalAxis = glm::normalize(glm::cross(YAxis, forward));
 
@@ -84,16 +86,16 @@ void Camera::move(unsigned short key)
 	switch (key)
 	{
 	case 65:
-		pos += glm::normalize(glm::cross(up, forward)) * speed;
+		_pos += glm::normalize(glm::cross(up, forward)) * speed;
 		break;
 	case 68:
-		pos += glm::normalize(glm::cross(forward, up)) * speed;
+		_pos += glm::normalize(glm::cross(forward, up)) * speed;
 		break;
 	case 83:
-		pos -= speed * forward; //not working
+		_pos -= speed * forward; //not working
 		break;
 	case 87:
-		pos += speed * forward; //not working
+		_pos += speed * forward; //not working
 		break;
 	}
 }

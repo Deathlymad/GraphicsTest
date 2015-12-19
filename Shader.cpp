@@ -48,9 +48,7 @@ Shader::Shader(std::vector<ShaderCode> Shaders) : program([this](GLuint* p) {del
 	build();
 }
 
-Shader::~Shader(){
-	Code.~vector();
-}
+Shader::~Shader(){}
 
 
 
@@ -123,8 +121,7 @@ void Shader::build()
 	}
 
 	//Uniform Phase
-	for (size_t i = 0; i < Uniforms.size(); i++)
-		setupUniform(&Uniforms[i]);
+	setUniforms();
 }
 void Shader::bind()
 {
@@ -140,7 +137,7 @@ void Shader::bind()
 void Shader::setUniforms()
 {
 	for (size_t i = 0; i < Uniforms.size(); i++)
-		updateUniform(&Uniforms[i]);
+		Uniforms[i].write(program.get());
 }
 
 
@@ -187,45 +184,6 @@ bool Shader::operator==(std::vector<ShaderCode> Shaders)
 		res = res && (*this == s);
 	}
 	return res;
-}
-
-
-
-void Shader::setupUniform(Uniform * uniform) //needs to be called
-{
-	uniform->pos.set( new GLuint( glGetUniformLocation(*(program.get()), uniform->_name.c_str()))); //Error Handling?
-}
-
-void Shader::updateUniform(Uniform * uniform)
-{
-	if ( *(uniform->pos.get()) == -1)
-		setupUniform(uniform);
-
-	float* tempData = uniform->_data;
-	char size = uniform->_size;
-	switch (size)
-	{
-	case 1:
-		glUniform1fv(*(uniform->pos.get()), 1, tempData); //error Handling
-		break;
-	case 2:
-		glUniform2fv(*(uniform->pos.get()), 1, tempData); //error Handling
-		break;
-	case 3:
-		glUniform3fv(*(uniform->pos.get()), 1, tempData); //error Handling
-		break;
-	case 4:
-		glUniform4fv(*(uniform->pos.get()), 1, tempData); //error Handling
-		break;
-	case 9:
-		glUniformMatrix3fv(*(uniform->pos.get()), 1, false, tempData); //error Handling
-		break;
-	case 16:
-		glUniformMatrix4fv(*(uniform->pos.get()), 1, false, tempData); //error Handling
-		break;
-	default:
-		break;
-	}
 }
 
 void Shader::makeShader(ShaderCode* code)
@@ -333,4 +291,40 @@ std::string Shader::getShaderCode(std::string File)
 	else
 		return "";
 	return ShaderCode;
+}
+
+void Shader::Uniform::create(GLuint* prgm)
+{
+	pos = glGetUniformLocation(*prgm, _name.c_str());
+}
+
+void Shader::Uniform::write(GLuint* prgm)
+{
+	if ( pos == -1)
+		create(prgm);
+
+	switch (_size)
+	{
+	case 1:
+		glUniform1fv(pos, 1, _data.get()); //error Handling
+		break;
+	case 2:
+		glUniform2fv(pos, 1, _data.get()); //error Handling
+		break;
+	case 3:
+		glUniform3fv(pos, 1, _data.get()); //error Handling
+		break;
+	case 4:
+		glUniform4fv(pos, 1, _data.get()); //error Handling
+		break;
+	case 9:
+		glUniformMatrix3fv(pos, 1, false, _data.get()); //error Handling
+		break;
+	case 16:
+		glUniformMatrix4fv(pos, 1, false, _data.get()); //error Handling
+		break;
+	default:
+		glUniform1fv(pos, _size, _data.get()); //error Handling
+		break;
+	}
 }

@@ -29,7 +29,7 @@ void RenderingEngine::render(Scene * s)
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND); //resetting to standard State
-
+	
 	screen->updateScreen();
 }
 

@@ -48,20 +48,18 @@ vec4 calcLight(BaseLight base, vec3 direction)
         difCol = vec4(base.color, 1.0) * base.intensity * dif;
         
         vec3 dirToEye = normalize(EyePos - worldPos);
-        //vec3 refDir = normalize(reflect(direction, normal));
         vec3 hDir = normalize(dirToEye - direction);
         
         float spec = dot(hDir, normal);
-        //float spec = dot(dirToEye, refDir);
         spec = pow(spec, specularExponent);
         
         if(spec > 0)
         {
-            specCol = vec4(base.color, 1.0) * specularIntensity * spec;
+            specCol = vec4(base.color, 1.0) * spec * specularIntensity;
         }
     }
     
-    return difCol * specCol;
+    return difCol + specCol;
 }
 
 vec4 calcPointLight(PointLight pointLight)

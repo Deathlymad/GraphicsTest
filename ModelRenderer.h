@@ -11,9 +11,10 @@ class ModelRenderer : public EngineObject
 {
 public:
 	ModelRenderer() {}
-	ModelRenderer( std::string, std::string, RenderingEngine*);
+	ModelRenderer( std::string, std::string);
 
-	void init( KeyMap* k);
+	void init(RenderingEngine*);
+
 	void render(Shader*);
 
 	~ModelRenderer();

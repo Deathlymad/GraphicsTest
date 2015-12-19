@@ -167,6 +167,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="TestGame.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="UniformRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bmp.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="TestGame.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="UniformRegistry.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>

@@ -37,8 +37,9 @@ public: //Public structures
 		CustomPtr<GLuint> pos;
 		void clearShader(GLuint* s)
 		{
-			if (glIsShader(*(pos.get())))
-				glDeleteShader(*(pos.get()));
+			if (pos.get())
+				if (glIsShader(*(pos.get())))
+					glDeleteShader(*(pos.get()));
 		}
 
 		ShaderCode() : _type(TESSELATION_EVALUATION), _path(""), pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
@@ -54,34 +55,30 @@ public: //Public structures
 	class Uniform
 	{
 	public:
-		std::string _name;
-		float* _data; //does not allocate in itself!!!
-		unsigned _size; //just to make sure sizeof seems derpy...
-		Ptr<GLuint> pos;
 
 		Uniform() : _name("emptyUniform"), _data(nullptr), _size(0), pos(-1) {}
-		Uniform(std::string name, float* data, unsigned size) : _name(name), _data(nullptr), _size(0), pos(-1)
+		Uniform(std::string name, float*& data, unsigned size) : _name(name), _data(new float[size]), _size(0), pos(-1)
 		{
-			if (data)
-			{
-				_data = data;
-				_size = size;
-			}
-		}
-
-		void setFloatArr(float* data, unsigned size)
-		{
-			_data = data;
+			data = _data.get();
 			_size = size;
 		}
+
+		void create(GLuint* prgm);
+
+		void write(GLuint* prgm);
 
 		bool operator==(Uniform other) { return _name == other._name; } //that should suffice
 		bool operator!=(Uniform other) { return _name != other._name; } //that should suffice
 		~Uniform()
 		{
-			_data = nullptr;
 			_size = 0;
 		}
+
+	private:
+		std::string _name;
+		Ptr<float> _data;
+		unsigned _size; //just to make sure sizeof seems derpy...
+		GLuint pos;
 	};
 public:
 	//construction / destruction
@@ -121,8 +118,6 @@ private:
 	std::vector<Uniform> Uniforms;
 
 	//functions
-	void setupUniform(Uniform*);
-	void updateUniform(Uniform*);
 	void makeShader(ShaderCode*);
 	std::string checkProgram();
 	GLenum getShaderType(ShaderType);

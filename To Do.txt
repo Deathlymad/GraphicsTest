@@ -1,13 +1,15 @@
 Short Term:
-Cube isn't a cube... fix perspective
 finish Textures (TextureAtlas)
 Add Object Transformation
 add comments
+make all Object modifications (Materials etc. ) have IDs
+Error Handling for Uniforms
 
 Long Term:
 Create World
 Physics
 autonomous Threadusage and memory optimization
+Move Math from glm to Blaze?
 
 Very Long Term:
 Gamepad Joystick implementation

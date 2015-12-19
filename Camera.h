@@ -31,7 +31,7 @@ protected:
 private:
 	void move(unsigned short key);
 
-	glm::vec3 pos;
+	glm::vec3 _pos, *pos;
 	glm::vec3 forward;
 	glm::vec3 up;
 
@@ -39,7 +39,7 @@ private:
 	float FoV;
 	float Aspect;
 	glm::mat4 projection;
-	Ptr<float> ViewProjMatPtr;
+	float* ViewProjMatPtr;
 
 	double XAngle, YAngle;
 
