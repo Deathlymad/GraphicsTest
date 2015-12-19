@@ -15,8 +15,8 @@ TestGame::TestGame() : Game()
 
 	//Rendering Registry
 	obj.init( getEngine()->getGraphicEngine());
-	//getEngine()->getGraphicEngine()->registerGraphicObject(&pt);
-	//getEngine()->getGraphicEngine()->registerGraphicObject(&Dir);
+	getEngine()->getGraphicEngine()->registerGraphicObject(&pt);
+	getEngine()->getGraphicEngine()->registerGraphicObject(&Dir);
 
 	//scene Registry
 	world.addObj(&pt);

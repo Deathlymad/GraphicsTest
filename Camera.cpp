@@ -7,7 +7,7 @@
 float Camera::speed = 0.05f;
 glm::vec3 Camera::YAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 
-Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr(nullptr)
+Camera::Camera() : InputHandler(), EngineObject()
 {
 	_pos = glm::vec3(0, 0, -5);
 	forward = glm::vec3(0, 0, -1);
@@ -21,13 +21,7 @@ Camera::Camera() : InputHandler(), EngineObject(), ViewProjMatPtr(nullptr)
 void Camera::update()
 {
 	View = projection * glm::lookAt(_pos, _pos + glm::normalize(forward), glm::normalize(up));
-	if (ViewProjMatPtr != nullptr)
-	{
-		for (unsigned char i = 0; i < 16; i++) //writes memory
-		{
-			ViewProjMatPtr[i] = (float) View[ (glm::tvec4<float, glm::precision::lowp>::length_type)floorf(i / 4)][(glm::tmat4x4<float, glm::precision::lowp>::length_type) (i - (floorf(i / 4) * 4))];
-		}
-	}
+	ViewProjMat.update(&View[0][0]);
 }
 
 void Camera::setFoV(float fov)
@@ -54,8 +48,10 @@ void Camera::registerKeyBinds(KeyMap * k)
 
 void Camera::registerUniform(Shader * s)
 {
-	s->addUniform(Shader::Uniform("ViewProj", ViewProjMatPtr, 16));
 	float* temp = nullptr;
+	s->addUniform(Shader::Uniform("ViewProj", temp, 16));
+	ViewProjMat.addMemPos(temp);
+	temp = nullptr;
 	s->addUniform(Shader::Uniform("EyePos", temp, 3));
 	pos = (glm::vec3*)temp;
 }

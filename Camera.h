@@ -4,6 +4,7 @@
 #include "EngineObject.h"
 #include "InputHandler.h"
 #include "KeyMap.h"
+#include "UniformRegistry.h"
 #include "Util.h"
 
 class RenderingEngine;
@@ -39,7 +40,7 @@ private:
 	float FoV;
 	float Aspect;
 	glm::mat4 projection;
-	float* ViewProjMatPtr;
+	UniformRegistry<16> ViewProjMat;
 
 	double XAngle, YAngle;
 
