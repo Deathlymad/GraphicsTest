@@ -19,6 +19,8 @@ void BaseLight::render(Shader * s)
 		*color = _color;
 		*intensity = _intensity;
 	}
+
+	EngineObject::render(s);
 }
 
 void BaseLight::init(RenderingEngine * r)
@@ -61,6 +63,8 @@ void DirectionalLight::render(Shader * s)
 		BaseLight::render(s);
 		*normal = _normal;
 	}
+
+	EngineObject::render(s);
 }
 
 PointLight::PointLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p) : BaseLight( c, i)
@@ -101,6 +105,9 @@ void PointLight::render(Shader * s)
 		*range = _range;
 		*pos = _pos;
 	}
+
+	EngineObject::render(s);
+
 }
 
 SpotLight::SpotLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p, glm::vec3 dir, float cut) : PointLight( c, i, a, p)
@@ -132,4 +139,7 @@ void SpotLight::render(Shader * s)
 		*direction = _direction;
 		*cutoff = _cutoff;
 	}
+
+	EngineObject::render(s);
+
 }

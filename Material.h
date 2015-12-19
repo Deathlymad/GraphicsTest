@@ -1,41 +1,39 @@
 #include "Shader.h"
+#include "UniformRegistry.h"
 
 #pragma once
 class Material :public EngineObject
 {
 public:
-	Material() : EngineObject(), specularIntensity(nullptr), specularExponent(nullptr)
+	Material() : EngineObject()
 	{
 		_specularExponent = 0.0f;
 		_specularIntensity = 0.0f;
 	}
 
-	Material( float intensity, float exponent) : EngineObject(), specularIntensity(nullptr), specularExponent(nullptr)
+	Material( float intensity, float exponent) : EngineObject()
 	{
 		_specularIntensity = intensity;
 		_specularExponent = exponent;
 	}
 
-	void createUniforms(Shader* prog)
+	void init(Shader* prog)
 	{
-		prog->addUniform(Shader::Uniform("specularIntensity", specularIntensity, 1));
-		prog->addUniform(Shader::Uniform("specularExponent", specularExponent, 1));
+		float* f;
+		prog->addUniform(Shader::Uniform("specularIntensity", f, 1));
+		specularIntensity.addMemPos(f);
+		f = nullptr;
+		prog->addUniform(Shader::Uniform("specularExponent", f, 1));
+		specularExponent.addMemPos(f);
 	}
 
 	void render(Shader* s)
 	{
-		if (isLoaded())
-		{
-			*specularIntensity = _specularIntensity;
-			*specularExponent = _specularExponent;
-		}
-		else
-		{
-			createUniforms(s);
-		}
-	}
+		specularIntensity.update(&_specularIntensity);
+		specularExponent.update(&_specularExponent);
 
-	bool isLoaded() { return specularIntensity && specularExponent; }
+		EngineObject::render(s);
+	}
 
 	void operator=(Material& m)
 	{
@@ -49,7 +47,7 @@ public:
 
 private:
 	float _specularIntensity;
-	float* specularIntensity;
+	UniformRegistry<1> specularIntensity;
 	float _specularExponent;
-	float* specularExponent;
+	UniformRegistry<1> specularExponent;
 };
