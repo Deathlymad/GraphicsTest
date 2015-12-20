@@ -12,7 +12,7 @@
 #include "InputHandler.h"
 
 bool InputHandler::registered = false;
-std::vector<InputHandler*> InputHandler::Handles;
+vector<InputHandler*> InputHandler::Handles;
 
 InputHandler::InputHandler(Screen * s)
 {

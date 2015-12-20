@@ -16,7 +16,7 @@ public:
 	RenderingEngine() : ThreadExclusiveObject<RenderingEngine>(*this) {}
 	RenderingEngine(CoreEngine* parent, Screen*);
 
-	void initOnShaders(std::function<void(Shader*)> f) { f(&ambient); for (BaseLight* l : Lights) f(l->getShader()); }
+	void initOnShaders(function<void(Shader*)> f) { f(&ambient); for (BaseLight* l : Lights) f(l->getShader()); }
 
 	void render(Scene*);
 
@@ -42,7 +42,7 @@ private:
 	Camera* MainView; //needs way of showing several pictures (PIP, mirrors, etc.) without several renderingengines
 
 	Shader ambient;
-	std::vector<BaseLight*> Lights;
+	vector<BaseLight*> Lights;
 
 
 	CoreEngine* _parent;

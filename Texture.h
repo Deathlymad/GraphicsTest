@@ -4,6 +4,8 @@
 #pragma once
 
 NSP_UTIL
+NSP_STD
+
 
 typedef unsigned int GLuint;
 class TextureAtlas;
@@ -20,7 +22,7 @@ public:
 		texY = 0;
 	}
 
-	Texture( std::vector<std::vector<char>> tex) : ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
+	Texture( vector<vector<char>> tex) : ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
 	{
 		f = "";
 		this->tex = &tex[0][0]; 
@@ -28,13 +30,13 @@ public:
 		texY = (unsigned short)tex[0].size();
 	}
 
-	Texture( std::string fileName);
+	Texture( string fileName);
 
-	void setTexture(std::string);
+	void setTexture(string);
 
-	void load( std::string);
+	void load( string);
 
-	std::vector<std::vector<char>> getTexData();
+	vector<vector<char>> getTexData();
 
 	void glDownload();
 
@@ -53,13 +55,13 @@ protected:
 	CustomPtr<GLuint> ID; //TextureID
 	void deleteTexture(GLuint* tex);
 
-	std::string f; //filename
+	string f; //filename
 	char* tex; //Texture Memory
 	unsigned short texX, texY; //size
 	bool isLoaded;
 
 	unsigned char pos; //Sampler Count
-	static std::vector<Texture*> SamplerList; //TODO improved sorting update, might not be necessary due to textureAtlas
+	static vector<Texture*> SamplerList; //TODO improved sorting update, might not be necessary due to textureAtlas
 
 	static GLuint* last;
 };
@@ -69,7 +71,7 @@ class TextureAtlas:Texture
 public:
 	TextureAtlas():Texture(){}
 
-	TextureAtlas( std::vector<std::vector<char>> tex,unsigned int bitX,unsigned int bitY)
+	TextureAtlas( vector<vector<char>> tex,unsigned int bitX,unsigned int bitY)
 	{
 		f = "";
 		this->tex = &tex[0][0]; 
@@ -79,9 +81,9 @@ public:
 		this->bitY = bitY; 
 	}
 
-	TextureAtlas(std::vector<std::string>);
+	TextureAtlas(vector<string>);
 
-	void load(std::string, unsigned short, unsigned short);
+	void load(string, unsigned short, unsigned short);
 
 	void bind();
 	

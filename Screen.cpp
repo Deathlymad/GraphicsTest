@@ -31,8 +31,8 @@ void Screen::initGraphicContexCreation()
 		return;
 	//Context Setup with GLFW
 	if (!glfwInit())
-		std::cout << "GLFW" << "startup of GLFW errored" << std::endl;
-	std::cout << "GLFW" << "started GLFW" << std::endl;
+		cout << "GLFW" << "startup of GLFW errored" << endl;
+	cout << "GLFW" << "started GLFW" << endl;
 	
 	initializedGLFW = true;
 }
@@ -41,7 +41,7 @@ GLFWmonitor* Screen::getMonitor(unsigned short monitorID)
 {
 	int monitorCount;
 	glfwGetMonitors(&monitorCount);
-	std::vector<GLFWmonitor*> monitors = std::vector<GLFWmonitor*>();
+	vector<GLFWmonitor*> monitors = vector<GLFWmonitor*>();
 	GLFWmonitor** temp = glfwGetMonitors(&monitorCount);
 	monitors.insert(monitors.begin(), temp, temp + monitorCount);
 
@@ -54,7 +54,7 @@ GLFWmonitor* Screen::getMonitor(unsigned short monitorID)
 }
 
 
-void Screen::createWindow(int width, int height, std::string title, char flags)
+void Screen::createWindow(int width, int height, string title, char flags)
 {
 	if (flags == 0)
 		flags = char(152);
@@ -70,7 +70,7 @@ void Screen::createWindow(int width, int height, std::string title, char flags)
 	if (!winHandle)
 		return;
 
-	std::cout << "Created Window" << std::endl;
+	cout << "Created Window" << endl;
 	
 	glfwSetInputMode(winHandle, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetInputMode(winHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -83,28 +83,28 @@ void Screen::setupGraphicFunctions()
 	if (initializedGLEW)
 		return;
 
-	std::cout << "GLEW" << "start init of GLEW" << std::endl;
+	cout << "GLEW" << "start init of GLEW" << endl;
 	glewExperimental = true; // Needed for core profile
-	std::cout << "GLEW" << "using experimental version of GLEW" << std::endl;
+	cout << "GLEW" << "using experimental version of GLEW" << endl;
 	if (glewInit() != GLEW_OK) {
-		std::cout << "GLEW" << "Failed to initialize GLEW" << std::endl;
+		cout << "GLEW" << "Failed to initialize GLEW" << endl;
 	}
-	std::cout << "GLEW" << "done with GLEW" << std::endl;
+	cout << "GLEW" << "done with GLEW" << endl;
 
 	glGetError(); //catches the Invalid Enum Error that GLEW Throws, not a error but a bug
-	std::cout << std::string("Running Versions: \n").c_str() <<
-		"  Graphics Data:\n" << std::endl <<
-		"    Graphic Renderer: " << (char*)glGetString(GL_RENDERER) << std::endl <<
-		"    Graphics Vendor:  " << (char*)glGetString(GL_VENDOR) << std::endl <<
-		"    OpenGL:           " << (char*)glGetString(GL_VERSION) << std::endl <<
-		"    GLSL:             " << (char*)glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl <<
-		"    GLFW:             " << (char*)glfwGetVersionString() << std::endl <<
-		"    GLEW:             " << (char*)glewGetString(GLEW_VERSION) << std::endl;
+	cout << string("Running Versions: \n").c_str() <<
+		"  Graphics Data:\n" << endl <<
+		"    Graphic Renderer: " << (char*)glGetString(GL_RENDERER) << endl <<
+		"    Graphics Vendor:  " << (char*)glGetString(GL_VENDOR) << endl <<
+		"    OpenGL:           " << (char*)glGetString(GL_VERSION) << endl <<
+		"    GLSL:             " << (char*)glGetString(GL_SHADING_LANGUAGE_VERSION) << endl <<
+		"    GLFW:             " << (char*)glfwGetVersionString() << endl <<
+		"    GLEW:             " << (char*)glewGetString(GLEW_VERSION) << endl;
 
 	initializedGLEW = true;
 }
 
-Screen::Screen(std::string title)
+Screen::Screen(string title)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
@@ -115,7 +115,7 @@ Screen::Screen(std::string title)
 	setupGraphicFunctions();
 }
 
-Screen::Screen(int width, int height, std::string title)
+Screen::Screen(int width, int height, string title)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
@@ -127,7 +127,7 @@ Screen::Screen(int width, int height, std::string title)
 	setupGraphicFunctions();
 }
 
-Screen::Screen(std::string title, char flags)
+Screen::Screen(string title, char flags)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
@@ -138,7 +138,7 @@ Screen::Screen(std::string title, char flags)
 	setupGraphicFunctions();
 }
 
-Screen::Screen(int width, int height, std::string title, char flags)
+Screen::Screen(int width, int height, string title, char flags)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();

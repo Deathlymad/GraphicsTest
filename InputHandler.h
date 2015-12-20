@@ -1,5 +1,8 @@
 #include <set>
 #include <vector>
+#include "Def.h"
+
+NSP_STD
 
 struct GLFWwindow;
 class Screen;
@@ -20,7 +23,7 @@ protected:
 	virtual void onMouseButton(char button, char action, char mods) {} //abstract, needs to be overwritten
 
 private:
-	static std::vector<InputHandler*> Handles; //atores Update Links to all Input Handlers, common Ressource needs protection
+	static vector<InputHandler*> Handles; //atores Update Links to all Input Handlers, common Ressource needs protection
 	size_t pos;
 
 	double x, y;

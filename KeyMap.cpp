@@ -23,7 +23,7 @@ KeyMap::KeyMap() : InputHandler(), KeyTick([] {}, [this] {updateKeyMap(this); },
 {
 }
 
-void KeyMap::addKeyBind( unsigned short key, std::function<void(unsigned short)> Func, std::string name)
+void KeyMap::addKeyBind( unsigned short key, function<void(unsigned short)> Func, string name)
 {
 	KeyBind k;
 	k.key = key;
@@ -64,7 +64,7 @@ void KeyMap::onKeyPress(char button, char action, char mods)
 		KeyBindings[pos].isPressed = false;
 }
 
-size_t KeyMap::find(unsigned short key, std::vector<KeyBind>* arr, int min, int max)
+size_t KeyMap::find(unsigned short key, vector<KeyBind>* arr, int min, int max)
 {
 	if (min > max) {
 		return min;
@@ -109,7 +109,7 @@ size_t KeyMap::find(unsigned short key, std::vector<KeyBind>* arr, int min, int 
 
 void KeyMap::updateKeyMap(KeyMap * k)
 {
-	std::vector<KeyBind>* Bindings = &(k->KeyBindings);
+	vector<KeyBind>* Bindings = &(k->KeyBindings);
 	for (size_t i = 0; i < Bindings->size(); i++)
 	{
 		if ((*Bindings)[i].isPressed)

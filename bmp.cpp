@@ -2,6 +2,11 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include "Def.h"
+
+NSP_STD
+
+//bmpread v0.1 by Linus Helfmann
 //Loader nimmt an das: Standard eingehalten wurde => Felder richtig beschrieben, Farbtiefe 24Bits, Compression = 0, ansonsten gibt es Fehler aus
 //1. Dateigröße bestimmen
 //2. wenn Dateigröße über 54, dann Header einlesen und prüfen ob es mit BM beginnt
@@ -11,9 +16,9 @@
 
 
 
-char* loadbmp(std::string path, int &width, int &height)
+char* loadbmp(string path, int &width, int &height)
 {
-	std::ifstream load(path.c_str(), std::ios::binary | std::ios::ate);
+	ifstream load(path.c_str(), ios::binary | ios::ate);
 	if (load.good())
 	{
 		//1.
@@ -56,7 +61,7 @@ char* loadbmp(std::string path, int &width, int &height)
 	}
 	
 	// Hier sollte man nicht ankommen ;)
-	std::cout << "bitmap Loader " << "Fehler beim lesen von " + path << std::endl;
+	cout << "bitmap Loader " << "Fehler beim lesen von " + path << endl;
 	load.close();
 	return nullptr;
 }

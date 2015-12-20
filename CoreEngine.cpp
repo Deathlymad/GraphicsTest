@@ -16,7 +16,7 @@ RenderingEngine* CoreEngine::getGraphicEngine()
 	return &GrEngine;
 }
 
-std::mutex* CoreEngine::getLock()
+mutex* CoreEngine::getLock()
 {
 	return &lk;
 }
@@ -28,12 +28,12 @@ CoreEngine::~CoreEngine()
 
 void CoreEngine::init()
 {
-	std::lock_guard<std::mutex> t(lk);
+	lock_guard<mutex> t(lk);
 	_game->init();
 }
 
 void CoreEngine::update()
 {
-	std::lock_guard<std::mutex> t(lk);
+	lock_guard<mutex> t(lk);
 	_game->update();
 }

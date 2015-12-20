@@ -1,5 +1,8 @@
 #include <mutex>
 #include <thread>
+#include "Def.h"
+
+NSP_STD
 
 #pragma once
 template<typename T>
@@ -18,12 +21,12 @@ public:
 
 	void claim(T& obj)
 	{
-		lock = new std::lock_guard<std::mutex>(mut);
-		//obj = std::move(*o);
+		lock = new lock_guard<mutex>(mut);
+		//obj = move(*o);
 	}
 	void unclaim(T& obj)
 	{
-		//obj = std::move(*o);
+		//obj = move(*o);
 		lock->~lock_guard();
 	}
 
@@ -35,26 +38,26 @@ public:
 private:
 	bool owned;
 	T* o;
-	std::mutex mut;
-	std::lock_guard<std::mutex>* lock;
+	mutex mut;
+	lock_guard<mutex>* lock;
 };
 
 template<typename T>
 class ThreadExclusiveObject : ExclusiveObject<T> //can onlybe used by one thread at a time
 {
 public:
-	ThreadExclusiveObject(T &obj):ExclusiveObject<T>(obj), id(std::this_thread::get_id())
+	ThreadExclusiveObject(T &obj):ExclusiveObject<T>(obj), id(this_thread::get_id())
 	{}
 
 	void claim(T &obj)
 	{
-		if (id != std::this_thread::get_id())
+		if (id != this_thread::get_id())
 			return;
 		ExclusiveObject<T>::claim(obj);
 	}
 	void unclaim(T &obj)
 	{
-		if (id != std::this_thread::get_id())
+		if (id != this_thread::get_id())
 			return;
 		ExclusiveObject<T>::unclaim(obj);
 	}
@@ -62,5 +65,5 @@ public:
 	~ThreadExclusiveObject()
 	{}
 private:
-	std::thread::id id;
+	thread::id id;
 };

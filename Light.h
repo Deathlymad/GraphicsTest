@@ -12,6 +12,10 @@
 #include <string>
 #include "EngineObject.h"
 #include "Shader.h"
+#include "Def.h"
+
+NSP_STD
+NSP_GLM
 
 class RenderingEngine;
 
@@ -22,7 +26,7 @@ public:
 
 	BaseLight() {}
 
-	BaseLight( glm::vec3 c, float i);
+	BaseLight( vec3 c, float i);
 
 	virtual void render(Shader*);
 
@@ -32,13 +36,13 @@ public:
 	
 	void init(RenderingEngine*);
 
-	virtual void createUniforms(std::string name);
+	virtual void createUniforms(string name);
 
 	Shader* getShader(){return shader;}
 protected:
 	Shader* shader;
 private:
-	glm::vec3 _color, *color;
+	vec3 _color, *color;
 	float _intensity, *intensity;
 };
 
@@ -49,18 +53,18 @@ public:
 
 	DirectionalLight() : BaseLight(){}
 
-	DirectionalLight( glm::vec3 c, float i, glm::vec3 dir);
+	DirectionalLight( vec3 c, float i, vec3 dir);
 	
-	virtual void createUniforms( std::string name);
+	virtual void createUniforms( string name);
 
 	virtual void render(Shader*);
 
-	void setNormal( glm::vec3 n)
+	void setNormal( vec3 n)
 	{
 		_normal = n;
 	}
 
-	glm::vec3 getNormal()
+	vec3 getNormal()
 	{
 		return _normal;
 	}
@@ -70,7 +74,7 @@ public:
 	}
 
 private:
-	glm::vec3 _normal, *normal;
+	vec3 _normal, *normal;
 };
 
 #pragma once
@@ -86,7 +90,7 @@ public:
 		_exponent = e;
 	}
 	
-	void createUniforms( Shader* target, std::string name)
+	void createUniforms( Shader* target, string name)
 	{
 		target->addUniform(Shader::Uniform::Uniform(name + ".constant", constant, 1));
 		target->addUniform(Shader::Uniform::Uniform(name + ".linear", linear, 1));
@@ -134,9 +138,9 @@ class PointLight : public BaseLight
 public:
 	PointLight() : BaseLight(){}
 
-	PointLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p);
+	PointLight( vec3 c, float i,Attenuation a, vec3 p);
 	
-	virtual void createUniforms(std::string name);
+	virtual void createUniforms(string name);
 
 	virtual void render(Shader*);
 
@@ -156,17 +160,17 @@ public:
 	{
 		return atten;
 	}
-	void setPosition( glm::vec3 b)
+	void setPosition( vec3 b)
 	{
 		_pos = b;
 	}
-	glm::vec3 getPosition()
+	vec3 getPosition()
 	{
 		return _pos;
 	}
 private:
 	Attenuation atten;
-	glm::vec3 _pos, *pos;
+	vec3 _pos, *pos;
 	float _range, *range;
 };
 
@@ -175,18 +179,18 @@ class SpotLight : public PointLight
 {
 public:
 	SpotLight() : PointLight() {}
-	SpotLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p, glm::vec3 dir, float cut);
+	SpotLight( vec3 c, float i,Attenuation a, vec3 p, vec3 dir, float cut);
 	
-	virtual void createUniforms(std::string name);
+	virtual void createUniforms(string name);
 
 	virtual void render(Shader*);
 
-	glm::vec3 getDirection(){ return _direction;}
+	vec3 getDirection(){ return _direction;}
 	float getCutoff(){return _cutoff;}
 
 	~SpotLight(){};
 	
 private:
-	glm::vec3 _direction, *direction;
+	vec3 _direction, *direction;
 	float _cutoff, *cutoff;
 };

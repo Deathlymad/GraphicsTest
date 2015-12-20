@@ -21,6 +21,6 @@ public:
 
 	~UniformRegistry<size>() {}
 private:
-	std::vector<float*> MemPos;
+	vector<float*> MemPos;
 };
 

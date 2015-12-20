@@ -1,5 +1,8 @@
 #include <functional>
 #include <string>
+#include "Def.h"
+
+NSP_STD
 
 struct GLFWwindow;
 struct GLFWmonitor;
@@ -14,14 +17,14 @@ public:
 	static GLFWmonitor* getMonitor(unsigned short monitorID);
 
 
-	Screen(std::string title);
-	Screen(int width, int height, std::string title);
-	Screen(std::string title, char flags);
-	Screen(int width, int height, std::string title, char flags);
+	Screen(string title);
+	Screen(int width, int height, string title);
+	Screen(string title, char flags);
+	Screen(int width, int height, string title, char flags);
 
 	void updateScreen();
 
-	void handleWindow(std::function<void(GLFWwindow*)> f)
+	void handleWindow(function<void(GLFWwindow*)> f)
 	{
 		f(winHandle);
 	}
@@ -35,7 +38,7 @@ public:
 private:
 	int Width, Height;
 	GLFWwindow* winHandle;
-	void createWindow(int width, int height, std::string title, char flags);
+	void createWindow(int width, int height, string title, char flags);
 	void setupGraphicFunctions();
 
 	static bool initializedGLFW;

@@ -14,7 +14,7 @@ void RenderingEngine::render(Scene * s)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	std::lock_guard<std::mutex>(*(_parent->getLock()));
+	lock_guard<mutex>(*(_parent->getLock()));
 	
 	s->render(&ambient);
 	

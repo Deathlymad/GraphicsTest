@@ -2,14 +2,14 @@
 
 
 
-Clock::Clock( std::function<void()> init, std::function<void()> f, unsigned int tps) : init(init), func(f), running(false), tickRatio(1000/tps)
+Clock::Clock( function<void()> init, function<void()> f, unsigned int tps) : init(init), func(f), running(false), tickRatio(1000/tps)
 {
 }
 
 void Clock::run()
 {
 	running = true;
-	t = std::thread([this] {update(); });
+	t = thread([this] {update(); });
 }
 
 Clock::~Clock()
@@ -25,13 +25,13 @@ void Clock::update()
 	lastSec = system_clock::now();
 	while (running)
 	{
-		lastTick = std::chrono::system_clock::now();
+		lastTick = chrono::system_clock::now();
 		
 		//mutex Check
 		func();
 		currentTicks++;
 
-		std::this_thread::sleep_for(milliseconds((int)std::floorf(tickRatio)) - duration_cast<std::chrono::milliseconds>(system_clock::now() - lastTick));
+		this_thread::sleep_for(milliseconds((int)floorf(tickRatio)) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
 
 
 		if (duration_cast<milliseconds>(system_clock::now() - lastSec) >= milliseconds(1000))

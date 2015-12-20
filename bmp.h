@@ -1,5 +1,8 @@
 #include <cstdint>
 #include <string>
+#include "Def.h"
+
+NSP_STD
 
 //Quelle: Wikipedia (http://de.wikipedia.org/wiki/Windows_Bitmap)
 struct bmp_header //12Byte
@@ -24,4 +27,4 @@ struct bmp_info //40Byte, bei GIMP 108, aber die ersten 40 sind gleich und der r
 	uint32_t biClrUsed; //Anzahl Farben in Farbtabelle
 	uint32_t biClrImportant; //Anzahl aller verwendeten Farben, falls keine Farbtabelle dann 0
 };
-char* loadbmp(std::string path, int &width, int &height);
+char* loadbmp(string path, int &width, int &height);

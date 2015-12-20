@@ -34,7 +34,7 @@ protected:
 private:
 	void setupKeyMap(KeyMap&);
 
-	std::vector<KeyMap*> KeyMaps;
+	vector<KeyMap*> KeyMaps;
 
 	bool running;
 };

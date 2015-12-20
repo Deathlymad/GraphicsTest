@@ -5,6 +5,9 @@
 
 #include "Clock.h"
 #include "InputHandler.h"
+#include "Def.h"
+
+NSP_STD
 
 #pragma once
 class KeyMap : InputHandler
@@ -12,8 +15,8 @@ class KeyMap : InputHandler
 	struct KeyBind
 	{
 		unsigned short key;
-		std::function<void(unsigned short)> callback;
-		std::string name;
+		function<void(unsigned short)> callback;
+		string name;
 		bool isPressed;
 	};
 public:
@@ -23,7 +26,7 @@ public:
 
 	void launchKeyMap() { KeyTick.run(); }
 
-	void addKeyBind( unsigned short key, std::function<void(unsigned short)> Func, std::string name);
+	void addKeyBind( unsigned short key, function<void(unsigned short)> Func, string name);
 
 	void onKeyPress( unsigned short);
 
@@ -33,9 +36,9 @@ public:
 protected:
 	void onKeyPress(char button, char action, char mods);
 private:
-	std::vector<KeyBind> KeyBindings; // short in binary 00000 3 bit modifier Key (Alt, Shift, Ctrl) 8 bit key
+	vector<KeyBind> KeyBindings; // short in binary 00000 3 bit modifier Key (Alt, Shift, Ctrl) 8 bit key
 
-	static size_t find(unsigned short, std::vector<KeyBind>*, int, int);
+	static size_t find(unsigned short, vector<KeyBind>*, int, int);
 
 	static void updateKeyMap(KeyMap*);
 

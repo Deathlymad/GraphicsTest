@@ -13,7 +13,7 @@ Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
 	Code.clear();
 }
 
-Shader::Shader(std::string vertexPath, std::string fragPath) : program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader(string vertexPath, string fragPath) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code.push_back(Vertex);
 	Code.push_back(Color);
@@ -36,7 +36,7 @@ Shader::Shader(ShaderCode ShaderArr[]) : program([this](GLuint* p) {deleteProgra
 	build();
 }
 
-Shader::Shader(std::vector<ShaderCode> Shaders) : program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader(vector<ShaderCode> Shaders) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code = Shaders;
 
@@ -79,7 +79,7 @@ void Shader::build()
 	glGetProgramiv(*(program.get()), GL_ATTACHED_SHADERS, &attached);
 	if (attached) //in case old Shaders are attached
 	{
-		std::vector<GLuint> shaders = std::vector<GLuint>();
+		vector<GLuint> shaders = vector<GLuint>();
 		for (char i = 0; i < 16; i++) //write invaid numbers to seperate them
 			shaders.push_back(-1);
 		glGetAttachedShaders(*(program.get()), 16, NULL, &shaders[0]); //get all Shaders attached to Program
@@ -102,7 +102,7 @@ void Shader::build()
 	if (attached > 0)
 		glLinkProgram(*(program.get()));
 	else
-		std::cout << "OpenGL Program " << "NO SHADERS ATTACHED." << std::endl;
+		cout << "OpenGL Program " << "NO SHADERS ATTACHED." << endl;
 
 	GLint isLinked = 0;
 	glGetProgramiv(*(program.get()), GL_LINK_STATUS, (int *)&isLinked);
@@ -114,9 +114,9 @@ void Shader::build()
 		if (maxLength > 1)
 		{
 			//The maxLength includes the NULL character
-			std::vector<GLchar> infoLog = std::vector<GLchar>(maxLength);
+			vector<GLchar> infoLog = vector<GLchar>(maxLength);
 			glGetProgramInfoLog(*(program.get()), maxLength, NULL, &infoLog[0]);
-			std::cout << "OpenGL Program " << infoLog.data() << std::endl;
+			cout << "OpenGL Program " << infoLog.data() << endl;
 		}
 	}
 
@@ -125,14 +125,14 @@ void Shader::build()
 }
 void Shader::bind()
 {
-	std::string err = checkProgram();
+	string err = checkProgram();
 
 	setUniforms();
 
 	if (err == "")
 		glUseProgram(*(program.get()));
 	else
-		std::cout << "OpenGL Shader " << err << std::endl;
+		cout << "OpenGL Shader " << err << endl;
 }
 void Shader::setUniforms()
 {
@@ -150,7 +150,7 @@ Shader& Shader::operator=(Shader& other)
 	return *this;
 }
 
-Shader& Shader::operator=(std::vector<ShaderCode> Shaders)
+Shader& Shader::operator=(vector<ShaderCode> Shaders)
 {
 	Code = Shaders;
 	load();
@@ -171,12 +171,12 @@ bool Shader::operator==(Shader& other)
 bool Shader::operator==(ShaderCode& contained)
 {
 	
-	ShaderCode res = *std::find(Code.begin(), Code.end(), contained)._Ptr;
+	ShaderCode res = *find(Code.begin(), Code.end(), contained)._Ptr;
 	return res == contained;
 	return true;
 }
 
-bool Shader::operator==(std::vector<ShaderCode> Shaders)
+bool Shader::operator==(vector<ShaderCode> Shaders)
 {
 	bool res = true;
 	for (ShaderCode s : Shaders)
@@ -203,14 +203,14 @@ void Shader::makeShader(ShaderCode* code)
 		}
 	}//if there is a Shader created with the right type then it is going to be rewritten but not recreated should reduce memory
 	
-	std::string s = getShaderCode(code->_path);
+	string s = getShaderCode(code->_path);
 	if (s.size() > 1)
 	{
 		const char *c_str = s.c_str();
 		glShaderSource(*(code->pos.get()), 1, &c_str, NULL);
 	}
 	else
-		std::cout << "OpenGL Shader " << "Empty Source." << std::endl;
+		cout << "OpenGL Shader " << "Empty Source." << endl;
 
 	int compiled = 0;
 	glGetShaderiv(*(code->pos.get()), GL_COMPILE_STATUS, &compiled);
@@ -225,18 +225,18 @@ void Shader::makeShader(ShaderCode* code)
 		if (maxLength > 1)
 		{
 			//The maxLength includes the NULL character
-			std::vector<GLchar> infoLog = std::vector<GLchar>(maxLength);
+			vector<GLchar> infoLog = vector<GLchar>(maxLength);
 			glGetShaderInfoLog(*(code->pos.get()), maxLength, NULL, &infoLog[0]);
-			std::cout << "OpenGL Shader " << infoLog.data() << std::endl;
+			cout << "OpenGL Shader " << infoLog.data() << endl;
 		}
 	}
 }
 
-std::string Shader::checkProgram()
+string Shader::checkProgram()
 {
 	if ( *(program.get()) == -1)
 		return "NO PROGRAM CREATED \n";
-	std::string errText = "";
+	string errText = "";
 	int res = 0;
 	glValidateProgram(*(program.get()));
 	glGetProgramiv(*(program.get()), GL_VALIDATE_STATUS, &res);
@@ -249,7 +249,7 @@ std::string Shader::checkProgram()
 		//The maxLength includes the NULL character
 		if (maxLength > 1)
 		{
-			std::string infoLog;
+			string infoLog;
 			infoLog.resize(maxLength);
 			glGetProgramInfoLog(*(program.get()), maxLength, &maxLength, &infoLog[0]);
 			errText += infoLog;
@@ -277,13 +277,13 @@ GLenum Shader::getShaderType(ShaderType shaderType)
 	}
 }
 
-std::string Shader::getShaderCode(std::string File)
+string Shader::getShaderCode(string File)
 {
-	std::string ShaderCode;
-	std::ifstream ShaderStream("assets/shaders/" + File);
+	string ShaderCode;
+	ifstream ShaderStream("assets/shaders/" + File);
 	if (ShaderStream.is_open())
 	{
-		std::string Line = "";
+		string Line = "";
 		while (getline(ShaderStream, Line))
 			ShaderCode += Line + "\n";
 		ShaderStream.close();

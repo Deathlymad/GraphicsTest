@@ -36,9 +36,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="iofunctions.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="KeyMap.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -90,11 +87,11 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="iofunctions.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="KeyMap.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -240,6 +237,7 @@
     <None Include="assets\shaders\vertex.glsl">
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="assets\mesh\Stein_einfach.obj">

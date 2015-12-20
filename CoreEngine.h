@@ -14,7 +14,7 @@ public:
 	void start();
 
 	RenderingEngine* getGraphicEngine();
-	std::mutex* getLock();
+	mutex* getLock();
 
 	~CoreEngine();
 private:
@@ -24,6 +24,6 @@ private:
 	RenderingEngine GrEngine;
 	Clock UpdateThread;
 
-	std::mutex lk;
+	mutex lk;
 	Game* _game;
 };

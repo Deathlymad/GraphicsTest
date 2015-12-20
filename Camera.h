@@ -10,6 +10,7 @@
 class RenderingEngine;
 
 NSP_UTIL
+NSP_GLM
 
 class Camera :
 	public InputHandler,
@@ -32,19 +33,19 @@ protected:
 private:
 	void move(unsigned short key);
 
-	glm::vec3 _pos, *pos;
-	glm::vec3 forward;
-	glm::vec3 up;
+	vec3 _pos, *pos;
+	vec3 forward;
+	vec3 up;
 
-	glm::mat4 View;
+	mat4 View;
 	float FoV;
 	float Aspect;
-	glm::mat4 projection;
+	mat4 projection;
 	UniformRegistry<16> ViewProjMat;
 
 	double XAngle, YAngle;
 
 	static float speed;
-	static glm::vec3 YAxis;
+	static vec3 YAxis;
 };
 

@@ -11,7 +11,7 @@ class ModelRenderer : public EngineObject
 {
 public:
 	ModelRenderer() {}
-	ModelRenderer( std::string, std::string);
+	ModelRenderer( string, string);
 
 	void render(Shader*);
 

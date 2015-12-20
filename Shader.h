@@ -16,6 +16,7 @@
 #include "Util.h"
 
 NSP_UTIL
+NSP_STD
 
 #pragma once
 class Shader
@@ -33,7 +34,7 @@ public: //Public structures
 	{
 	public:
 		ShaderType _type; //should be made private
-		std::string _path;
+		string _path;
 		CustomPtr<GLuint> pos;
 		void clearShader(GLuint* s)
 		{
@@ -43,7 +44,7 @@ public: //Public structures
 		}
 
 		ShaderCode() : _type(TESSELATION_EVALUATION), _path(""), pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
-		ShaderCode(ShaderType type, std::string path) : _type(type), _path(path), pos([this](GLuint* s) {}, new GLuint())
+		ShaderCode(ShaderType type, string path) : _type(type), _path(path), pos([this](GLuint* s) {}, new GLuint())
 		{ pos.setDestructor([this](GLuint* s) {clearShader(s); }); }
 		ShaderCode(ShaderType type, char* path) : _type(type), _path(path), pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
 
@@ -57,7 +58,7 @@ public: //Public structures
 	public:
 
 		Uniform() : _name("emptyUniform"), _data(nullptr), _size(0), pos(-1) {}
-		Uniform(std::string name, float*& data, unsigned size) : _name(name), _data(new float[size]), _size(0), pos(-1)
+		Uniform(string name, float*& data, unsigned size) : _name(name), _data(new float[size]), _size(0), pos(-1)
 		{
 			data = _data.get();
 			_size = size;
@@ -75,7 +76,7 @@ public: //Public structures
 		}
 
 	private:
-		std::string _name;
+		string _name;
 		Ptr<float> _data;
 		unsigned _size; //just to make sure sizeof seems derpy...
 		GLuint pos;
@@ -83,9 +84,9 @@ public: //Public structures
 public:
 	//construction / destruction
 	Shader();
-	Shader(std::string, std::string);
+	Shader(string, string);
 	Shader(ShaderCode[]);
-	Shader(std::vector<ShaderCode>);
+	Shader(vector<ShaderCode>);
 	~Shader();
 
 	//getter / setter
@@ -100,10 +101,10 @@ public:
 	
 	//operators
 	Shader& operator= (Shader&);
-	Shader& operator= (std::vector<ShaderCode>);
+	Shader& operator= (vector<ShaderCode>);
 	bool operator== (Shader&);
 	bool operator== (ShaderCode&);
-	bool operator== (std::vector<ShaderCode>);
+	bool operator== (vector<ShaderCode>);
 private:
 	//variables
 	//OpenGL
@@ -114,14 +115,14 @@ private:
 			glDeleteProgram(*prgm);
 	}
 
-	std::vector<ShaderCode> Code; //contains Shader variable
-	std::vector<Uniform> Uniforms;
+	vector<ShaderCode> Code; //contains Shader variable
+	vector<Uniform> Uniforms;
 
 	//functions
 	void makeShader(ShaderCode*);
-	std::string checkProgram();
+	string checkProgram();
 	GLenum getShaderType(ShaderType);
-	std::string getShaderCode(std::string);
+	string getShaderCode(string);
 
 	//common Shader Files, like libraries :D
 	const static ShaderCode Light;   //Contains the basic Light function

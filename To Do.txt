@@ -4,14 +4,16 @@ Add Object Transformation
 add comments
 make all Object modifications (Materials etc. ) have IDs
 Error Handling for Uniforms
+Finish window management (resizing)
+Gamepad Joystick implementation
+
 
 Long Term:
 Create World
 Physics
-autonomous Threadusage and memory optimization
 Move Math from glm to Blaze?
 
 Very Long Term:
-Gamepad Joystick implementation
+autonomous Threadusage and memory optimization
 OpenCL
 Use Vulkan

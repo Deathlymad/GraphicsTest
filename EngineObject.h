@@ -1,4 +1,7 @@
 #include <vector>
+#include "Def.h"
+
+NSP_STD
 
 class Shader;
 class RenderingEngine;
@@ -18,5 +21,5 @@ public:
 
 	~EngineObject();
 private:
-	std::vector<EngineObject*> children;
+	vector<EngineObject*> children;
 };

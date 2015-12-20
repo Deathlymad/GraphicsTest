@@ -3,7 +3,7 @@
 #include "RenderingEngine.h"
 
 
-ModelRenderer::ModelRenderer(std::string meshFile, std::string texFile) : EngineObject(), mesh(meshFile), tex(texFile)
+ModelRenderer::ModelRenderer(string meshFile, string texFile) : EngineObject(), mesh(meshFile), tex(texFile)
 {
 	if (!tex.Loaded())
 		tex.glDownload();

@@ -12,64 +12,61 @@
 	#undef __glewGenerateMipmap
 #endif
 
-#include "iofunctions.h"
-
 #include "Mesh.h"
-
 
 Mesh::Mesh() : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
 {
 }
 
-Mesh::Mesh ( std::string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
+Mesh::Mesh ( string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
 {
-	std::vector<Vertex> v;
-	std::vector<unsigned int> in;
-	std::vector<glm::vec3> n;
-	std::vector<glm::vec2> t;
+	vector<Vertex> v;
+	vector<unsigned int> in;
+	vector<vec3> n;
+	vector<vec2> t;
 	
-	std::vector<std::string> vec;
-	std::vector<std::string> temp;
-	io::load(vec, file);
+	vector<string> vec;
+	vector<string> temp;
+	load(vec, file);
 		
 	for(unsigned int i = 0; i<vec.size(); i++)
 	{
 		temp.clear();
-		if((vec[i].find_first_of('o') != std::string::npos)) continue; //Object typname irrelevant
-		if((vec[i].find_first_of('m') != std::string::npos)) continue; //Material Data may be used someday but not now
-		if((vec[i].find_first_of('s') != std::string::npos)) continue; //some other data
-		if((vec[i].find_first_of('#') != std::string::npos) || vec[i].size() < 3) continue; //Kommentarzeilen werden KOMPLETT ignoriert, auch wenn Kommentar am Ende steht! oder Leerzeilen oder Zeile hat weniger als 3 Zeichen => bestimmt sinnlos
+		if((vec[i].find_first_of('o') != string::npos)) continue; //Object typname irrelevant
+		if((vec[i].find_first_of('m') != string::npos)) continue; //Material Data may be used someday but not now
+		if((vec[i].find_first_of('s') != string::npos)) continue; //some other data
+		if((vec[i].find_first_of('#') != string::npos) || vec[i].size() < 3) continue; //Kommentarzeilen werden KOMPLETT ignoriert, auch wenn Kommentar am Ende steht! oder Leerzeilen oder Zeile hat weniger als 3 Zeichen => bestimmt sinnlos
 		io::strsep(temp,vec[i]); //vec[i] in teile zerlegen
 		if(temp[0].compare("v") == 0)
 		{
-			v.push_back( Vertex(glm::vec3( stof(temp[1]), stof(temp[2]), stof(temp[3])) , glm::vec2(-1.0, -1.0), glm::vec3(0,1,0))); //writes default Data
+			v.push_back( Vertex(vec3( stof(temp[1]), stof(temp[2]), stof(temp[3])) , vec2(-1.0, -1.0), vec3(0,1,0))); //writes default Data
 			continue;
 		}
 		
 		if(temp[0].compare("vt") == 0)
 		{
-			t.push_back(glm::vec2(stof(temp[1]),stof(temp[2])));
+			t.push_back(vec2(stof(temp[1]),stof(temp[2])));
 			continue;
 		}
 			
 		if(temp[0].compare("vn") == 0)
 		{
-			n.push_back(glm::vec3(stof(temp[1]),stof(temp[2]),stof(temp[3])));
+			n.push_back(vec3(stof(temp[1]),stof(temp[2]),stof(temp[3])));
 			continue;
 		}
 		
 		if(temp[0].compare("f") == 0) // needs to have a check wether the face ids are seperated by space or by slash
 		{
-			std::vector<std::string> s;
+			vector<string> s;
 			
 			for (unsigned int i = 1; i < temp.size(); i++)
 			{
 				io::strsep( s, temp[i], '/');
-				in.push_back(std::stoi(s[0]) - 1);
+				in.push_back(stoi(s[0]) - 1);
 				if (t.size() > 0)
-					v[std::stoi(s[0]) - 1].setTexCoord( t[std::stoi(s[1]) - 1]);
+					v[stoi(s[0]) - 1].setTexCoord( t[stoi(s[1]) - 1]);
 				if(n.size() > 0)
-					v[std::stoi(s[0]) - 1].setNormal(v[std::stoi(s[0]) - 1].getNormal() + n[std::stoi(s[2]) - 1]); // need to renormalize
+					v[stoi(s[0]) - 1].setNormal(v[stoi(s[0]) - 1].getNormal() + n[stoi(s[2]) - 1]); // need to renormalize
 			}
 			continue;
 		}
@@ -77,7 +74,7 @@ Mesh::Mesh ( std::string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, 
 	glDownload(v, in);
 }
 
-Mesh::Mesh(  std::vector<Vertex> &vec, std::vector < unsigned int> &i) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
+Mesh::Mesh(  vector<Vertex> &vec, vector < unsigned int> &i) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
 {
 	glDownload( vec, i);
 }
@@ -97,14 +94,14 @@ void Mesh::initGL( unsigned char flag)
 	vao = VertexArrayObject(true, true, true);
 }
 
-void Mesh::glDownload(std::vector<Vertex>& v, std::vector < unsigned int>& i)
+void Mesh::glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 {
 	initGL(!glIsBuffer( *(vbo.get())) << 1 | !glIsBuffer( *(ibo.get())));
 
 	if (v.size() == 0)
 		return;
 
-	std::vector<float> temp;
+	vector<float> temp;
 	for (unsigned int i = 0; i < v.size(); i++)
 	{
 		float* d = v[i].getData();

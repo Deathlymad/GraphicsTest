@@ -5,35 +5,35 @@
 #include<GLFW\glfw3.h> //needed for defines
 
 float Camera::speed = 0.05f;
-glm::vec3 Camera::YAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+vec3 Camera::YAxis = vec3(0.0f, 1.0f, 0.0f);
 
 Camera::Camera() : InputHandler(), EngineObject()
 {
-	_pos = glm::vec3(0, 0, -5);
-	forward = glm::vec3(0, 0, -1);
-	up = glm::vec3(0, 1, 0);
+	_pos = vec3(0, 0, -5);
+	forward = vec3(0, 0, -1);
+	up = vec3(0, 1, 0);
 	FoV = 45.0f;
 	Aspect = 4 / 3;
-	View = glm::mat4();
-	projection = glm::perspective( FoV, Aspect, 0.1f, 100.0f);
+	View = mat4();
+	projection = perspective( FoV, Aspect, 0.1f, 100.0f);
 }
 
 void Camera::update()
 {
-	View = projection * glm::lookAt(_pos, _pos + glm::normalize(forward), glm::normalize(up));
+	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
 	ViewProjMat.update(&View[0][0]);
 }
 
 void Camera::setFoV(float fov)
 {
 	FoV = fov;
-	projection = glm::perspective(FoV, Aspect, 0.1f, 100.0f);
+	projection = perspective(FoV, Aspect, 0.1f, 100.0f);
 }
 
 void Camera::setAspect(float aspect)
 {
 	Aspect = aspect;
-	projection = glm::perspective(FoV, Aspect, 0.1f, 100.0f);
+	projection = perspective(FoV, Aspect, 0.1f, 100.0f);
 }
 
 void Camera::registerKeyBinds(KeyMap * k)
@@ -53,7 +53,7 @@ void Camera::registerUniform(Shader * s)
 	ViewProjMat.addMemPos(temp);
 	temp = nullptr;
 	s->addUniform(Shader::Uniform("EyePos", temp, 3));
-	pos = (glm::vec3*)temp;
+	pos = (vec3*)temp;
 }
 
 Camera::~Camera()
@@ -66,15 +66,15 @@ void Camera::onMouseMove(double dY, double dX)
 	XAngle += dX * - (speed / 100);
 	YAngle += dY * - (speed / 100);
 
-	glm::vec3 HorizontalAxis = glm::normalize(glm::cross(YAxis, forward));
+	vec3 HorizontalAxis = normalize(cross(YAxis, forward));
 
 	//rotate forward
-	forward = glm::vec3(
+	forward = vec3(
 		cos(XAngle) * sin(YAngle),
 		sin(XAngle),
 		cos(XAngle) * cos(YAngle));
 	
-	up = glm::normalize(glm::cross(forward, HorizontalAxis));
+	up = normalize(cross(forward, HorizontalAxis));
 }
 
 void Camera::move(unsigned short key)
@@ -82,10 +82,10 @@ void Camera::move(unsigned short key)
 	switch (key)
 	{
 	case 65:
-		_pos += glm::normalize(glm::cross(up, forward)) * speed;
+		_pos += normalize(cross(up, forward)) * speed;
 		break;
 	case 68:
-		_pos += glm::normalize(glm::cross(forward, up)) * speed;
+		_pos += normalize(cross(forward, up)) * speed;
 		break;
 	case 83:
 		_pos -= speed * forward; //not working

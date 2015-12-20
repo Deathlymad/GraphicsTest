@@ -4,6 +4,9 @@
 #include "Util.h"
 
 NSP_UTIL
+NSP_IO
+NSP_STD
+NSP_GLM
 
 typedef unsigned int GLuint;
 
@@ -42,22 +45,22 @@ class Mesh
 	class Vertex
 	{
 	public:
-		Vertex(glm::vec3 pos, glm::vec2 tex, glm::vec3 nor)
+		Vertex(vec3 pos, vec2 tex, vec3 nor)
 		{
 			data[0] = pos.x; data[1] = pos.y; data[2] = pos.z;
 			data[3] = tex.x; data[4] = tex.y;
 			data[5] = nor.x; data[6] = nor.y; data[7] = nor.z;
 		}
 
-		void setTexCoord( glm::vec2 tex) { data[3] = tex.x; data[4] = tex.y; }
+		void setTexCoord( vec2 tex) { data[3] = tex.x; data[4] = tex.y; }
 
-		void setNormal( glm::vec3 nor) { data[5] = nor.x; data[6] = nor.y; data[7] = nor.z; }
+		void setNormal( vec3 nor) { data[5] = nor.x; data[6] = nor.y; data[7] = nor.z; }
 
-		glm::vec3 getNormal() { return glm::vec3(data[5], data[6], data[7]); }
+		vec3 getNormal() { return vec3(data[5], data[6], data[7]); }
 
 		float* getData()
 		{
-			glm::vec3 nor = glm::normalize(glm::vec3(data[5], data[6], data[7]));
+			vec3 nor = normalize(vec3(data[5], data[6], data[7]));
 			data[5] = nor.x; data[6] = nor.y; data[7] = nor.z;
 			return data;
 		}
@@ -65,8 +68,8 @@ class Mesh
 		float data[8];
 	};
 public:
-	Mesh ( std::string);
-	Mesh(  std::vector<Vertex> &vec, std::vector < unsigned int> &i);
+	Mesh ( string);
+	Mesh(  vector<Vertex> &vec, vector < unsigned int> &i);
 	Mesh();
 		
 	void Draw();
@@ -74,7 +77,7 @@ public:
 	~Mesh(void);
 private:
 	void initGL(unsigned char);
-	void glDownload(  std::vector<Vertex>&, std::vector <unsigned int>&);
+	void glDownload(  vector<Vertex>&, vector <unsigned int>&);
 	
 	VertexArrayObject vao;
 	CustomPtr<GLuint> vbo;

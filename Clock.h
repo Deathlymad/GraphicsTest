@@ -4,14 +4,17 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include "Def.h"
 
-using namespace std::chrono;
+NSP_STD
+
+using namespace chrono;
 
 #pragma once
 class Clock
 {
 public:
-	Clock(std::function<void()>, std::function<void()>, unsigned int);
+	Clock(function<void()>, function<void()>, unsigned int);
 
 	unsigned int getLastTPS() { return lastTicks; }
 
@@ -24,18 +27,18 @@ public:
 	~Clock();
 private:
 	//function Variable
-	std::function<void()> init, func;
+	function<void()> init, func;
 	//Loop Variables
 	bool running;
 
 	float tickRatio;
 	unsigned short currentTicks = 0; //tps
 	unsigned short lastTicks = 0;
-	system_clock::time_point lastSec = std::chrono::system_clock::now();  //used to update TPS
-	system_clock::time_point lastTick = std::chrono::system_clock::now(); //used to retain ticking Speed
+	system_clock::time_point lastSec = chrono::system_clock::now();  //used to update TPS
+	system_clock::time_point lastTick = chrono::system_clock::now(); //used to retain ticking Speed
 
 	//Loop
 	void update();
 
-	std::thread t;
+	thread t;
 };

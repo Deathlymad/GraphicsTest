@@ -5,7 +5,7 @@
 #include "RenderingEngine.h"
 
 
-BaseLight::BaseLight( glm::vec3 c, float i)
+BaseLight::BaseLight( vec3 c, float i)
 {
 	_color = c;
 	_intensity = i;
@@ -29,29 +29,29 @@ void BaseLight::init(RenderingEngine * r)
 		r->registerGraphicObject(this);
 }
 
-void BaseLight::createUniforms( std::string name)
+void BaseLight::createUniforms( string name)
 {
 	float* temp = nullptr;
 	shader->addUniform(Shader::Uniform( name + ".color", temp, 3));
-	color = (glm::vec3*)temp;
+	color = (vec3*)temp;
 	shader->addUniform(Shader::Uniform(name + ".intensity", intensity, 1));
 
 	*color = _color;
 	*intensity = _intensity;
 }
 
-DirectionalLight::DirectionalLight( glm::vec3 c, float i, glm::vec3 dir) : BaseLight( c, i)
+DirectionalLight::DirectionalLight( vec3 c, float i, vec3 dir) : BaseLight( c, i)
 {
 	_normal = dir;
 	shader = new Shader("forward_directional_vs.glsl", "forward_directional_fs.glsl");
 }
 
-void DirectionalLight::createUniforms( std::string name)
+void DirectionalLight::createUniforms( string name)
 {
 	BaseLight::createUniforms(name + ".base");
 	float* temp = nullptr;
 	shader->addUniform(Shader::Uniform(name + ".direction", temp, 3));
-	normal = (glm::vec3*)temp;
+	normal = (vec3*)temp;
 
 	*normal = _normal;
 }
@@ -67,7 +67,7 @@ void DirectionalLight::render(Shader * s)
 	EngineObject::render(s);
 }
 
-PointLight::PointLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p) : BaseLight( c, i)
+PointLight::PointLight( vec3 c, float i,Attenuation a, vec3 p) : BaseLight( c, i)
 {
 	atten = a;
 	_pos = p;
@@ -82,14 +82,14 @@ PointLight::PointLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p) : BaseL
 	shader = new Shader( "forward_point_vs.glsl",  "forward_point_fs.glsl");
 }
 	
-void PointLight::createUniforms(std::string name)
+void PointLight::createUniforms(string name)
 {
 	BaseLight::createUniforms(name + ".base");
 	atten.createUniforms(shader, name + ".atten");
 	shader->addUniform(Shader::Uniform(name + ".range", range, 1));
 	float* temp = nullptr;
 	shader->addUniform(Shader::Uniform(name + ".pos", temp, 3));
-	pos = (glm::vec3*)temp;
+	pos = (vec3*)temp;
 
 	atten.writeUniforms();
 	*range = _range;
@@ -110,21 +110,21 @@ void PointLight::render(Shader * s)
 
 }
 
-SpotLight::SpotLight( glm::vec3 c, float i,Attenuation a, glm::vec3 p, glm::vec3 dir, float cut) : PointLight( c, i, a, p)
+SpotLight::SpotLight( vec3 c, float i,Attenuation a, vec3 p, vec3 dir, float cut) : PointLight( c, i, a, p)
 {
-	_direction = glm::normalize(dir);
+	_direction = normalize(dir);
 	_cutoff = cut;
 	if (shader)
 		shader->~Shader();
 	shader = new Shader( "forward_spot_vs.glsl", "forward_spot_fs.glsl");
 }
 	
-void SpotLight::createUniforms(std::string name)
+void SpotLight::createUniforms(string name)
 {
 	PointLight::createUniforms(name + ".point");
 	float* temp = nullptr;
 	shader->addUniform(Shader::Uniform(name + ".direction", temp, 3));
-	direction = (glm::vec3*)temp;
+	direction = (vec3*)temp;
 	shader->addUniform(Shader::Uniform(name + ".cutoff", cutoff, 1));
 
 	*direction = _direction;
