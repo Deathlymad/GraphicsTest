@@ -14,11 +14,11 @@
 
 #include "Mesh.h"
 
-Mesh::Mesh() : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
+Mesh::Mesh() : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), vao(true, true, true)
 {
 }
 
-Mesh::Mesh ( string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
+Mesh::Mesh ( string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), vao(true, true, true)
 {
 	vector<Vertex> v;
 	vector<unsigned int> in;
@@ -74,7 +74,7 @@ Mesh::Mesh ( string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new G
 	glDownload(v, in);
 }
 
-Mesh::Mesh(  vector<Vertex> &vec, vector < unsigned int> &i) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint)
+Mesh::Mesh(  vector<Vertex> &vec, vector < unsigned int> &i) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), vao(true, true, true)
 {
 	glDownload( vec, i);
 }
@@ -91,7 +91,7 @@ void Mesh::initGL( unsigned char flag)
 	{
 		glGenBuffers(1, ibo.get());
 	}
-	vao = VertexArrayObject(true, true, true);
+	vao.createVertexArray();
 }
 
 void Mesh::glDownload(vector<Vertex>& v, vector < unsigned int>& i)
@@ -127,7 +127,6 @@ void Mesh::deleteBuffer(GLuint * buf)
 
 void Mesh::Draw()
 {
-	vao.createVertexArray();
 	vao.bindVertexArray();
 	glBindBuffer(GL_ARRAY_BUFFER, *(vbo.get()));
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(ibo.get()));

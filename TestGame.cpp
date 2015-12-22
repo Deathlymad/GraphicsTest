@@ -21,12 +21,14 @@ trans( 0, vec3(), vec3(0.75f, 0.75f, 0.75f), vec3(1.0f, 2.0f, 1.0f))
 	getEngine()->getGraphicEngine()->initOnShaders([this](Shader*s) {m.init(s); });
 
 	//scene Registry
-	world.addObj(&pt);
-	world.addObj(&Dir);
+	m.add(&obj);
 
 	Dir.add(&m);
 	pt.add(&m);
-	m.add(&obj);
+
+	world.addObj(&pt);
+	world.addObj(&Dir);
+
 }
 
 TestGame::~TestGame()

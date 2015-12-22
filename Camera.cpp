@@ -20,15 +20,12 @@ Camera::Camera() : InputHandler(), EngineObject()
 
 void Camera::update()
 {
+	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
 }
 
 void Camera::render(Shader *)
 {
-	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
-	float* tempPtr = new float[16];
-	for (unsigned char i = 0; i < 16; i++)
-		tempPtr[i] = View[floorl(i/4)][i - (floorl(i/4) * 4)];
-	ViewProjMat.update(tempPtr);
+	ViewProjMat.update(&View[0][0]);
 }
 
 void Camera::setFoV(float fov)
@@ -76,10 +73,10 @@ void Camera::onMouseMove(double dY, double dX)
 	vec3 HorizontalAxis = normalize(cross(YAxis, forward));
 
 	//rotate forward
-	forward = vec3(
+	forward = normalize(vec3(
 		cos(XAngle) * sin(YAngle),
 		sin(XAngle),
-		cos(XAngle) * cos(YAngle));
+		cos(XAngle) * cos(YAngle)));
 	
 	up = normalize(cross(forward, HorizontalAxis));
 }
