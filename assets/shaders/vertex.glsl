@@ -13,7 +13,7 @@ uniform mat4 ViewProj;
 void copyAttribData()
 {
    normal = Normal;
-   worldPos = pos;
+   worldPos = (TransMatrix0 * vec4(pos, 1)).xyz;
    texCoord = tex;
-   gl_Position = ViewProj * vec4( pos, 1);
+   gl_Position = ViewProj * (TransMatrix0 * vec4( pos, 1));
 }
