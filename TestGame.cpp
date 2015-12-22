@@ -19,7 +19,6 @@ trans( 0, vec3(), vec3(0.75f, 0.75f, 0.75f), vec3(1.0f, 2.0f, 1.0f))
 	getEngine()->getGraphicEngine()->registerGraphicObject(&Dir);
 
 	getEngine()->getGraphicEngine()->initOnShaders([this](Shader*s) {m.init(s); });
-	getEngine()->getGraphicEngine()->initOnShaders([this](Shader*s) {trans.init(s); });
 
 	//scene Registry
 	world.addObj(&pt);
@@ -27,8 +26,7 @@ trans( 0, vec3(), vec3(0.75f, 0.75f, 0.75f), vec3(1.0f, 2.0f, 1.0f))
 
 	Dir.add(&m);
 	pt.add(&m);
-	m.add(&trans);
-	trans.add(&obj);
+	m.add(&obj);
 }
 
 TestGame::~TestGame()

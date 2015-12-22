@@ -20,12 +20,15 @@ Camera::Camera() : InputHandler(), EngineObject()
 
 void Camera::update()
 {
-	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
 }
 
 void Camera::render(Shader *)
 {
-	ViewProjMat.update(&View[0][0]);
+	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
+	float* tempPtr = new float[16];
+	for (unsigned char i = 0; i < 16; i++)
+		tempPtr[i] = View[floorl(i/4)][i - (floorl(i/4) * 4)];
+	ViewProjMat.update(tempPtr);
 }
 
 void Camera::setFoV(float fov)
