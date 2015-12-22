@@ -22,6 +22,7 @@ void Scene::update()
 
 void Scene::render(Shader* s)
 {
+	View.render(s);
 	root.render(s);
 }
 

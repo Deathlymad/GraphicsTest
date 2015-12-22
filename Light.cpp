@@ -60,11 +60,9 @@ void DirectionalLight::render(Shader * s)
 {
 	if (s == shader)
 	{
-		BaseLight::render(s);
 		*normal = _normal;
+		BaseLight::render(s);
 	}
-
-	EngineObject::render(s);
 }
 
 PointLight::PointLight( vec3 c, float i,Attenuation a, vec3 p) : BaseLight( c, i)
@@ -100,13 +98,11 @@ void PointLight::render(Shader * s)
 {
 	if (s == shader)
 	{
-		BaseLight::render(s);
 		atten.writeUniforms();
 		*range = _range;
 		*pos = _pos;
+		BaseLight::render(s);
 	}
-
-	EngineObject::render(s);
 
 }
 
@@ -135,11 +131,8 @@ void SpotLight::render(Shader * s)
 {
 	if (s == shader)
 	{
-		PointLight::render(s);
 		*direction = _direction;
 		*cutoff = _cutoff;
+		PointLight::render(s);
 	}
-
-	EngineObject::render(s);
-
 }

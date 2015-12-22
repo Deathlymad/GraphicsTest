@@ -21,6 +21,10 @@ Camera::Camera() : InputHandler(), EngineObject()
 void Camera::update()
 {
 	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
+}
+
+void Camera::render(Shader *)
+{
 	ViewProjMat.update(&View[0][0]);
 }
 

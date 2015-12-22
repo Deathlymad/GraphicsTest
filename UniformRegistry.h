@@ -15,8 +15,9 @@ public:
 	void update(float* data)
 	{
 		for (float* pos : MemPos)
-			for (size_t i = 0; i < size; i++)
-				pos[i] = data[i];
+			if (pos)
+				for (size_t i = 0; i < size; i++)
+					pos[i] = data[i];
 	}
 
 	~UniformRegistry<size>() {}

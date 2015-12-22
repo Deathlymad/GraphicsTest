@@ -10,11 +10,9 @@ class CoreEngine
 public:
 	CoreEngine(Screen*, Game*);
 
-	void graphicInit();
 	void start();
 
 	RenderingEngine* getGraphicEngine();
-	mutex* getLock();
 
 	~CoreEngine();
 private:
@@ -24,6 +22,5 @@ private:
 	RenderingEngine GrEngine;
 	Clock UpdateThread;
 
-	mutex lk;
 	Game* _game;
 };

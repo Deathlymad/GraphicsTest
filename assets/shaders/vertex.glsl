@@ -9,11 +9,12 @@ out vec3 worldPos;
 out vec2 texCoord;
 
 uniform mat4 ViewProj;
+uniform mat4 TransMatrix0;
 
 void copyAttribData()
 {
    normal = Normal;
-   worldPos = pos;
+   worldPos = pos;//(TransMatrix0 * vec4(pos, 1)).xyz;
    texCoord = tex;
-   gl_Position = ViewProj * vec4( pos, 1);
+   gl_Position = ViewProj * (TransMatrix0 * vec4( pos, 1));
 }

@@ -5,8 +5,8 @@ in vec3 worldPos;
 in vec3 normal;
 
 uniform vec3 EyePos;
-uniform float specularIntensity;
-uniform float specularExponent;
+uniform float specularIntensity0;
+uniform float specularExponent0;
 
 struct BaseLight
 {
@@ -51,11 +51,11 @@ vec4 calcLight(BaseLight base, vec3 direction)
         vec3 hDir = normalize(dirToEye - direction);
         
         float spec = dot(hDir, normal);
-        spec = pow(spec, specularExponent);
+        spec = pow(spec, specularExponent0);
         
         if(spec > 0)
         {
-            specCol = vec4(base.color, 1.0) * spec * specularIntensity;
+            specCol = vec4(base.color, 1.0) * spec * specularIntensity0;
         }
     }
     

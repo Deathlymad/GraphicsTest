@@ -1,8 +1,7 @@
 Short Term:
-finish Textures (TextureAtlas)
+finish Textures (TextureAtlas, multiple Samplers)
 Add Object Transformation
 add comments
-make all Object modifications (Materials etc. ) have IDs
 Error Handling for Uniforms
 Finish window management (resizing)
 Gamepad Joystick implementation

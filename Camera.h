@@ -8,6 +8,7 @@
 #include "Util.h"
 
 class RenderingEngine;
+class Shader;
 
 NSP_UTIL
 NSP_GLM
@@ -20,6 +21,7 @@ public:
 	Camera();
 
 	void update();
+	void render(Shader*);
 
 	void setFoV(float);
 	void setAspect(float);
