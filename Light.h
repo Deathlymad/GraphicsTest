@@ -28,8 +28,8 @@ public:
 
 	BaseLight( vec3 c, float i);
 
-	virtual void render(Shader*);
-	void render() { this->render(shader); }
+	virtual void render(Shader*, bool);
+	void render() { this->render(shader, false); }
 
 	~BaseLight(void)
 	{
@@ -58,7 +58,7 @@ public:
 	
 	virtual void createUniforms( string name);
 
-	virtual void render(Shader*);
+	virtual void render(Shader*, bool);
 
 	void setNormal( vec3 n)
 	{
@@ -143,7 +143,7 @@ public:
 	
 	virtual void createUniforms(string name);
 
-	virtual void render(Shader*);
+	virtual void render(Shader*, bool);
 
 	void setAttenuation( Attenuation b)
 	{
@@ -184,7 +184,7 @@ public:
 	
 	virtual void createUniforms(string name);
 
-	virtual void render(Shader*);
+	virtual void render(Shader*, bool);
 
 	vec3 getDirection(){ return _direction;}
 	float getCutoff(){return _cutoff;}

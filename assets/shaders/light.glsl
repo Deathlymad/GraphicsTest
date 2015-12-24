@@ -59,7 +59,7 @@ vec4 calcLight(BaseLight base, vec3 direction)
         }
     }
     
-    return difCol * specCol;
+    return difCol + specCol;
 }
 
 vec4 calcPointLight(PointLight pointLight)

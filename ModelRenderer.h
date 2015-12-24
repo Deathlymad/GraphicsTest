@@ -13,7 +13,7 @@ public:
 	ModelRenderer() {}
 	ModelRenderer( string, string);
 
-	void render(Shader*);
+	void render(Shader*, bool);
 
 	~ModelRenderer();
 private:

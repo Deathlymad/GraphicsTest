@@ -24,10 +24,6 @@ struct PointLight
 
 uniform PointLight pLight;
 
-uniform float specularIntensity;
-uniform float specularExponent;
-
-
 vec4 calcPointLight(PointLight base);
 
 vec4 getColor();

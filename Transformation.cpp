@@ -122,12 +122,12 @@ void Transformation::init(Shader* prog)
 	TransformationMatrix.addMemPos(f);
 }
 
-void Transformation::render(Shader* s)
+void Transformation::render(Shader* s, bool firstPass)
 {
 	mat4 mat = getMatrix();
 	TransformationMatrix.update(&mat[0][0]);
 
-	EngineObject::render(s);
+	EngineObject::render(s, firstPass);
 }
 
 

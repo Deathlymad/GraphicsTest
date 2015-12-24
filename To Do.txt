@@ -1,9 +1,6 @@
 Short Term:
 finish Textures (TextureAtlas, multiple Samplers)
- make the camera only update once a frame.
 add comments
-Error Handling for Uniforms
-the Usage of tansformation results in NULLPTR, why?
 Finish window management (resizing)
 Gamepad Joystick implementation
 

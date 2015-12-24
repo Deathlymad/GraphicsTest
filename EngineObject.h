@@ -17,7 +17,7 @@ public:
 
 	virtual void init( KeyMap* k);
 	virtual void update();
-	virtual void render(Shader*);
+	virtual void render(Shader*, bool);
 
 	~EngineObject();
 private:

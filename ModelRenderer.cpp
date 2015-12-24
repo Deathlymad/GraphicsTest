@@ -9,7 +9,7 @@ ModelRenderer::ModelRenderer(string meshFile, string texFile) : EngineObject(), 
 		tex.glDownload();
 }
 
-void ModelRenderer::render(Shader* s)
+void ModelRenderer::render(Shader* s, bool)
 {
 	s->bind();
 	tex.bind();

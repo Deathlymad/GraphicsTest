@@ -21,11 +21,17 @@ Camera::Camera() : InputHandler(), EngineObject()
 void Camera::update()
 {
 	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
+	_update = false;
 }
 
-void Camera::render(Shader *)
+void Camera::render(Shader *, bool firstPass)
 {
-	ViewProjMat.update(&View[0][0]);
+	if (firstPass)
+	{
+		ViewProjMat.update(&View[0][0]);
+		_update = true;
+		EyePos.update(&_pos[0]);
+	}
 }
 
 void Camera::setFoV(float fov)
@@ -57,7 +63,7 @@ void Camera::registerUniform(Shader * s)
 	ViewProjMat.addMemPos(temp);
 	temp = nullptr;
 	s->addUniform(Shader::Uniform("EyePos", temp, 3));
-	pos = (vec3*)temp;
+	EyePos.addMemPos(temp);
 }
 
 Camera::~Camera()

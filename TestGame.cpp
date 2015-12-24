@@ -5,9 +5,9 @@ NSP_GLM
 
 
 TestGame::TestGame() : Game(),
-pt(vec3(1.0f, 0.0f, 0.0f), 10.0f, Attenuation(6.0f, 0.0f, 0.0f), vec3(2.0f, 2.0f, 2.0f)),
+pt(vec3(1.0f, 0.0f, 0.0f), 10.0f, Attenuation(1.0f, 0.0f, 0.0f), vec3(2.0f, 2.0f, 2.0f)),
 Dir(vec3(0.1f, 0.6f, 0.8f), 1.0f, vec3(0.0f, 0.0f, 1.0f)),
-m( 0, 4, 2),
+m( 0, 1, 8),
 obj("assets/mesh/untitled.obj", "assets/textures/tex1.bmp"),
 trans( 0, vec3(), vec3(0.75f, 0.75f, 0.75f), vec3(1.0f, 2.0f, 1.0f))
 {

@@ -12,7 +12,7 @@ BaseLight::BaseLight( vec3 c, float i)
 	shader = nullptr;
 }
 
-void BaseLight::render(Shader * s)
+void BaseLight::render(Shader * s, bool firstPass)
 {
 	if (s == shader)
 	{
@@ -20,7 +20,7 @@ void BaseLight::render(Shader * s)
 		*intensity = _intensity;
 	}
 
-	EngineObject::render(s);
+	EngineObject::render(s, firstPass);
 }
 
 void BaseLight::init(RenderingEngine * r)
@@ -56,15 +56,15 @@ void DirectionalLight::createUniforms( string name)
 	*normal = _normal;
 }
 
-void DirectionalLight::render(Shader * s)
+void DirectionalLight::render(Shader * s, bool firstPass)
 {
 	if (s == shader)
 	{
 		*normal = _normal;
-		BaseLight::render(s);
+		BaseLight::render(s, firstPass);
 	}
 	else
-		EngineObject::render(s);
+		EngineObject::render(s, firstPass);
 }
 
 PointLight::PointLight( vec3 c, float i,Attenuation a, vec3 p) : BaseLight( c, i)
@@ -96,17 +96,17 @@ void PointLight::createUniforms(string name)
 	*pos = _pos;
 }
 
-void PointLight::render(Shader * s)
+void PointLight::render(Shader * s, bool firstPass)
 {
 	if (s == shader)
 	{
 		atten.writeUniforms();
 		*range = _range;
 		*pos = _pos;
-		BaseLight::render(s);
+		BaseLight::render(s, firstPass);
 	}
 	else
-		EngineObject::render(s);
+		EngineObject::render(s, firstPass);
 }
 
 SpotLight::SpotLight( vec3 c, float i,Attenuation a, vec3 p, vec3 dir, float cut) : PointLight( c, i, a, p)
@@ -130,14 +130,14 @@ void SpotLight::createUniforms(string name)
 	*cutoff = _cutoff;
 }
 
-void SpotLight::render(Shader * s)
+void SpotLight::render(Shader * s, bool firstPass)
 {
 	if (s == shader)
 	{
 		*direction = _direction;
 		*cutoff = _cutoff;
-		PointLight::render(s);
+		PointLight::render(s, firstPass);
 	}
 	else
-		EngineObject::render(s);
+		EngineObject::render(s, firstPass);
 }

@@ -19,11 +19,11 @@ void EngineObject::update()
 			children[i]->update();
 }
 
-void EngineObject::render(Shader* s)
+void EngineObject::render(Shader* s, bool firstPass)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
 		if (children[i])
-			children[i]->render(s);
+			children[i]->render(s, firstPass);
 }
 
 

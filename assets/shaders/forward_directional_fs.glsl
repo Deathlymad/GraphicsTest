@@ -14,9 +14,6 @@ struct DirectionalLight
 
 uniform DirectionalLight Light;
 
-uniform float specularIntensity;
-uniform float specularExponent;
-
 vec4 calcLight(BaseLight base, vec3 direction);
 
 vec4 getColor();

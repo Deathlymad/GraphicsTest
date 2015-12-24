@@ -20,10 +20,10 @@ void Scene::update()
 	root.update();
 }
 
-void Scene::render(Shader* s)
+void Scene::render(Shader* s, bool firstPass)
 {
-	View.render(s);
-	root.render(s);
+	View.render(s, firstPass);
+	root.render(s, firstPass);
 }
 
 Scene::~Scene()

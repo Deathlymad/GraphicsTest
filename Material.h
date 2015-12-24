@@ -42,12 +42,12 @@ public:
 		specularExponent.addMemPos(f);
 	}
 
-	void render(Shader* s)
+	void render(Shader* s, bool firstPass)
 	{
 		specularIntensity.update(&_specularIntensity);
 		specularExponent.update(&_specularExponent);
 
-		EngineObject::render(s);
+		EngineObject::render(s, firstPass);
 	}
 
 	void operator=(Material& m)

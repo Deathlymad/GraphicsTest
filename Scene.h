@@ -17,7 +17,7 @@ public:
 
 	void init(KeyMap*);
 	void update();
-	void render(Shader*);
+	void render(Shader*, bool);
 
 	~Scene();
 private:

@@ -296,8 +296,8 @@ string Shader::getShaderCode(string File)
 void Shader::Uniform::create(GLuint* prgm)
 {
 	pos = glGetUniformLocation(*prgm, _name.c_str());
-	//if (pos == -1)
-		//cout << "couldn't Resolve Uniform: " << _name << endl;
+	if (pos == -1)
+		cout << "couldn't Resolve Uniform: " << _name << endl;
 }
 
 void Shader::Uniform::write(GLuint* prgm)
@@ -305,7 +305,7 @@ void Shader::Uniform::write(GLuint* prgm)
 	if ( pos == -1)
 		create(prgm);
 	if (pos == -1 )
-		return;
+		return;//pos couldn't be resolved
 	switch (_size)
 	{
 	case 1:

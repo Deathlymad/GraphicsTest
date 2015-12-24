@@ -21,7 +21,7 @@ public:
 	Camera();
 
 	void update();
-	void render(Shader*);
+	void render(Shader*, bool);
 
 	void setFoV(float);
 	void setAspect(float);
@@ -35,15 +35,17 @@ protected:
 private:
 	void move(unsigned short key);
 
-	vec3 _pos, *pos;
+	vec3 _pos;
 	vec3 forward;
 	vec3 up;
-
+	UniformRegistry<1> EyePos;
+	
 	mat4 View;
 	float FoV;
 	float Aspect;
 	mat4 projection;
 	UniformRegistry<16> ViewProjMat;
+	bool _update;
 
 	double XAngle, YAngle;
 
