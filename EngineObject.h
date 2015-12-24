@@ -13,7 +13,7 @@ class EngineObject
 public:
 	EngineObject();
 
-	void add(EngineObject* obj) { children.push_back(obj); }
+	void add(EngineObject* obj) { if (obj && obj != this) children.push_back(obj); }
 
 	virtual void init( KeyMap* k);
 	virtual void update();

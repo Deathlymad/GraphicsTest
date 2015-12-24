@@ -116,9 +116,9 @@ void Transformation::init(Shader* prog)
 {
 	float* f = nullptr;
 	if (_ID != -1)
-		prog->addUniform(Shader::Uniform("TransMatrix" + _ID, f, 1));
+		prog->addUniform(Shader::Uniform("TransMatrix" + to_string(_ID), f, 16));
 	else
-		prog->addUniform(Shader::Uniform("TransMatrix", f, 1));
+		prog->addUniform(Shader::Uniform("TransMatrix", f, 16));
 	TransformationMatrix.addMemPos(f);
 }
 

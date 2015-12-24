@@ -9,6 +9,7 @@ out vec3 worldPos;
 out vec2 texCoord;
 
 uniform mat4 ViewProj;
+uniform mat4 TransMatrix0;
 
 void copyAttribData()
 {

@@ -29,6 +29,7 @@ public:
 	BaseLight( vec3 c, float i);
 
 	virtual void render(Shader*);
+	void render() { this->render(shader); }
 
 	~BaseLight(void)
 	{

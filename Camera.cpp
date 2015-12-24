@@ -13,7 +13,7 @@ Camera::Camera() : InputHandler(), EngineObject()
 	forward = vec3(0, 0, -1);
 	up = vec3(0, 1, 0);
 	FoV = 45.0f;
-	Aspect = 4 / 3;
+	Aspect = 1.333f;
 	View = mat4();
 	projection = perspective( FoV, Aspect, 0.1f, 100.0f);
 }

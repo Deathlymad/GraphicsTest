@@ -107,7 +107,6 @@ void PointLight::render(Shader * s)
 	}
 	else
 		EngineObject::render(s);
-
 }
 
 SpotLight::SpotLight( vec3 c, float i,Attenuation a, vec3 p, vec3 dir, float cut) : PointLight( c, i, a, p)
