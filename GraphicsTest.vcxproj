@@ -212,7 +212,6 @@
     <Text Include="World\World, Space &amp; Time.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\color.glsl" />
     <None Include="assets\shaders\forward_ambient_fs.glsl" />
     <None Include="assets\shaders\forward_ambient_vs.glsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -223,10 +222,8 @@
     <None Include="assets\shaders\forward_point_vs.glsl" />
     <None Include="assets\shaders\forward_spot_fs.glsl" />
     <None Include="assets\shaders\forward_spot_vs.glsl" />
-    <None Include="assets\shaders\light.glsl" />
     <None Include="assets\shaders\version.glsl" />
     <None Include="assets\shaders\vertex.glsl" />
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="assets\mesh\Stein_einfach.obj">

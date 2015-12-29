@@ -5,7 +5,6 @@
 #include "Shader.h"
 
 const Shader::ShaderCode Shader::Vertex  = Shader::ShaderCode(VERTEX, "vertex.glsl"); //make dynamic
-const Shader::ShaderCode Shader::Color   = Shader::ShaderCode(FRAGMENT, "color.glsl");
 
 Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
 {
@@ -16,7 +15,6 @@ Shader::Shader(string vertexPath, string fragPath) : program([this](GLuint* p) {
 {
 	Code.push_back(Vertex);
 	Code.push_back(ShaderCode(VERTEX, vertexPath));
-	Code.push_back(Color);
 	Code.push_back(ShaderCode(FRAGMENT, fragPath));
 
 	load();
@@ -26,7 +24,6 @@ Shader::Shader(string vertexPath, string fragPath) : program([this](GLuint* p) {
 Shader::Shader(ShaderCode ShaderArr[]) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code.push_back(Vertex);
-	Code.push_back(Color);
 	Code.insert(Code.begin() + 3, sizeof(ShaderArr) / sizeof(ShaderCode), ShaderArr[0]);//copies Array in vector
 
 	load();
@@ -38,7 +35,6 @@ Shader::Shader(vector<ShaderCode> Shaders) : program([this](GLuint* p) {deletePr
 	Code = Shaders;
 
 	Code.push_back(Vertex);
-	Code.push_back(Color);
 
 	load();
 	build();
@@ -361,13 +357,13 @@ void Shader::Uniform::write(GLuint* prgm)
 		glUniform1fv(pos, 1, _data.get());
 		break;
 	case 2:
-		glUniform2fv(pos, 2, _data.get());
+		glUniform2fv(pos, 1, _data.get());
 		break;
 	case 3:
 		glUniform3fv(pos, 1, _data.get());
 		break;
 	case 4:
-		glUniform4fv(pos, 4, _data.get());
+		glUniform4fv(pos, 1, _data.get());
 		break;
 	case 9:
 		glUniformMatrix3fv(pos, 1, false, _data.get());

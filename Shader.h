@@ -135,8 +135,7 @@ private:
 	int findUniform(string&, int, int);
 	int findUniform(Uniform&, int, int);
 
-	//common Shader Files, like libraries :D
-	const static ShaderCode Color;   //Defines the Color Funtion to retreive fragment color from the texture, also defines the Uniforms
+	//common Shader Files
 	const static ShaderCode Vertex;
 };
 
