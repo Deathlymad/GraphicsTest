@@ -86,25 +86,6 @@ size_t KeyMap::find(unsigned short key, vector<KeyBind>* arr, int min, int max)
 			return find(key, arr, min, mid - 1);
 		}
 	}
-	/*
-	if (max > min)
-	{
-		int pos = floor((max - min)/2) + min;
-
-		if (arr->size() < min)
-			return -1;
-
-		//recursion
-		if ( (*arr)[pos].key < key)
-			return find(key, arr, pos, max);
-		else if ((*arr)[pos].key > key)
-			return find(key, arr, min, pos + 1);
-		else
-			return pos;
-	}
-	else
-		return min;
-		*/
 }
 
 void KeyMap::updateKeyMap(KeyMap * k)

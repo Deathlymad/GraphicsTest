@@ -11,8 +11,9 @@ public:
 	
 	~TestGame();
 private:
-	PointLight pt;
-	DirectionalLight Dir;
+	DirectionalLight Light;
+	PointLight Light1;
+	SpotLight Light2;
 
 	Transformation trans;
 	Material m;

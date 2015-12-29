@@ -27,6 +27,9 @@ public:
 	BaseLight() {}
 
 	BaseLight( vec3 c, float i);
+	
+	float getIntensity() { return _intensity; }
+	vec3 getColor() { return _color; }
 
 	virtual void render(Shader*, bool);
 	void render() { this->render(shader, false); }
@@ -35,13 +38,12 @@ public:
 	{
 	}
 	
-	void init(RenderingEngine*);
-
 	virtual void createUniforms(string name);
 
 	Shader* getShader(){return shader;}
 protected:
 	Shader* shader;
+	string _name;
 private:
 	vec3 _color, *color;
 	float _intensity, *intensity;
@@ -102,6 +104,16 @@ public:
 		*constant = _constant;
 		*linear = _linear;
 		*exponent = _exponent;
+	}
+	void removeUniforms(Shader* target, string name)
+	{
+
+		target->removeUniform(name + ".constant");
+		constant = nullptr;
+		target->removeUniform(name + ".linear");
+		linear = nullptr;
+		target->removeUniform(name + ".exponent");
+		exponent = nullptr;
 	}
 
 	float getConstant()

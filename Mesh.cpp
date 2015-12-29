@@ -39,7 +39,7 @@ Mesh::Mesh ( string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new G
 		io::strsep(temp,vec[i]); //vec[i] in teile zerlegen
 		if(temp[0].compare("v") == 0)
 		{
-			v.push_back( Vertex(vec3( stof(temp[1]), stof(temp[2]), stof(temp[3])) , vec2(-1.0, -1.0), vec3(0,1,0))); //writes default Data
+			v.push_back( Vertex(vec3( stof(temp[1]), stof(temp[2]), stof(temp[3])) , vec2(-1.0, -1.0), vec3(0,0,0))); //writes default Data
 			continue;
 		}
 		

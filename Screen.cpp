@@ -161,7 +161,13 @@ void Screen::makeCurrent()
 	glfwMakeContextCurrent(winHandle);
 }
 
+bool Screen::isFocused()
+{
+	glfwPollEvents();
+	return glfwGetWindowAttrib(winHandle, GLFW_FOCUSED);
+}
+
 Screen::~Screen()
 {
-	//glfwDestroyWindow(winHandle);
+	//glfwDestroyWindow(winHandle);  TODO need to be addded and fixed
 }

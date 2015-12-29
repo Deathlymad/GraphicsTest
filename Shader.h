@@ -64,12 +64,20 @@ public: //Public structures
 			_size = size;
 		}
 
-		void create(GLuint* prgm);
+		void create( GLuint* prgm);
 
 		void write(GLuint* prgm);
 
-		bool operator==(Uniform other) { return _name == other._name; } //that should suffice
-		bool operator!=(Uniform other) { return _name != other._name; } //that should suffice
+		bool operator==(Uniform& other) { return _name == other._name; }
+		bool operator==(string& name) { return _name == name; }
+		bool operator!=(Uniform& other) { return _name != other._name; }
+		bool operator!=(string& name) { return _name != name; }
+		bool operator< (Uniform& other) { return _name.compare(other._name) < 0; }
+		bool operator< (string& name) { return _name.compare(name) < 0; }
+		bool operator> (Uniform& other) { return _name.compare(other._name) > 0; }
+		bool operator> (string& name) { return _name.compare(name) > 0; }
+
+
 		~Uniform()
 		{
 			_size = 0;
@@ -78,7 +86,7 @@ public: //Public structures
 	private:
 		string _name;
 		Ptr<float> _data;
-		unsigned _size; //just to make sure sizeof seems derpy...
+		unsigned _size;
 		GLuint pos;
 	};
 public:
@@ -91,7 +99,8 @@ public:
 
 	//getter / setter
 	void addShader(ShaderCode&);
-	int addUniform(Uniform&);
+	void addUniform(Uniform&);
+	void removeUniform(string&);
 
 	//functions
 	void load();
@@ -123,9 +132,10 @@ private:
 	string checkProgram();
 	GLenum getShaderType(ShaderType);
 	string getShaderCode(string);
+	int findUniform(string&, int, int);
+	int findUniform(Uniform&, int, int);
 
 	//common Shader Files, like libraries :D
-	const static ShaderCode Light;   //Contains the basic Light function
 	const static ShaderCode Color;   //Defines the Color Funtion to retreive fragment color from the texture, also defines the Uniforms
 	const static ShaderCode Vertex;
 };

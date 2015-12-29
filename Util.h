@@ -50,13 +50,14 @@
 				else
 					return nullptr;
 			}
-		
-			void operator=(Ptr<T> &other)
+
+			Ptr<T>& operator=(const Ptr<T> &other)
 			{
 				//takes over ownership
 				setPtr( other.ptr);
-				other.owned = false;
-				owned = true;
+				owned = false;
+
+				return *this;
 			}
 
 			T& operator->()
@@ -78,6 +79,8 @@
 				ptr = p;
 				owned = true;
 			}
+
+			void loseOwnership() { owned = false; }
 			bool owned;
 			T* ptr;
 		};

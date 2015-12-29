@@ -4,8 +4,7 @@
 
 #include "Shader.h"
 
-const Shader::ShaderCode Shader::Vertex  = Shader::ShaderCode(VERTEX, "vertex.glsl");
-const Shader::ShaderCode Shader::Light   = Shader::ShaderCode(FRAGMENT, "light.glsl");
+const Shader::ShaderCode Shader::Vertex  = Shader::ShaderCode(VERTEX, "vertex.glsl"); //make dynamic
 const Shader::ShaderCode Shader::Color   = Shader::ShaderCode(FRAGMENT, "color.glsl");
 
 Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
@@ -16,9 +15,8 @@ Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
 Shader::Shader(string vertexPath, string fragPath) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code.push_back(Vertex);
-	Code.push_back(Color);
-	Code.push_back(Light);
 	Code.push_back(ShaderCode(VERTEX, vertexPath));
+	Code.push_back(Color);
 	Code.push_back(ShaderCode(FRAGMENT, fragPath));
 
 	load();
@@ -29,7 +27,6 @@ Shader::Shader(ShaderCode ShaderArr[]) : program([this](GLuint* p) {deleteProgra
 {
 	Code.push_back(Vertex);
 	Code.push_back(Color);
-	Code.push_back(Light);
 	Code.insert(Code.begin() + 3, sizeof(ShaderArr) / sizeof(ShaderCode), ShaderArr[0]);//copies Array in vector
 
 	load();
@@ -42,7 +39,6 @@ Shader::Shader(vector<ShaderCode> Shaders) : program([this](GLuint* p) {deletePr
 
 	Code.push_back(Vertex);
 	Code.push_back(Color);
-	Code.push_back(Light);
 
 	load();
 	build();
@@ -56,11 +52,15 @@ void Shader::addShader(ShaderCode &code)
 {
 	Code.push_back(code);
 }
-int Shader::addUniform(Uniform &u)
+void Shader::addUniform(Uniform &u)
 {
-	Uniforms.push_back(u);
-
-	return Uniforms.size() - 1;
+	Uniforms.insert(Uniforms.begin() + findUniform(u, 0, Uniforms.size()), u);
+}
+void Shader::removeUniform(string& s)
+{
+	unsigned int pos = findUniform(s, 0, Uniforms.size());
+	if (Uniforms[pos] == s)
+		Uniforms.erase(Uniforms.begin() + pos);
 }
 
 
@@ -127,10 +127,11 @@ void Shader::bind()
 {
 	string err = checkProgram();
 
-	setUniforms();
-
 	if (err == "")
+	{
 		glUseProgram(*(program.get()));
+		setUniforms();
+	}
 	else
 		cout << "OpenGL Shader " << err << endl;
 }
@@ -293,7 +294,54 @@ string Shader::getShaderCode(string File)
 	return ShaderCode;
 }
 
-void Shader::Uniform::create(GLuint* prgm)
+int Shader::findUniform(string& name, int min, int max)
+{
+	if (min > max) {
+		return min;
+	}
+	else if (Uniforms.size() == 0)
+		return 0;
+	else {
+		unsigned int mid = (min + max) / 2;
+		if (mid >= Uniforms.size())
+			return Uniforms.size();
+
+		if (Uniforms[mid] == name) {
+			return mid;
+		}
+		else if (Uniforms[mid] < name) {
+			return findUniform( name, mid + 1, max);
+		}
+		else {
+			return findUniform( name, min, mid - 1);
+		}
+	}
+}
+int Shader::findUniform(Uniform& u, int min, int max)
+{
+	if (min > max) {
+		return min;
+	}
+	else if (Uniforms.size() == 0)
+		return 0;
+	else {
+		unsigned int mid = (min + max) / 2;
+		if (mid >= Uniforms.size())
+			return Uniforms.size();
+
+		if (Uniforms[mid] == u) {
+			return mid;
+		}
+		else if (Uniforms[mid] < u) {
+			return findUniform(u, mid + 1, max);
+		}
+		else {
+			return findUniform(u, min, mid - 1);
+		}
+	}
+}
+
+void Shader::Uniform::create( GLuint* prgm)
 {
 	pos = glGetUniformLocation(*prgm, _name.c_str());
 	if (pos == -1)
@@ -302,32 +350,33 @@ void Shader::Uniform::create(GLuint* prgm)
 
 void Shader::Uniform::write(GLuint* prgm)
 {
-	if ( pos == -1)
+	if(pos == -1)
 		create(prgm);
 	if (pos == -1 )
 		return;//pos couldn't be resolved
+	
 	switch (_size)
 	{
 	case 1:
-		glUniform1fv(pos, 1, _data.get()); //error Handling
+		glUniform1fv(pos, 1, _data.get());
 		break;
 	case 2:
-		glUniform2fv(pos, 1, _data.get()); //error Handling
+		glUniform2fv(pos, 2, _data.get());
 		break;
 	case 3:
-		glUniform3fv(pos, 1, _data.get()); //error Handling
+		glUniform3fv(pos, 1, _data.get());
 		break;
 	case 4:
-		glUniform4fv(pos, 1, _data.get()); //error Handling
+		glUniform4fv(pos, 4, _data.get());
 		break;
 	case 9:
-		glUniformMatrix3fv(pos, 1, false, _data.get()); //error Handling
+		glUniformMatrix3fv(pos, 1, false, _data.get());
 		break;
 	case 16:
-		glUniformMatrix4fv(pos, 1, false, _data.get()); //error Handling
+		glUniformMatrix4fv(pos, 1, false, _data.get());
 		break;
 	default:
-		glUniform1fv(pos, _size, _data.get()); //error Handling
+		glUniform1fv(pos, _size, _data.get());
 		break;
 	}
 }

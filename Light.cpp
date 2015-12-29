@@ -10,6 +10,7 @@ BaseLight::BaseLight( vec3 c, float i)
 	_color = c;
 	_intensity = i;
 	shader = nullptr;
+	_name = "";
 }
 
 void BaseLight::render(Shader * s, bool firstPass)
@@ -23,14 +24,17 @@ void BaseLight::render(Shader * s, bool firstPass)
 	EngineObject::render(s, firstPass);
 }
 
-void BaseLight::init(RenderingEngine * r)
-{
-	if (r)
-		r->registerGraphicObject(this);
-}
-
 void BaseLight::createUniforms( string name)
 {
+
+	if (_name != name && _name.size())
+	{
+		shader->removeUniform(_name + ".color");
+		color = nullptr;
+		shader->removeUniform(_name + ".intensity");
+		intensity = nullptr;
+	}
+
 	float* temp = nullptr;
 	shader->addUniform(Shader::Uniform( name + ".color", temp, 3));
 	color = (vec3*)temp;
@@ -44,12 +48,18 @@ DirectionalLight::DirectionalLight( vec3 c, float i, vec3 dir) : BaseLight( c, i
 {
 	_normal = dir;
 	shader = new Shader("forward_directional_vs.glsl", "forward_directional_fs.glsl");
+	createUniforms("Light");
 }
 
 void DirectionalLight::createUniforms( string name)
 {
-	BaseLight::createUniforms(name + ".base");
+	BaseLight::createUniforms(name + "");
 	float* temp = nullptr;
+	if (_name != name && _name.size())
+	{
+		shader->removeUniform(_name + ".direction");
+		normal = nullptr;
+	}
 	shader->addUniform(Shader::Uniform(name + ".direction", temp, 3));
 	normal = (vec3*)temp;
 
@@ -73,18 +83,24 @@ PointLight::PointLight( vec3 c, float i,Attenuation a, vec3 p) : BaseLight( c, i
 	_pos = p;
 
 	float ex = a.getExponent();
-	float li = a.getLinear() / ex;
-	float co = a.getConstant() / ex;
-	if (((li * li) / 4 - co) > 0)
-		_range = (-li / 2 + sqrt((li * li) / 4 - co)); //calculate point where equation returns 0
-	else
-		_range = 1000.0f;
+	float li = a.getLinear();
+	float co = a.getConstant() * getIntensity() * max(getColor().x, max(getColor().y, getColor().z));
+	_range = max(abs((-li + sqrtf(li * li - 4 * ex * co)) / (2 * ex)), abs((-li - sqrtf(li * li - 4 * ex * co)) / (2 * ex)));
 	shader = new Shader( "forward_point_vs.glsl",  "forward_point_fs.glsl");
+	createUniforms("Light");
 }
 	
 void PointLight::createUniforms(string name)
 {
 	BaseLight::createUniforms(name + ".base");
+	if (_name != name && _name.size())
+	{
+		atten.createUniforms(shader, name + ".atten");
+		shader->removeUniform(_name + ".range");
+		range = nullptr;
+		shader->removeUniform(_name + ".pos");
+		pos = nullptr;
+	}
 	atten.createUniforms(shader, name + ".atten");
 	shader->addUniform(Shader::Uniform(name + ".range", range, 1));
 	float* temp = nullptr;
@@ -116,11 +132,19 @@ SpotLight::SpotLight( vec3 c, float i,Attenuation a, vec3 p, vec3 dir, float cut
 	if (shader)
 		shader->~Shader();
 	shader = new Shader( "forward_spot_vs.glsl", "forward_spot_fs.glsl");
+	createUniforms("Light");
 }
 	
 void SpotLight::createUniforms(string name)
 {
 	PointLight::createUniforms(name + ".point");
+	if (_name != name && _name.size() > 0)
+	{
+		shader->removeUniform(_name + ".direction");
+		direction = nullptr;
+		shader->removeUniform(_name + ".cutoff");
+		cutoff = nullptr;
+	}
 	float* temp = nullptr;
 	shader->addUniform(Shader::Uniform(name + ".direction", temp, 3));
 	direction = (vec3*)temp;

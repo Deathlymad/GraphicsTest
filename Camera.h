@@ -27,8 +27,8 @@ public:
 	void setAspect(float);
 
 	void registerKeyBinds(KeyMap*);
-	void registerUniform(Shader*);
-	void onMouseMove(double x, double y);
+	void registerUniform(Shader*, bool);
+	void onMouseMove(double x, double y); //move, cameras need to be static too
 
 	~Camera();
 protected:
@@ -38,7 +38,7 @@ private:
 	vec3 _pos;
 	vec3 forward;
 	vec3 up;
-	UniformRegistry<1> EyePos;
+	UniformRegistry<3> EyePos;
 	
 	mat4 View;
 	float FoV;

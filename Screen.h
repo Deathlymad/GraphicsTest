@@ -30,6 +30,7 @@ public:
 	}
 
 	void makeCurrent();
+	bool isFocused();
 
 	int getWidth() { return Width; }
 	int getHeight() { return Height; }

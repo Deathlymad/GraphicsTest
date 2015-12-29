@@ -3,12 +3,17 @@ finish Textures (TextureAtlas, multiple Samplers)
 add comments
 Finish window management (resizing)
 Gamepad Joystick implementation
-
+reduce Update calls from constants like Material Data
+Write Regex Algorithms to modify Shaders in order to fit them to the input Data.
+create UI
+Options
+create Player
+create World
+make the Registration in the TestGame class cleaner
+clean up Shaders
 
 Long Term:
-Create World
 Physics
-Move Math from glm to Blaze?
 
 Very Long Term:
 autonomous Threadusage and memory optimization

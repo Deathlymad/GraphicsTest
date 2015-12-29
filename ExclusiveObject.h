@@ -22,11 +22,19 @@ public:
 	void claim(T& obj)
 	{
 		lock = new lock_guard<mutex>(mut);
-		//obj = move(*o);
+		obj = move(*o);
 	}
 	void unclaim(T& obj)
 	{
-		//obj = move(*o);
+		obj = move(*o);
+		lock->~lock_guard();
+	}
+	void claim()
+	{
+		lock = new lock_guard<mutex>(mut);
+	}
+	void unclaim()
+	{
 		lock->~lock_guard();
 	}
 
@@ -60,6 +68,18 @@ public:
 		if (id != this_thread::get_id())
 			return;
 		ExclusiveObject<T>::unclaim(obj);
+	}
+	void claim()
+	{
+		if (id != this_thread::get_id())
+			return;
+		ExclusiveObject<T>::claim();
+	}
+	void unclaim()
+	{
+		if (id != this_thread::get_id())
+			return;
+		ExclusiveObject<T>::unclaim();
 	}
 
 	~ThreadExclusiveObject()

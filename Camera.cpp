@@ -21,7 +21,6 @@ Camera::Camera() : InputHandler(), EngineObject()
 void Camera::update()
 {
 	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
-	_update = false;
 }
 
 void Camera::render(Shader *, bool firstPass)
@@ -29,7 +28,6 @@ void Camera::render(Shader *, bool firstPass)
 	if (firstPass)
 	{
 		ViewProjMat.update(&View[0][0]);
-		_update = true;
 		EyePos.update(&_pos[0]);
 	}
 }
@@ -56,14 +54,18 @@ void Camera::registerKeyBinds(KeyMap * k)
 	k->addKeyBind(68, [this](unsigned short key) { move(key); }, "Strafe Right");//D
 }
 
-void Camera::registerUniform(Shader * s)
+void Camera::registerUniform(Shader * s, bool light)
 {
 	float* temp = nullptr;
 	s->addUniform(Shader::Uniform("ViewProj", temp, 16));
 	ViewProjMat.addMemPos(temp);
 	temp = nullptr;
-	s->addUniform(Shader::Uniform("EyePos", temp, 3));
-	EyePos.addMemPos(temp);
+	if (light)
+	{
+		s->addUniform(Shader::Uniform("EyePos", temp, 3));
+		EyePos.addMemPos(temp);
+	}
+	
 }
 
 Camera::~Camera()

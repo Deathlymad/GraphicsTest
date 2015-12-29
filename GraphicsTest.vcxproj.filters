@@ -31,34 +31,19 @@
     <Filter Include="Graphics">
       <UniqueIdentifier>{22421b31-23df-4d21-9b42-da409cb8d901}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{ad5ee55d-b56c-4a67-a038-8175d5990c56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\UI">
+      <UniqueIdentifier>{980496d2-a6d8-4ac3-966c-f8e5918b8df3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyMap.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="Clock.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="InputHandler.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="bmp.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="TestGame.cpp">
       <Filter>TestGame</Filter>
-    </ClCompile>
-    <ClCompile Include="CoreEngine.cpp">
-      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Graphics</Filter>
@@ -87,46 +72,43 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Util.cpp">
-      <Filter>Quelldateien</Filter>
+    <ClCompile Include="Clock.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreEngine.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineObject.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHandler.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyMap.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Transformation.cpp">
-      <Filter>Quelldateien</Filter>
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>Graphics\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="KeyMap.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Clock.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="InputHandler.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="bmp.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ExclusiveObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Util.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Def.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TestGame.h">
       <Filter>TestGame</Filter>
-    </ClInclude>
-    <ClInclude Include="CoreEngine.h">
-      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Graphics</Filter>
@@ -161,8 +143,38 @@
     <ClInclude Include="UniformRegistry.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Clock.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreEngine.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Def.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineObject.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ExclusiveObject.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandler.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyMap.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="Transformation.h">
-      <Filter>Headerdateien</Filter>
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Graphics\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

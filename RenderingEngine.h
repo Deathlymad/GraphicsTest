@@ -10,13 +10,12 @@ class Camera;
 class CoreEngine;
 
 #pragma once
-class RenderingEngine : ThreadExclusiveObject<RenderingEngine>
+class RenderingEngine
 {
 public:
-	RenderingEngine() : ThreadExclusiveObject<RenderingEngine>(*this) {}
 	RenderingEngine(CoreEngine* parent, Screen*);
 
-	void initOnShaders(function<void(Shader*)> f) { f(&ambient); for (BaseLight* l : Lights) f(l->getShader()); }
+	void initOnShaders(function<void(Shader*, bool)> f) { f(&ambient, false); for (BaseLight* l : Lights) f(l->getShader(), true); }
 
 	void render(Scene*);
 
