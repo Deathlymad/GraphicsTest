@@ -160,6 +160,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
+    <ClCompile Include="OptionRegistry.cpp" />
     <ClCompile Include="RenderingEngine.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Screen.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="UI.cpp" />
+    <ClCompile Include="UIPart.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -185,6 +187,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelRenderer.h" />
+    <ClInclude Include="OptionRegistry.h" />
     <ClInclude Include="RenderingEngine.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Screen.h" />
@@ -193,6 +196,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transformation.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="UIPart.h" />
     <ClInclude Include="UniformRegistry.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>

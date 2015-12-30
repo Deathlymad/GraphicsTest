@@ -16,14 +16,33 @@ void Game::Start()
 {
 	Engine.start();
 	running = true;
+	isMenuOpen = false;
 	Run();
 }
 
 void Game::Run()
 {
+	bool is3D = true;
 	while (running)
 	{
-		Engine.getGraphicEngine()->render(&world);
+		if (isMenuOpen)
+		{
+			if (!is3D)
+			{
+				is3D = true;
+				Engine.getGraphicEngine()->set3D();
+			}
+			Engine.getGraphicEngine()->render(&world);
+		}
+		else
+		{
+			if (is3D)
+			{
+				is3D = false;
+				Engine.getGraphicEngine()->set2D();
+			}
+			Engine.getGraphicEngine()->render(&Menu);
+		}
 	}
 }
 
@@ -45,7 +64,10 @@ void Game::init()
 
 void Game::update()
 {
-	world.update();
+	if (!isMenuOpen)
+		world.update();
+	else
+		Menu.update();
 }
 
 KeyMap & Game::addKeyMap()
@@ -62,6 +84,11 @@ Game::~Game()
 
 void Game::setupKeyMap(KeyMap &k)
 {
-	k.addKeyBind(0, [this](unsigned short) { Terminate(); }, "Shutdown");
+	k.addKeyBind(0, [this](unsigned short) { ToggleMenu(); }, "Shutdown");
 	world.init( &k);
+}
+
+void Game::ToggleMenu()
+{
+	isMenuOpen = !isMenuOpen;
 }

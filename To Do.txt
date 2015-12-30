@@ -1,12 +1,11 @@
 Short Term:
-finish Textures (TextureAtlas, multiple Samplers)
-add comments
-Finish window management (resizing)
-Gamepad Joystick implementation
-reduce Update calls from constants like Material Data
 create UI
 	Menu
 	Options
+finish Textures (TextureAtlas, multiple Samplers)
+Finish window management (resizing)
+Gamepad/Joystick implementation
+reduce Update calls from constants like Material Data
 make the Registration in the TestGame class cleaner
 add Log File
 
@@ -19,6 +18,15 @@ Write Regex Algorithms to modify Shaders in order to fit them to the input Data.
 Make the "Borders" of the Lights disappear
 
 Very Long Term:
+add comments
 autonomous Threadusage and memory optimization
 OpenCL
 Use Vulkan
+
+
+
+
+UI stuffs:
+Enabling the mouse/rendering a virtual mouse
+make the UI able to Drag & Drop over the Screen
+keep all Data current (Options)

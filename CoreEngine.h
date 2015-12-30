@@ -1,5 +1,6 @@
 #include <mutex>
 #include "RenderingEngine.h"
+#include "Clock.h"
 
 class Screen;
 class Game;

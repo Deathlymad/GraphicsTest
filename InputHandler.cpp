@@ -21,8 +21,8 @@ InputHandler::InputHandler(Screen * s)
 	pos = Handles.size();
 	Handles.insert(Handles.begin() + pos, this);
 
-	x = 0;
-	y = 0;
+	_x = 0;
+	_y = 0;
 }
 
 InputHandler::InputHandler()
@@ -30,8 +30,8 @@ InputHandler::InputHandler()
 	pos = Handles.size();
 	Handles.insert(Handles.begin() + pos, this);
 
-	x = 0;
-	y = 0;
+	_x = 0;
+	_y = 0;
 }
 
 InputHandler::~InputHandler()
@@ -58,9 +58,9 @@ void InputHandler::cursorPosCallback(GLFWwindow * window, double xpos, double yp
 {
 	for (InputHandler* handle : Handles)
 	{
-		handle->onMouseMove(xpos - handle->x, ypos - handle->y);
-		handle->x = xpos;
-		handle->y = ypos;
+		handle->onMouseMove(xpos - handle->_x, ypos - handle->_y);
+		handle->_x = xpos;
+		handle->_y = ypos;
 	}
 }
 

@@ -21,12 +21,12 @@ protected:
 	virtual void onKeyPress(char button, char action, char mods) {} //abstract, needs to be overwritten
 	virtual void onMouseMove(double x, double y) {} //abstract, needs to be overwritten
 	virtual void onMouseButton(char button, char action, char mods) {} //abstract, needs to be overwritten
-
+	void getCursorPos(double &x, double &y) { x = _x; y = _y; }
 private:
 	static vector<InputHandler*> Handles; //atores Update Links to all Input Handlers, common Ressource needs protection
 	size_t pos;
 
-	double x, y;
+	double _x, _y;
 
 	static bool registered;
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

@@ -13,6 +13,7 @@ typedef unsigned int GLuint;
 #pragma once
 class Mesh
 {
+public:
 	class VertexArrayObject
 	{
 	public:
@@ -24,19 +25,18 @@ class Mesh
 		void bindVertexArray();
 		void disableVAO();
 
-		~VertexArrayObject();
-	private:
-		bool isVec() { return (bitset & 1) != 0; }
-		bool isTex() { return (bitset & 2) != 0; }
-		bool isNor() { return (bitset & 4) != 0; }
-
 		void enableVec();
 		void disableVec();
 		void enableTex();
 		void disableTex();
 		void enableNor();
 		void disableNor();
+		bool isVec() { return (bitset & 1) != 0; }
+		bool isTex() { return (bitset & 2) != 0; }
+		bool isNor() { return (bitset & 4) != 0; }
 
+		~VertexArrayObject();
+	private:
 		int getsize() { return (isVec() ? 12 : 0) + (isTex() ? 8 : 0) + (isNor() ? 12 : 0); }
 
 		Ptr<unsigned int> VAO;
@@ -67,7 +67,7 @@ class Mesh
 	private:
 		float data[8];
 	};
-public:
+
 	Mesh ( string);
 	Mesh(  vector<Vertex> &vec, vector < unsigned int> &i);
 	Mesh();
@@ -75,14 +75,23 @@ public:
 	void Draw();
 
 	~Mesh(void);
-private:
+protected:
 	void initGL(unsigned char);
-	void glDownload(  vector<Vertex>&, vector <unsigned int>&);
-	
 	VertexArrayObject vao;
 	CustomPtr<GLuint> vbo;
 	CustomPtr<GLuint> ibo;
 	void deleteBuffer(GLuint* buf);
-
 	unsigned int indices;
+private:
+	virtual void glDownload(  vector<Vertex>&, vector <unsigned int>&);
+};
+
+class Mesh2D : public Mesh
+{
+public:
+	Mesh2D() : Mesh() {}
+	Mesh2D(vector<Vertex> &vec);
+	Mesh2D(vector<Vertex> &vec, vector<unsigned int>&);
+private:
+	void glDownload(vector<Vertex>&, vector<unsigned int>&);
 };

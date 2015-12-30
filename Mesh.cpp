@@ -226,3 +226,43 @@ void Mesh::VertexArrayObject::disableNor()
 {
 	glDisableVertexAttribArray(2);
 }
+
+Mesh2D::Mesh2D(vector<Vertex>& vec) : Mesh()
+{
+	vector<unsigned int> i = vector<unsigned int>({0,1,2,3});
+	glDownload(vec, i);
+	vao.disableNor();
+}
+
+Mesh2D::Mesh2D(vector<Vertex>& vec, vector<unsigned int> &i) : Mesh()
+{
+	glDownload(vec, i);
+	vao.disableNor();
+}
+
+void Mesh2D::glDownload(vector<Vertex>& v, vector<unsigned int>& i)
+{
+	initGL(!glIsBuffer(*(vbo.get())) << 1 | !glIsBuffer(*(ibo.get())));
+
+	if (v.size() == 0)
+		return;
+
+	vector<float> temp;
+	for (unsigned int i = 0; i < v.size(); i++)
+	{
+		float* d = v[i].getData();
+		for (size_t j = 0; j < 6; j++)
+		{
+			if (i == 2)//skips Z data
+				continue; 
+			temp.push_back(d[j]);
+		}
+	}
+	glBindBuffer(GL_ARRAY_BUFFER, *(vbo.get())); //contains Vertices
+	glBufferData(GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_STATIC_DRAW);
+	temp.clear();
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(ibo.get()));
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_STATIC_DRAW);
+	indices = i.size();
+}

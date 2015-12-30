@@ -2,8 +2,8 @@
 #include "CoreEngine.h"
 #include "Scene.h"
 #include "KeyMap.h"
-
-class Screen;
+#include "UI.h"
+#include "Screen.h"
 
 #pragma once
 class Game
@@ -29,11 +29,12 @@ private: //context
 
 protected:
 	Scene world;
-
+	UI Menu;
+	bool isMenuOpen;
 	CoreEngine* getEngine() { return &Engine; }
 private:
 	void setupKeyMap(KeyMap&);
-
+	void ToggleMenu();
 	vector<KeyMap*> KeyMaps;
 
 	bool running;

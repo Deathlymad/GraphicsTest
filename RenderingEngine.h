@@ -2,12 +2,13 @@
 
 #include "ExclusiveObject.h"
 #include "Light.h"
-#include "Scene.h"
-#include "Screen.h"
 #include "Shader.h"
 
 class Camera;
 class CoreEngine;
+class Screen;
+class Scene;
+class UI;
 
 #pragma once
 class RenderingEngine
@@ -18,6 +19,10 @@ public:
 	void initOnShaders(function<void(Shader*, bool)> f) { f(&ambient, false); for (BaseLight* l : Lights) f(l->getShader(), true); }
 
 	void render(Scene*);
+	void render(UI*);
+
+	void set2D();
+	void set3D();
 
 	void registerGraphicObject(BaseLight*);
 	void registerGraphicObject(Camera*);
@@ -34,7 +39,8 @@ public:
 
 	~RenderingEngine();
 private:
-	void setupInitialEngineState();
+	void setup3DEngineState();
+	void setup2DEngineState();
 
 	Screen* screen;
 
