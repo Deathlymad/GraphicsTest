@@ -10,6 +10,7 @@ Game::Game() : screen(1366, 768, "Test", char(154)), Engine(&screen, this), worl
 
 	setupKeyMap(*KeyMaps[0]);
 	running = false;
+	Menu = nullptr;
 }
 
 void Game::Start()
@@ -25,7 +26,7 @@ void Game::Run()
 	bool is3D = true;
 	while (running)
 	{
-		if (isMenuOpen)
+		if (!isMenuOpen)
 		{
 			if (!is3D)
 			{
@@ -34,14 +35,14 @@ void Game::Run()
 			}
 			Engine.getGraphicEngine()->render(&world);
 		}
-		else
+		else if (Menu)
 		{
 			if (is3D)
 			{
 				is3D = false;
 				Engine.getGraphicEngine()->set2D();
 			}
-			Engine.getGraphicEngine()->render(&Menu);
+			Engine.getGraphicEngine()->render(Menu);
 		}
 	}
 }
@@ -66,8 +67,8 @@ void Game::update()
 {
 	if (!isMenuOpen)
 		world.update();
-	else
-		Menu.update();
+	else if (Menu)
+		Menu->update();
 }
 
 KeyMap & Game::addKeyMap()

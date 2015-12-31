@@ -46,8 +46,6 @@ void Camera::setAspect(float aspect)
 
 void Camera::registerKeyBinds(KeyMap * k)
 {
-	if (!this)
-		return;
 	k->addKeyBind(87, [this](unsigned short key) { move(key); }, "Move Forward");//W
 	k->addKeyBind(83, [this](unsigned short key) { move(key); }, "Move Backward");//S
 	k->addKeyBind(65, [this](unsigned short key) { move(key); }, "Strafe Left");//A

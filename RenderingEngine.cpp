@@ -41,7 +41,7 @@ void RenderingEngine::render(UI * ui)
 	if (!screen->isFocused())
 		return;
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	ui->render();
 
@@ -92,7 +92,7 @@ void RenderingEngine::setup2DEngineState()
 {
 	glFrontFace(GL_CCW); //defines the Front face having counterclockwise vertices for culling
 	glCullFace(GL_BACK); //Deletes the Backface
-	glEnable(GL_CULL_FACE); //Enables Backfaceculling
+	glDisable(GL_CULL_FACE); //Enables Backfaceculling
 	glDisable(GL_DEPTH_CLAMP);
 	glDisable(GL_DEPTH_TEST); //Enables Depth Test for Fragments
 	glDisable(GL_ALPHA_TEST);

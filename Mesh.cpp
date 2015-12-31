@@ -229,15 +229,15 @@ void Mesh::VertexArrayObject::disableNor()
 
 Mesh2D::Mesh2D(vector<Vertex>& vec) : Mesh()
 {
-	vector<unsigned int> i = vector<unsigned int>({0,1,2,3});
+	vector<unsigned int> i = vector<unsigned int>({0,1,2,2,1,3});
 	glDownload(vec, i);
-	vao.disableNor();
+	vao.setBitset(true, false, false);
 }
 
 Mesh2D::Mesh2D(vector<Vertex>& vec, vector<unsigned int> &i) : Mesh()
 {
 	glDownload(vec, i);
-	vao.disableNor();
+	vao.setBitset(true, false, false);
 }
 
 void Mesh2D::glDownload(vector<Vertex>& v, vector<unsigned int>& i)
@@ -251,10 +251,8 @@ void Mesh2D::glDownload(vector<Vertex>& v, vector<unsigned int>& i)
 	for (unsigned int i = 0; i < v.size(); i++)
 	{
 		float* d = v[i].getData();
-		for (size_t j = 0; j < 6; j++)
+		for (size_t j = 0; j < 3; j++)
 		{
-			if (i == 2)//skips Z data
-				continue; 
 			temp.push_back(d[j]);
 		}
 	}

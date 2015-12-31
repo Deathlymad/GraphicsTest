@@ -29,7 +29,7 @@ private: //context
 
 protected:
 	Scene world;
-	UI Menu;
+	UI* Menu;
 	bool isMenuOpen;
 	CoreEngine* getEngine() { return &Engine; }
 private:

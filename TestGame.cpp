@@ -32,6 +32,8 @@ trans( 0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f))
 	Light2.add(&m);
 
 	world.addObj(&m);
+	
+	Menu = new UI();
 }
 
 TestGame::~TestGame()

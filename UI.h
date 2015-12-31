@@ -22,6 +22,6 @@ private:
 	vector<UIPart*> _parts;
 	bool _enabled;
 
-	static Shader renderer;
+	static Shader* renderer;
 };
 

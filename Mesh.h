@@ -21,16 +21,12 @@ public:
 		VertexArrayObject( int vec, int tex, int norm) : VAO( nullptr), bitset( vec | (tex << 1) | (norm << 2) ) {}
 		VertexArrayObject(unsigned char bitset) : VAO( nullptr), bitset(bitset) {}
 
+		void setBitset(int vec, int tex, int norm) { bitset = (vec | (tex << 1) | (norm << 2)); }
+
 		void createVertexArray();
 		void bindVertexArray();
 		void disableVAO();
 
-		void enableVec();
-		void disableVec();
-		void enableTex();
-		void disableTex();
-		void enableNor();
-		void disableNor();
 		bool isVec() { return (bitset & 1) != 0; }
 		bool isTex() { return (bitset & 2) != 0; }
 		bool isNor() { return (bitset & 4) != 0; }
@@ -38,6 +34,13 @@ public:
 		~VertexArrayObject();
 	private:
 		int getsize() { return (isVec() ? 12 : 0) + (isTex() ? 8 : 0) + (isNor() ? 12 : 0); }
+
+		void enableVec();
+		void disableVec();
+		void enableTex();
+		void disableTex();
+		void enableNor();
+		void disableNor();
 
 		Ptr<unsigned int> VAO;
 		unsigned char bitset;
