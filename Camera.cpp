@@ -46,10 +46,10 @@ void Camera::setAspect(float aspect)
 
 void Camera::registerKeyBinds(KeyMap * k)
 {
-	k->addKeyBind(87, [this](unsigned short key) { move(key); }, "Move Forward");//W
-	k->addKeyBind(83, [this](unsigned short key) { move(key); }, "Move Backward");//S
-	k->addKeyBind(65, [this](unsigned short key) { move(key); }, "Strafe Left");//A
-	k->addKeyBind(68, [this](unsigned short key) { move(key); }, "Strafe Right");//D
+	k->addKeyBind(87, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Move Forward", KeyMap::KeyState::ONHOLD);//W
+	k->addKeyBind(83, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Move Backward", KeyMap::KeyState::ONHOLD);//S
+	k->addKeyBind(65, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Strafe Left", KeyMap::KeyState::ONHOLD);//A
+	k->addKeyBind(68, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Strafe Right", KeyMap::KeyState::ONHOLD);//D
 }
 
 void Camera::registerUniform(Shader * s, bool light)

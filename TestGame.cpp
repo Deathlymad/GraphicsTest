@@ -33,7 +33,7 @@ trans( 0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f))
 
 	world.addObj(&m);
 	
-	Menu = new UI();
+	Menu = new UI(this);
 }
 
 TestGame::~TestGame()

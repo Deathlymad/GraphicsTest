@@ -59,8 +59,8 @@ void Game::addObject(EngineObject & object)
 
 void Game::init()
 {
-	if (KeyMaps.size() > 0)
-		KeyMaps[0]->launchKeyMap();
+	KeyMaps[0]->launchKeyMap();
+	KeyMaps[0]->activate();
 }
 
 void Game::update()
@@ -85,11 +85,18 @@ Game::~Game()
 
 void Game::setupKeyMap(KeyMap &k)
 {
-	k.addKeyBind(0, [this](unsigned short) { ToggleMenu(); }, "Shutdown");
+	k.addKeyBind(0, [this](unsigned short, KeyMap::KeyState) { ToggleMenu(); }, "Menu", KeyMap::KeyState::ONPRESS);
 	world.init( &k);
 }
 
 void Game::ToggleMenu()
 {
 	isMenuOpen = !isMenuOpen;
+	if (isMenuOpen)
+	{
+		KeyMaps[0]->deactivate();
+		Menu->activate();
+	}
+	else
+		KeyMaps[0]->activate();
 }

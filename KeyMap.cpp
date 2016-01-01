@@ -23,12 +23,13 @@ KeyMap::KeyMap() : InputHandler(), KeyTick([] {}, [this] {updateKeyMap(this); },
 {
 }
 
-void KeyMap::addKeyBind( unsigned short key, function<void(unsigned short)> Func, string name)
+void KeyMap::addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig)
 {
 	KeyBind k;
 	k.key = key;
 	k.callback = Func;
 	k.name = name;
+	k.trigger = trig;
 	k.isPressed = false;
 	int newPos = find(key, &KeyBindings, 0, KeyBindings.size());
 	KeyBindings.insert(KeyBindings.begin() + newPos, k);
@@ -38,7 +39,8 @@ void KeyMap::onKeyPress(unsigned short key)
 {
 	KeyBind temp = KeyBindings[find(key, &KeyBindings, 0, KeyBindings.size())];
 
-	temp.callback(key);
+	if (temp.trigger & ONHOLD)
+		temp.callback(key, ONHOLD);
 }
 
 KeyMap & KeyMap::operator=(KeyMap & k)
@@ -59,9 +61,17 @@ void KeyMap::onKeyPress(char button, char action, char mods)
 	if (key != KeyBindings[pos].key)
 		return;
 	if (action == GLFW_PRESS)
+	{
+		if (KeyBindings[pos].trigger & ONPRESS && _activated)
+			KeyBindings[pos].callback(key, ONPRESS);
 		KeyBindings[pos].isPressed = true;
+	}
 	if (action == GLFW_RELEASE)
+	{
+		if (KeyBindings[pos].trigger & ONRELEASE && _activated)
+			KeyBindings[pos].callback(key, ONRELEASE);
 		KeyBindings[pos].isPressed = false;
+	}
 }
 
 size_t KeyMap::find(unsigned short key, vector<KeyBind>* arr, int min, int max)
@@ -90,6 +100,8 @@ size_t KeyMap::find(unsigned short key, vector<KeyBind>* arr, int min, int max)
 
 void KeyMap::updateKeyMap(KeyMap * k)
 {
+	if (!k->_activated)
+		return;
 	vector<KeyBind>* Bindings = &(k->KeyBindings);
 	for (size_t i = 0; i < Bindings->size(); i++)
 	{

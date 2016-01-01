@@ -9,24 +9,36 @@
 
 NSP_STD
 
+
 #pragma once
 class KeyMap : InputHandler
 {
+public:
+	enum KeyState
+	{
+		ONPRESS   = 1,
+		ONHOLD    = 2,
+		ONRELEASE = 4
+	};
 	struct KeyBind
 	{
 		unsigned short key;
-		function<void(unsigned short)> callback;
+		function<void(unsigned short, KeyState)> callback;
 		string name;
+		int trigger;
 		bool isPressed;
 	};
-public:
+
 	KeyMap(Screen* s);
 	KeyMap(KeyMap&);
 	KeyMap();
 
 	void launchKeyMap() { KeyTick.run(); }
 
-	void addKeyBind( unsigned short key, function<void(unsigned short)> Func, string name);
+	void activate() { _activated = true; }
+	void deactivate() { _activated = false; }
+
+	void addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig = ONHOLD);
 
 	void onKeyPress( unsigned short);
 
@@ -43,4 +55,6 @@ private:
 	static void updateKeyMap(KeyMap*);
 
 	Clock KeyTick;
+
+	bool _activated;
 };

@@ -8,6 +8,7 @@ Gamepad/Joystick implementation
 reduce Update calls from constants like Material Data
 make the Registration in the TestGame class cleaner
 add Log File
+merge Mesh2D and Mesh
 
 Long Term:
 Physics
@@ -30,4 +31,3 @@ UI stuffs:
 Enabling the mouse/rendering a virtual mouse
 make the UI able to Drag & Drop over the Screen
 keep all Data current (Options)
-Disable all Keybinds from the 3D Rendering
