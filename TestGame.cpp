@@ -1,5 +1,6 @@
 #include "TestGame.h"
 #include "Def.h"
+#include "UIPart.h"
 
 NSP_GLM
 
@@ -34,6 +35,7 @@ trans( 0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f))
 	world.addObj(&m);
 	
 	Menu = new UI(this);
+	Menu->add(new UIButton(Menu, vec2(-0.2, -0.2), vec2(0.2, 0.2), -1, [this] {Terminate(); }));
 }
 
 TestGame::~TestGame()

@@ -24,6 +24,9 @@ public:
 
 	void updateScreen();
 
+	void enableCursor();
+	void disableCursor();
+
 	void handleWindow(function<void(GLFWwindow*)> f)
 	{
 		f(winHandle);

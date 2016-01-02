@@ -20,7 +20,7 @@ UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex
 	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2(-1.0f,  1.0f), vec3()));
 	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2( 1.0f,  1.0f), vec3()));
 	_mesh = Mesh2D(v);
-
+	
 	_event = e;
 
 	if (!_tex.Loaded())
@@ -58,11 +58,32 @@ UIPart::~UIPart()
 
 bool UIPart::isInPart(double x, double y)
 {
-	if ((_pos[0].x < x < _pos[3].x) && (_pos[0].y < y < _pos[3].y))
+	if ((_pos[0].x < convertToScreenSpace(x, false) && convertToScreenSpace( x, false) < _pos[1].x) && (_pos[0].y < convertToScreenSpace( y, true) && convertToScreenSpace(y, true) < _pos[1].y))
 		return true;
 	return false;
 }
 
+double UIPart::convertToScreenSpace(double in, bool height)
+{
+	return ((in/(height ? _parent->getScreenSize().y : _parent->getScreenSize().x)) * 2) - 1;
+}
+
+vec2 UIPart::convertToScreenSpace(vec2 in)
+{
+	return vec2(convertToScreenSpace(in.x, false), convertToScreenSpace(in.y, true));
+}
+
+UIButton::UIButton(UI* parent, vec2 pos1, vec2 pos2, unsigned short shortcut, function<void()> _event) : UIPart(parent, pos1, pos2, _event)
+{
+	if (shortcut != -1)
+		_parent->addEvent(shortcut, [this](unsigned short, KeyMap::KeyState) {_pressed != _pressed; }, "Shortcut", KeyMap::KeyState::ONRELEASE);
+}
+
+void UIButton::render()
+{
+	_tex.bind();
+	_mesh.Draw();
+}
 void UIButton::update()
 {
 	if (_pressed)

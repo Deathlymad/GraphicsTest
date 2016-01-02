@@ -156,6 +156,16 @@ void Screen::updateScreen()
 	glfwPollEvents();
 }
 
+void Screen::enableCursor()
+{
+	glfwSetInputMode(winHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void Screen::disableCursor()
+{
+	glfwSetInputMode(winHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
 void Screen::makeCurrent()
 {
 	glfwMakeContextCurrent(winHandle);

@@ -9,9 +9,14 @@ class Game;
 #pragma once
 class UI : EngineObject
 {
+	friend class UIPart;
+	friend class UIButton;
 public:
 	UI(Game* parent);
 	UI(UI* parent);
+
+	void add(UI*);
+	void add(UIPart*);
 
 	bool isActive() { return _enabled; }
 
@@ -23,6 +28,9 @@ public:
 
 	~UI();
 private:
+	vec2 getScreenSize();
+	void addEvent(unsigned short, function<void(unsigned short, KeyMap::KeyState)>, string, int);
+
 	KeyMap keyBinds;
 	UI* _parent;
 	Game* _owner;
@@ -32,4 +40,3 @@ private:
 
 	static Shader* renderer;
 };
-

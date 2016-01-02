@@ -15,6 +15,8 @@ public:
 	void Run();
 	void Terminate();
 
+	vec2 getScreenSize() { return vec2(screen.getWidth(), screen.getHeight()); }
+
 	void addObject(EngineObject&);
 
 	virtual void init();
@@ -30,11 +32,9 @@ private: //context
 protected:
 	Scene world;
 	UI* Menu;
-	bool isMenuOpen;
 	CoreEngine* getEngine() { return &Engine; }
 private:
 	void setupKeyMap(KeyMap&);
-	void ToggleMenu();
 	vector<KeyMap*> KeyMaps;
 
 	bool running;

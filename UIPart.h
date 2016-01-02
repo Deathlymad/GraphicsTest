@@ -18,22 +18,28 @@ public:
 	UIPart(UI* parent, vec2 pos1, vec2 pos2, function<void()> e= []() {});
 
 	virtual void render();
+	virtual void update() {}
 
 	~UIPart();
 protected:
 	bool isInPart(double x, double y);
+	double convertToScreenSpace(double, bool);
+	vec2 convertToScreenSpace(vec2);
 
 	function<void()> _event;
 	UI* _parent;
-private:
-	vec2 _pos[2]; //from bottom left, top right
 	Mesh2D _mesh;
 	Texture _tex;
+private:
+	vec2 _pos[2]; //from bottom left, top right
 };
 
-class UIButton : UIPart
+class UIButton : public UIPart
 {
 public:
+	UIButton(UI* parent, vec2 pos1, vec2 pos2, unsigned short = -1, function<void()> = [] {});
+	
+	virtual void render();
 	virtual void update();
 	virtual void onMouseButton(char button, char action, char mods);
 private:

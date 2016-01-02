@@ -62,15 +62,21 @@ void KeyMap::onKeyPress(char button, char action, char mods)
 		return;
 	if (action == GLFW_PRESS)
 	{
-		if (KeyBindings[pos].trigger & ONPRESS && _activated)
-			KeyBindings[pos].callback(key, ONPRESS);
 		KeyBindings[pos].isPressed = true;
+		if (KeyBindings[pos].trigger & ONPRESS && _activated)
+		{
+			KeyBindings[pos].callback(key, ONPRESS);
+			return;
+		}
 	}
 	if (action == GLFW_RELEASE)
 	{
-		if (KeyBindings[pos].trigger & ONRELEASE && _activated)
-			KeyBindings[pos].callback(key, ONRELEASE);
 		KeyBindings[pos].isPressed = false;
+		if (KeyBindings[pos].trigger & ONRELEASE && _activated)
+		{
+			KeyBindings[pos].callback(key, ONRELEASE);
+			return;
+		}
 	}
 }
 

@@ -1,7 +1,6 @@
 Short Term:
-create UI
-	Menu
-	Options
+	Menu UI
+	Options UI
 finish Textures (TextureAtlas, multiple Samplers)
 Finish window management (resizing)
 Gamepad/Joystick implementation
@@ -9,13 +8,14 @@ reduce Update calls from constants like Material Data
 make the Registration in the TestGame class cleaner
 add Log File
 merge Mesh2D and Mesh
+#decrease threads from KeyMaps (maybe move to update thread) -->ThreadServer/ThreadClient
 
 Long Term:
 Physics
 create Player
 create World
 Write Regex Algorithms to modify Shaders in order to fit them to the input Data.
-
+write Mousehandler?!
 Make the "Borders" of the Lights disappear
 
 Very Long Term:

@@ -46,6 +46,7 @@ void InputHandler::registerCallbacks(GLFWwindow* w)
 	glfwSetKeyCallback(w, keyCallback);
 	glfwSetCursorPosCallback(w, cursorPosCallback);
 	glfwSetMouseButtonCallback(w, mouseButtonCallback);
+	glfwSetScrollCallback(w, mouseScrollCallback);
 }
 
 void InputHandler::keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
@@ -68,4 +69,10 @@ void InputHandler::mouseButtonCallback(GLFWwindow * window, int button, int acti
 {
 	for (InputHandler* handle : Handles)
 		handle->onMouseButton(button, action, mods);
+}
+
+void InputHandler::mouseScrollCallback(GLFWwindow * window, double xoffset, double yoffset)
+{
+	for (InputHandler* handle : Handles)
+		handle->onScroll(xoffset, yoffset);
 }
