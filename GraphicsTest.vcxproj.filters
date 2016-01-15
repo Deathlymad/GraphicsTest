@@ -39,14 +39,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="bmp.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="TestGame.cpp">
       <Filter>TestGame</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Graphics</Filter>
@@ -108,16 +102,13 @@
     <ClCompile Include="OptionRegistry.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bmp.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="TestGame.h">
       <Filter>TestGame</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Graphics</Filter>
@@ -187,6 +178,9 @@
     </ClInclude>
     <ClInclude Include="OptionRegistry.h">
       <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

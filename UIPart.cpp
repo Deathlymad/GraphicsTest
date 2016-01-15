@@ -3,7 +3,7 @@
 #include <GLFW\glfw3.h>
 
 
-UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex("assets/textures/tex1.bmp")
+UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex( Image("assets/textures/Test_tex2.bmp"))
 {
 	_parent = parent;
 
@@ -15,35 +15,33 @@ UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex
 	_pos[1].y -= range;
 
 	vector<Mesh::Vertex> v;
-	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[0].y, 0), vec2(-1.0f, -1.0f), vec3()));
-	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[0].y, 0), vec2( 1.0f, -1.0f), vec3()));
-	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2(-1.0f,  1.0f), vec3()));
-	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2( 1.0f,  1.0f), vec3()));
-	_mesh = Mesh2D(v);
+	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[0].y, 0), vec2( 0.0f,  0.0f)));
+	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[0].y, 0), vec2( 1.0f,  0.0f)));
+	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2( 0.0f,  1.0f)));
+	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2( 1.0f,  1.0f)));
+	_mesh = Mesh(v, Mesh::VertexArrayObject::genBitset(2, 2));
 	
 	_event = e;
 
-	if (!_tex.Loaded())
-		_tex.glDownload();
+	_tex.glDownload();
 }
 
-UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex("assets/textures/tex1.bmp")
+UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex(Image("assets/textures/Test_tex2.bmp"))
 {
 	_parent = parent;
 	_pos[0] = pos1;
 	_pos[1] = pos2;
 
 	vector<Mesh::Vertex> v;
-	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[0].y, 0), vec2(-1.0f, -1.0f), vec3()));
-	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[0].y, 0), vec2(1.0f, -1.0f), vec3()));
-	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2(-1.0f, 1.0f), vec3()));
-	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2(1.0f, 1.0f), vec3()));
-	_mesh = Mesh2D(v);
+	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[0].y, 0), vec2( 0.0f, 0.0f)));
+	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[0].y, 0), vec2( 1.0f, 0.0f)));
+	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2( 0.0f, 1.0f)));
+	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2( 1.0f, 1.0f)));
+	_mesh = Mesh(v, Mesh::VertexArrayObject::genBitset(2, 2));
 
 	_event = e;
 
-	if (!_tex.Loaded())
-		_tex.glDownload();
+	_tex.glDownload();
 }
 
 void UIPart::render()
@@ -73,17 +71,12 @@ vec2 UIPart::convertToScreenSpace(vec2 in)
 	return vec2(convertToScreenSpace(in.x, false), convertToScreenSpace(in.y, true));
 }
 
-UIButton::UIButton(UI* parent, vec2 pos1, vec2 pos2, unsigned short shortcut, function<void()> _event) : UIPart(parent, pos1, pos2, _event)
+UIButton::UIButton(UI* parent, vec2 pos1, vec2 pos2, unsigned short shortcut, function<void()> _event) : UIPart(parent, vec2(0.0, 0.0), 0.2f, _event)
 {
 	if (shortcut != -1)
-		_parent->addEvent(shortcut, [this](unsigned short, KeyMap::KeyState) {_pressed != _pressed; }, "Shortcut", KeyMap::KeyState::ONRELEASE);
+		_parent->addEvent(shortcut, [this](unsigned short, KeyMap::KeyState) {_pressed = !_pressed; }, "Shortcut", KeyMap::KeyState::ONRELEASE);
 }
 
-void UIButton::render()
-{
-	_tex.bind();
-	_mesh.Draw();
-}
 void UIButton::update()
 {
 	if (_pressed)

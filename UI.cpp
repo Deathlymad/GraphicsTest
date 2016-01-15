@@ -9,7 +9,7 @@ UI::UI(Game* parent)
 {
 	_parent = nullptr;
 	_owner = parent;
-	//_parts.push_back(new UIPart(this, vec2(-1.0f, -1.0f), vec2(1.0f, 1.0f))); //add Background
+	_parts.push_back(new UIPart(this, vec2(-1.0f, -1.0f), vec2(1.0f, 1.0f))); //add Background
 	_enabled = true;
 	keyBinds.addKeyBind(0, [this](unsigned short, KeyMap::KeyState) { deactivate(); _owner->Terminate(); }, "Quit", KeyMap::KeyState::ONPRESS);
 	keyBinds.launchKeyMap();

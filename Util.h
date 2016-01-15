@@ -8,6 +8,7 @@
 
 #ifndef INCLUDE_UTIL
 
+	#define NSP_UTIL using namespace util;
 	NSP_STD
 	NSP_UTIL_BEG
 	

@@ -35,7 +35,7 @@ in vec3 worldPos;
 in vec2 texCoord;
 in vec3 normal;
 
-uniform sampler2D tex;
+uniform sampler2D _tex0;
 uniform vec3 EyePos;
 uniform float specularIntensity0;
 uniform float specularExponent0;
@@ -72,7 +72,7 @@ vec4 calcPointLight(PointLight pointLight)
             specCol = vec4(pointLight.base.color, 1.0) * spec * specularIntensity0;
         }
     }
-	vec4 color = (difCol + specCol) * texture2D(tex, texCoord);
+	vec4 color = (difCol + specCol) * texture2D(_tex0, texCoord);
 
     float attenuation = pointLight.atten.constant + pointLight.atten.linear * distanceToPoint + pointLight.atten.exponent * distanceToPoint * distanceToPoint + 0.0001;
                          

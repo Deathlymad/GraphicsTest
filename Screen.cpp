@@ -24,6 +24,7 @@
 #include "Screen.h"
 
 bool Screen::initializedGLFW = false;
+vector<Screen*> Screen::_winPtr;
 
 void Screen::initGraphicContexCreation()
 {
@@ -53,6 +54,36 @@ GLFWmonitor* Screen::getMonitor(unsigned short monitorID)
 		return nullptr; //actually uses the default screen in Fullscreen mode
 }
 
+unsigned int Screen::getPtr(GLFWwindow * key, unsigned int min, unsigned int max)
+{
+	if (min > max) {
+		return min;
+	}
+	else if (_winPtr.size() == 0)
+		return 0;
+	else {
+		unsigned int mid = (min + max) / 2;
+		if (mid >= _winPtr.size())
+			return _winPtr.size();
+		int comp = int(_winPtr[mid]->_winHandle) - int(key);
+		if (comp == 0) {
+			return mid;
+		}
+		else if (comp < 0) {
+			return getPtr(key, mid + 1, max);
+		}
+		else {
+			return getPtr(key, min, mid - 1);
+		}
+	}
+}
+
+void Screen::onWindowResize(GLFWwindow * win, int width, int height)
+{
+	Screen* s = _winPtr[getPtr(win, 0, _winPtr.size() - 1)];
+	s->_width = width;
+	s->_height = height;
+}
 
 void Screen::createWindow(int width, int height, string title, char flags)
 {
@@ -64,18 +95,20 @@ void Screen::createWindow(int width, int height, string title, char flags)
 	tempVal = (flags & 56) >> 3;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, tempVal);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE + ((flags & 4) >> 2) );
-	winHandle = glfwCreateWindow(width, height, title.c_str(), getMonitor(flags & 3), NULL);
+	_winHandle = glfwCreateWindow(width, height, title.c_str(), getMonitor(flags & 3), NULL);
 	
 
-	if (!winHandle)
+	if (!_winHandle)
 		return;
 
 	cout << "Created Window" << endl;
 	
-	glfwSetInputMode(winHandle, GLFW_STICKY_KEYS, GL_TRUE);
-	glfwSetInputMode(winHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(_winHandle, GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetInputMode(_winHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetWindowSizeCallback(_winHandle, onWindowResize);
+	_winPtr.insert(_winPtr.begin() + getPtr(_winHandle, 0, _winPtr.size() - 1), this);
 
-	glfwMakeContextCurrent(winHandle);
+	glfwMakeContextCurrent(_winHandle);
 }
 
 void Screen::setupGraphicFunctions()
@@ -109,8 +142,8 @@ Screen::Screen(string title)
 	if (!initializedGLFW)
 		initGraphicContexCreation();
 
-	glfwGetMonitorPhysicalSize(glfwGetPrimaryMonitor(), &Width, &Height);
-	createWindow(Width, Height, title, 0);
+	glfwGetMonitorPhysicalSize(glfwGetPrimaryMonitor(), &_width, &_height);
+	createWindow(_width, _height, title, 0);
 
 	setupGraphicFunctions();
 }
@@ -121,8 +154,8 @@ Screen::Screen(int width, int height, string title)
 		initGraphicContexCreation();
 
 	createWindow(width, height, title, 0);
-	Width = width;
-	Height = height;
+	_width = width;
+	_height = height;
 
 	setupGraphicFunctions();
 }
@@ -132,8 +165,8 @@ Screen::Screen(string title, char flags)
 	if (!initializedGLFW)
 		initGraphicContexCreation();
 
-	glfwGetMonitorPhysicalSize(glfwGetPrimaryMonitor(), &Width, &Height);
-	createWindow(Width, Height, title, flags);
+	glfwGetMonitorPhysicalSize(glfwGetPrimaryMonitor(), &_width, &_height);
+	createWindow(_width, _height, title, flags);
 
 	setupGraphicFunctions();
 }
@@ -144,40 +177,42 @@ Screen::Screen(int width, int height, string title, char flags)
 		initGraphicContexCreation();
 
 	createWindow(width, height, title, flags);
-	Width = width;
-	Height = height;
+	_width = width;
+	_height = height;
 
 	setupGraphicFunctions();
 }
 
 void Screen::updateScreen()
 {
-	glfwSwapBuffers(winHandle);
+	glfwSwapBuffers(_winHandle);
 	glfwPollEvents();
 }
 
 void Screen::enableCursor()
 {
-	glfwSetInputMode(winHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	glfwSetInputMode(_winHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void Screen::disableCursor()
 {
-	glfwSetInputMode(winHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(_winHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Screen::makeCurrent()
 {
-	glfwMakeContextCurrent(winHandle);
+	glfwMakeContextCurrent(_winHandle);
 }
 
 bool Screen::isFocused()
 {
 	glfwPollEvents();
-	return glfwGetWindowAttrib(winHandle, GLFW_FOCUSED);
+	return glfwGetWindowAttrib(_winHandle, GLFW_FOCUSED) != 0;
 }
 
 Screen::~Screen()
 {
-	//glfwDestroyWindow(winHandle);  TODO need to be addded and fixed
+	if (!_winPtr.empty())
+		_winPtr.erase(_winPtr.begin() + getPtr(_winHandle, 0, _winPtr.size() - 1));
+	glfwDestroyWindow(_winHandle);
 }

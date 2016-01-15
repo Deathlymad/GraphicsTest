@@ -6,11 +6,11 @@ NSP_GLM
 
 
 TestGame::TestGame() : Game(),
-Light(vec3(1.0, 0.3, 0.2), 1.0f, vec3(0.0f, 0.0f, 1.0f)),
-Light1(vec3(0.0, 0.9, 0.0), 1.0f, Attenuation(1, 2, 4), vec3(0.0, 1.2, 0.0)),
-Light2(vec3(0.0, 0.0, 0.9), 3.0f, Attenuation(1, 2, 4), vec3(0.0, 1.2, 0.0), vec3( 0.0, -1.0, 0.0), 0.8),
+Light(vec3(1.0f, 0.3f, 0.2f), 1.0f, vec3(0.0f, 0.0f, 1.0f)),
+Light1(vec3(0.0f, 0.9f, 0.0f), 1.0f, Attenuation(1, 2, 4), vec3(0.0f, 1.2f, 0.0f)),
+Light2(vec3(0.0f, 0.0f, 0.9f), 3.0f, Attenuation(1, 2, 4), vec3(0.0f, 1.2f, 0.0f), vec3( 0.0f, -1.0f, 0.0f), 0.8f),
 m( 0, 1, 2),
-obj("assets/mesh/Test_Block.obj", "assets/textures/tex1.bmp"),
+obj("assets/mesh/Test_Block.obj", "assets/textures/Test_tex2.bmp"),
 trans( 0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f))
 {
 	//Rendering Registry

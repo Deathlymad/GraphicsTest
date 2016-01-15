@@ -14,26 +14,28 @@ typedef unsigned int GLuint;
 class Mesh
 {
 public:
-	class VertexArrayObject
+	class VertexArrayObject //bitset works as long as we stay in 3D space
 	{
 	public:
-		VertexArrayObject() : VAO( nullptr) {}
-		VertexArrayObject( int vec, int tex, int norm) : VAO( nullptr), bitset( vec | (tex << 1) | (norm << 2) ) {}
-		VertexArrayObject(unsigned char bitset) : VAO( nullptr), bitset(bitset) {}
+		VertexArrayObject() : _vao( nullptr) {}
+		VertexArrayObject( int vec, int tex, int norm) : _vao( nullptr), _bitset( vec | (tex << 2) | (norm << 4) ) {}
+		VertexArrayObject(unsigned char _bitset) : _vao( nullptr), _bitset(_bitset) {}
 
-		void setBitset(int vec, int tex, int norm) { bitset = (vec | (tex << 1) | (norm << 2)); }
+		void setBitset(int vec, int tex = 0, int norm = 0) { _bitset = (vec | (tex << 2) | (norm << 4)); }
 
 		void createVertexArray();
 		void bindVertexArray();
 		void disableVAO();
 
-		bool isVec() { return (bitset & 1) != 0; }
-		bool isTex() { return (bitset & 2) != 0; }
-		bool isNor() { return (bitset & 4) != 0; }
+		char isVec() { return (_bitset & 3); } //first two bits
+		char isTex() { return (_bitset & 12); }
+		char isNor() { return (_bitset & 48); }
 
 		~VertexArrayObject();
+		static unsigned char genBitset(int vec, int tex = 0, int norm = 0) { return (vec | (tex << 2) | (norm << 4)); }
+
 	private:
-		int getsize() { return (isVec() ? 12 : 0) + (isTex() ? 8 : 0) + (isNor() ? 12 : 0); }
+		int getSize() { return (isVec() + isTex() + isNor()) * 4; }
 
 		void enableVec();
 		void disableVec();
@@ -42,59 +44,65 @@ public:
 		void enableNor();
 		void disableNor();
 
-		Ptr<unsigned int> VAO;
-		unsigned char bitset;
+		Ptr<GLuint> _vao;
+		unsigned char _bitset;
 	};
 	class Vertex
 	{
 	public:
-		Vertex(vec3 pos, vec2 tex, vec3 nor)
+		Vertex(vec2 pos, vec2 tex, vec3 nor = vec3(0,0,0))
 		{
-			data[0] = pos.x; data[1] = pos.y; data[2] = pos.z;
-			data[3] = tex.x; data[4] = tex.y;
-			data[5] = nor.x; data[6] = nor.y; data[7] = nor.z;
+			data[0] = pos.x; data[1] = pos.y; data[2] =     0;
+			data[3] = tex.x; data[4] = tex.y; data[5] =     0;
+			data[6] = nor.x; data[7] = nor.y; data[8] = nor.z;
 		}
 
-		void setTexCoord( vec2 tex) { data[3] = tex.x; data[4] = tex.y; }
+		Vertex(vec3 pos, vec2 tex, vec3 nor = vec3(0, 0, 0))
+		{
+			data[0] = pos.x; data[1] = pos.y; data[2] = pos.z;
+			data[3] = tex.x; data[4] = tex.y; data[5] =     0;
+			data[6] = nor.x; data[7] = nor.y; data[8] = nor.z;
+		}
+		Vertex(vec3 pos, vec3 tex, vec3 nor = vec3(0, 0, 0))
+		{
+			data[0] = pos.x; data[1] = pos.y; data[2] = pos.z;
+			data[3] = tex.x; data[4] = tex.y; data[5] = tex.z; //needed for 3D textures
+			data[6] = nor.x; data[7] = nor.y; data[8] = nor.z;
+		}
 
-		void setNormal( vec3 nor) { data[5] = nor.x; data[6] = nor.y; data[7] = nor.z; }
+		void setTexCoord( float tex) { data[3] = tex  ; data[4] = -1   ; data[5] = -1  ; }
+		void setTexCoord( vec2  tex) { data[3] = tex.x; data[4] = tex.y; data[5] = 0   ; }
+		void setTexCoord( vec3  tex) { data[3] = tex.x; data[4] = tex.y; data[5] = tex.z;}
 
-		vec3 getNormal() { return vec3(data[5], data[6], data[7]); }
+		void setNormal( vec3 nor) { data[6] = nor.x; data[7] = nor.y; data[8] = nor.z; }
+
+		vec3 getNormal() { return vec3(data[6], data[7], data[8]); }
 
 		float* getData()
 		{
-			vec3 nor = normalize(vec3(data[5], data[6], data[7]));
-			data[5] = nor.x; data[6] = nor.y; data[7] = nor.z;
+			vec3 nor = normalize(vec3(data[6], data[7], data[8]));
+			data[6] = nor.x; data[7] = nor.y; data[8] = nor.z;
 			return data;
 		}
 	private:
-		float data[8];
+		float data[9];
 	};
 
 	Mesh ( string);
-	Mesh(  vector<Vertex> &vec, vector < unsigned int> &i);
-	Mesh();
+	Mesh ( vector<Vertex> &vec, unsigned char bitset); //Cube Constructor
+	Mesh ( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset);
+	Mesh ();
 		
 	void Draw();
 
 	~Mesh(void);
 protected:
 	void initGL(unsigned char);
-	VertexArrayObject vao;
-	CustomPtr<GLuint> vbo;
-	CustomPtr<GLuint> ibo;
+	VertexArrayObject _vao;
+	CustomPtr<GLuint> _vbo;
+	CustomPtr<GLuint> _ibo;
 	void deleteBuffer(GLuint* buf);
-	unsigned int indices;
+	unsigned int _indices;
 private:
 	virtual void glDownload(  vector<Vertex>&, vector <unsigned int>&);
-};
-
-class Mesh2D : public Mesh
-{
-public:
-	Mesh2D() : Mesh() {}
-	Mesh2D(vector<Vertex> &vec);
-	Mesh2D(vector<Vertex> &vec, vector<unsigned int>&);
-private:
-	void glDownload(vector<Vertex>&, vector<unsigned int>&);
 };

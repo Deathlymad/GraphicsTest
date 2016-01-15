@@ -4,7 +4,7 @@ in vec3 worldPos;
 in vec2 texCoord;
 in vec3 normal;
 
-uniform sampler2D tex;
+uniform sampler2D _tex0;
 uniform vec3 EyePos;
 uniform float specularExponent0;
 uniform float specularIntensity0;
@@ -42,5 +42,5 @@ void main()
             specCol = vec4(Light.color, 1.0) * spec * specularIntensity0;
         }
     }
-	gl_FragColor = (difCol + specCol) * texture2D(tex, texCoord);
+	gl_FragColor = (difCol + specCol) * texture2D(_tex0, texCoord);
 }

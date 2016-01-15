@@ -28,7 +28,7 @@ protected:
 
 	function<void()> _event;
 	UI* _parent;
-	Mesh2D _mesh;
+	Mesh _mesh;
 	Texture _tex;
 private:
 	vec2 _pos[2]; //from bottom left, top right
@@ -39,7 +39,6 @@ class UIButton : public UIPart
 public:
 	UIButton(UI* parent, vec2 pos1, vec2 pos2, unsigned short = -1, function<void()> = [] {});
 	
-	virtual void render();
 	virtual void update();
 	virtual void onMouseButton(char button, char action, char mods);
 private:

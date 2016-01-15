@@ -1,5 +1,4 @@
 Short Term:
-	Menu UI
 	Options UI
 finish Textures (TextureAtlas, multiple Samplers)
 Finish window management (resizing)
@@ -7,8 +6,10 @@ Gamepad/Joystick implementation
 reduce Update calls from constants like Material Data
 make the Registration in the TestGame class cleaner
 add Log File
-merge Mesh2D and Mesh
-#decrease threads from KeyMaps (maybe move to update thread) -->ThreadServer/ThreadClient
+decrease threads from KeyMaps (maybe move to update thread) -->ThreadServer/ThreadClient
+fix button not rendering with Background
+If window is deselected in the first main menu screen the input is not reacted for (NullPtrException)
+make UI background modifiable
 
 Long Term:
 Physics
@@ -28,6 +29,6 @@ Use Vulkan
 
 
 UI stuffs:
-Enabling the mouse/rendering a virtual mouse
-make the UI able to Drag & Drop over the Screen
+rendering a virtual mouse
+make the UI able to Drag & Drop over the Screen (if not fullscreen)
 keep all Data current (Options)

@@ -3,10 +3,9 @@
 #include "RenderingEngine.h"
 
 
-ModelRenderer::ModelRenderer(string meshFile, string texFile) : EngineObject(), mesh(meshFile), tex(texFile)
+ModelRenderer::ModelRenderer(string meshFile, string texFile) : EngineObject(), mesh(meshFile), tex(Image(texFile))
 {
-	if (!tex.Loaded())
-		tex.glDownload();
+	tex.glDownload();
 }
 
 void ModelRenderer::render(Shader* s, bool)

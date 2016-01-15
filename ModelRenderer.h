@@ -10,7 +10,6 @@ class KeyMap;
 class ModelRenderer : public EngineObject
 {
 public:
-	ModelRenderer() {}
 	ModelRenderer( string, string);
 
 	void render(Shader*, bool);

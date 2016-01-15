@@ -14,11 +14,11 @@
 
 #include "Mesh.h"
 
-Mesh::Mesh() : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), vao(true, true, true)
+Mesh::Mesh() : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao( 3, 2, 3)
 {
 }
 
-Mesh::Mesh ( string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), vao(true, true, true)
+Mesh::Mesh ( string file) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(3, 2, 3)
 {
 	vector<Vertex> v;
 	vector<unsigned int> in;
@@ -63,7 +63,7 @@ Mesh::Mesh ( string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new G
 			{
 				io::strsep( s, temp[i], '/');
 				in.push_back(stoi(s[0]) - 1);
-				if (t.size() > 0)
+				if (t.size() > 0) //might search for onexistend data, also this might not be applicable all the time
 					v[stoi(s[0]) - 1].setTexCoord( t[stoi(s[1]) - 1]);
 				if(n.size() > 0)
 					v[stoi(s[0]) - 1].setNormal(v[stoi(s[0]) - 1].getNormal() + n[stoi(s[2]) - 1]); // need to renormalize
@@ -74,7 +74,13 @@ Mesh::Mesh ( string file) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new G
 	glDownload(v, in);
 }
 
-Mesh::Mesh(  vector<Vertex> &vec, vector < unsigned int> &i) : vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), vao(true, true, true)
+Mesh::Mesh(vector<Vertex>& vec, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
+{
+	vector<unsigned int> i = vector<unsigned int>({ 0,1,2,2,1,3 });//2D indices, might need additions later for other sizes
+	glDownload( vec, i);
+}
+
+Mesh::Mesh(  vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
 {
 	glDownload( vec, i);
 }
@@ -85,18 +91,18 @@ void Mesh::initGL( unsigned char flag)
 		return;
 	if (flag & 2)
 	{
-		glGenBuffers( 1, vbo.get());
+		glGenBuffers( 1, _vbo.get());
 	}
 	if (flag & 1)
 	{
-		glGenBuffers(1, ibo.get());
+		glGenBuffers(1, _ibo.get());
 	}
-	vao.createVertexArray();
+	_vao.createVertexArray();
 }
 
 void Mesh::glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 {
-	initGL(!glIsBuffer( *(vbo.get())) << 1 | !glIsBuffer( *(ibo.get())));
+	initGL(!glIsBuffer( *(_vbo.get())) << 1 | !glIsBuffer( *(_ibo.get())));
 
 	if (v.size() == 0)
 		return;
@@ -105,18 +111,20 @@ void Mesh::glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 	for (unsigned int i = 0; i < v.size(); i++)
 	{
 		float* d = v[i].getData();
-		for (size_t j = 0; j < 8; j++)
-		{
-			temp.push_back(d[j]);
-		}
+		if (_vao.isVec())
+			temp.insert(temp.end(), &d[0], &d[_vao.isVec()]);
+		if (_vao.isTex())
+			temp.insert(temp.end(), &d[3], &d[ 3 + _vao.isTex()]);
+		if (_vao.isNor())
+			temp.insert(temp.end(), &d[6], &d[ 6 + _vao.isNor()]);
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, *(vbo.get())); //contains Vertices
+	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get())); //contains Vertices
 	glBufferData( GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_STATIC_DRAW);
-	temp.clear();
+	temp.~vector();
 
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(ibo.get()));
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_STATIC_DRAW);
-	indices = i.size();
+	_indices = i.size();
 }
 
 void Mesh::deleteBuffer(GLuint * buf)
@@ -127,18 +135,18 @@ void Mesh::deleteBuffer(GLuint * buf)
 
 void Mesh::Draw()
 {
-	vao.bindVertexArray();
-	glBindBuffer(GL_ARRAY_BUFFER, *(vbo.get()));
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(ibo.get()));
+	_vao.bindVertexArray();
+	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get()));
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
 
 	//vec2 = 8 vec3 = 12 vec4 = 16
 
 
-	glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, _indices, GL_UNSIGNED_INT, 0);
 
-	vao.disableVAO();
+	_vao.disableVAO();
 	//Wireframe Shader
-	//glDrawElements( GL_LINE_STRIP, indices, GL_UNSIGNED_INT, 0);  //for debug purposes
+	//glDrawElements( GL_LINE_STRIP, _indices, GL_UNSIGNED_INT, 0);  //for debug purposes
 }
 
 Mesh::~Mesh(void)
@@ -148,11 +156,11 @@ Mesh::~Mesh(void)
 void Mesh::VertexArrayObject::createVertexArray()
 {
 	GLuint temp = -1;
-	if ( !VAO.get() || !glIsVertexArray(*(VAO.get())))
+	if ( !_vao.get() || !glIsVertexArray(*(_vao.get())))
 	{
 		glGenVertexArrays(1, &temp);
-		VAO.set(new GLuint(temp));
-		glBindVertexArray( *(VAO.get()));
+		_vao.set(new GLuint(temp));
+		glBindVertexArray( *(_vao.get()));
 
 		if (isVec())
 			enableVec();
@@ -167,7 +175,7 @@ void Mesh::VertexArrayObject::createVertexArray()
 
 void Mesh::VertexArrayObject::bindVertexArray()
 {
-	glBindVertexArray( *(VAO.get()));
+	glBindVertexArray( *(_vao.get()));
 
 	if (isVec())
 		enableVec();
@@ -193,9 +201,8 @@ Mesh::VertexArrayObject::~VertexArrayObject()
 
 void Mesh::VertexArrayObject::enableVec()
 {
-	//Vertices
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getsize() /*stride*/, 0 /*offset*/); //Pos
+	glVertexAttribPointer(0 /*Vertex Attribute Layout Location*/, isVec() /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getSize() /*stride*/, 0 /*offset*/); //Pos
 }
 
 void Mesh::VertexArrayObject::disableVec()
@@ -205,9 +212,8 @@ void Mesh::VertexArrayObject::disableVec()
 
 void Mesh::VertexArrayObject::enableTex()
 {
-	//TexCoords
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, 2 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getsize() /*stride*/, (void*)12/*offset*/); //Tex
+	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, isTex() /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getSize() /*stride*/, (void*)isVec() /*offset*/); //Tex
 }
 
 void Mesh::VertexArrayObject::disableTex()
@@ -217,50 +223,11 @@ void Mesh::VertexArrayObject::disableTex()
 
 void Mesh::VertexArrayObject::enableNor()
 {
-	//normals
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, 3 /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getsize() /*stride*/, (void*)20/*offset*/); //Nor
+	glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, isNor() /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getSize() /*stride*/, (void*)(isVec() + isTex()) /*offset*/); //Nor
 }
 
 void Mesh::VertexArrayObject::disableNor()
 {
 	glDisableVertexAttribArray(2);
-}
-
-Mesh2D::Mesh2D(vector<Vertex>& vec) : Mesh()
-{
-	vector<unsigned int> i = vector<unsigned int>({0,1,2,2,1,3});
-	glDownload(vec, i);
-	vao.setBitset(true, false, false);
-}
-
-Mesh2D::Mesh2D(vector<Vertex>& vec, vector<unsigned int> &i) : Mesh()
-{
-	glDownload(vec, i);
-	vao.setBitset(true, false, false);
-}
-
-void Mesh2D::glDownload(vector<Vertex>& v, vector<unsigned int>& i)
-{
-	initGL(!glIsBuffer(*(vbo.get())) << 1 | !glIsBuffer(*(ibo.get())));
-
-	if (v.size() == 0)
-		return;
-
-	vector<float> temp;
-	for (unsigned int i = 0; i < v.size(); i++)
-	{
-		float* d = v[i].getData();
-		for (size_t j = 0; j < 3; j++)
-		{
-			temp.push_back(d[j]);
-		}
-	}
-	glBindBuffer(GL_ARRAY_BUFFER, *(vbo.get())); //contains Vertices
-	glBufferData(GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_STATIC_DRAW);
-	temp.clear();
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(ibo.get()));
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_STATIC_DRAW);
-	indices = i.size();
 }

@@ -1,93 +1,96 @@
-#include <vector>
 #include "Util.h"
+#include "UniformRegistry.h"
+#include <fstream>
+
+NSP_STD
+NSP_UTIL
+
+class Shader;
+typedef unsigned int GLuint;
 
 #pragma once
+class Image
+{
+public:
+	enum ImageType
+	{
+		BMP,
+		PNG
+	};
 
-NSP_UTIL
-NSP_STD
+	Image();
+	Image(string);
 
+	void load(string file);
+	char* getData();
 
-typedef unsigned int GLuint;
-class TextureAtlas;
+	unsigned int getHeight() { return _height; }
+	unsigned int getWidth() { return _width; }
 
+private:
+	void load(ifstream& f);
+	void format();
+	ImageType getFileImageType( ifstream&);
+
+	char* _data;
+
+	ImageType _type;
+	unsigned short _depth;
+	unsigned int _compression;
+	unsigned int _bitMasks[3];
+	unsigned int _width, _height;
+
+	char* _colorTable;
+	unsigned int _tableSize;
+};
+
+#pragma once
 class Texture
 {
+	friend class Layeredtexture;
 public:
-	Texture() : ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
-	{
-		isLoaded = false;
-		f = "";
-		tex = nullptr;
-		texX = 0;
-		texY = 0;
-	}
-
-	Texture( vector<vector<char>> tex) : ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
-	{
-		f = "";
-		this->tex = &tex[0][0]; 
-		texX = (unsigned short)tex.size();
-		texY = (unsigned short)tex[0].size();
-	}
-
-	Texture( string fileName);
-
-	void setTexture(string);
-
-	void load( string);
-
-	vector<vector<char>> getTexData();
-
-	void glDownload();
-
-	void bind();
-
-	bool Loaded()
-	{
-		if (isLoaded)
-			return true;
-		else
-			return false;
-	}
-
-	TextureAtlas operator + (Texture);
-protected:
-	CustomPtr<GLuint> ID; //TextureID
-	void deleteTexture(GLuint* tex);
-
-	string f; //filename
-	char* tex; //Texture Memory
-	unsigned short texX, texY; //size
-	bool isLoaded;
-
-	unsigned char pos; //Sampler Count
-	static vector<Texture*> SamplerList; //TODO improved sorting update, might not be necessary due to textureAtlas
-
-	static GLuint* last;
-};
-
-class TextureAtlas:Texture
-{
-public:
-	TextureAtlas():Texture(){}
-
-	TextureAtlas( vector<vector<char>> tex,unsigned int bitX,unsigned int bitY)
-	{
-		f = "";
-		this->tex = &tex[0][0]; 
-		texX = (unsigned short)tex.size();
-		texY = (unsigned short)tex[0].size();
-		this->bitX = bitX; 
-		this->bitY = bitY; 
-	}
-
-	TextureAtlas(vector<string>);
-
-	void load(string, unsigned short, unsigned short);
-
-	void bind();
+	Texture(Image);
+	~Texture();
 	
-	TextureAtlas operator + (Texture);	//TODO: add Merging
+	virtual void init(Shader* s);
+
+	virtual void glDownload();
+	virtual void bind();
+
 private:
-	unsigned short bitX, bitY;
+	void deleteTexture(GLuint* tex);
+	Texture(Image, unsigned int samplerID);
+
+	CustomPtr<GLuint> _ID;
+	static GLuint _lastTexID;
+	UniformRegistry<1> _sampler;
+	unsigned int _samplerID;
+	Image _image;
 };
+/*
+#pragma once
+class LayeredTexture : public Texture
+{
+	LayeredTexture();
+	~LayeredTexture();
+
+	virtual void glDownload();
+	virtual void writeSampler(string name, Shader*s);
+	virtual void bind();
+public:
+	vector<Texture> _sampler;
+};
+
+#pragma once
+class TextureAtlas : public LayeredTexture
+{
+	TextureAtlas();
+	~TextureAtlas();
+
+	virtual void writeSampler();
+
+public:
+	unsigned int _bitX, _countX;
+	unsigned int _bitY, _countY;
+};
+*/

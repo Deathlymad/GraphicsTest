@@ -19,4 +19,3 @@ private:
 	Material m;
 	ModelRenderer obj;
 };
-

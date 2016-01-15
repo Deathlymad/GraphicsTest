@@ -1,5 +1,6 @@
 #include <functional>
 #include <string>
+#include <vector>
 #include "Def.h"
 
 NSP_STD
@@ -29,19 +30,24 @@ public:
 
 	void handleWindow(function<void(GLFWwindow*)> f)
 	{
-		f(winHandle);
+		f(_winHandle);
 	}
 
 	void makeCurrent();
 	bool isFocused();
 
-	int getWidth() { return Width; }
-	int getHeight() { return Height; }
+	int getWidth() { return _width; }
+	int getHeight() { return _height; }
 
 	~Screen();
 private:
-	int Width, Height;
-	GLFWwindow* winHandle;
+	int _width, _height;
+
+	GLFWwindow* _winHandle;
+	static unsigned int getPtr(GLFWwindow*, unsigned int, unsigned int);
+	static vector<Screen*> _winPtr;
+
+	static void onWindowResize(GLFWwindow*, int, int);
 	void createWindow(int width, int height, string title, char flags);
 	void setupGraphicFunctions();
 
