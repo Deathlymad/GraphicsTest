@@ -1,12 +1,10 @@
 Short Term:
 	Options UI
 finish Textures (TextureAtlas, multiple Samplers)
-Finish window management (resizing)
 Gamepad/Joystick implementation
 reduce Update calls from constants like Material Data
 make the Registration in the TestGame class cleaner
 add Log File
-decrease threads from KeyMaps (maybe move to update thread) -->ThreadServer/ThreadClient
 fix button not rendering with Background
 If window is deselected in the first main menu screen the input is not reacted for (NullPtrException)
 make UI background modifiable
@@ -15,7 +13,7 @@ Long Term:
 Physics
 create Player
 create World
-Write Regex Algorithms to modify Shaders in order to fit them to the input Data.
+Write Regex Algorithms to modify Shaders in order to fit them to the input Data. (rename certain valuies to codes used in the engine)
 write Mousehandler?!
 Make the "Borders" of the Lights disappear
 
@@ -30,5 +28,5 @@ Use Vulkan
 
 UI stuffs:
 rendering a virtual mouse
-make the UI able to Drag & Drop over the Screen (if not fullscreen)
+make the UI able to Drag & Drop window independent
 keep all Data current (Options)

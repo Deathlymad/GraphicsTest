@@ -62,7 +62,6 @@ void Game::addObject(EngineObject & object)
 
 void Game::init()
 {
-	KeyMaps[0]->launchKeyMap();
 	KeyMaps[0]->activate();
 }
 

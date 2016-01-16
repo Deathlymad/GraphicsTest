@@ -5,9 +5,10 @@
 
 #include "Clock.h"
 #include "InputHandler.h"
-#include "Def.h"
+#include "Util.h"
 
 NSP_STD
+NSP_UTIL
 
 
 #pragma once
@@ -33,8 +34,6 @@ public:
 	KeyMap(KeyMap&);
 	KeyMap();
 
-	void launchKeyMap() { KeyTick.run(); }
-
 	void activate() { _activated = true; }
 	void deactivate() { _activated = false; }
 
@@ -54,7 +53,8 @@ private:
 
 	static void updateKeyMap(KeyMap*);
 
-	Clock KeyTick;
+	static ThreadServer _keyTickServer;
+	ThreadClient _keyTickClient;
 
 	bool _activated;
 };

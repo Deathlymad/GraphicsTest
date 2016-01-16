@@ -11,16 +11,21 @@
 
 #include "KeyMap.h"
 
-KeyMap::KeyMap(Screen* s) : InputHandler(s), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
-{}
+ThreadServer KeyMap::_keyTickServer(1);
 
-KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
+KeyMap::KeyMap(Screen* s) : InputHandler(s), _keyTickClient( [this] {updateKeyMap(this); })
 {
-
+	_keyTickServer.addThreadClient(&_keyTickClient);
 }
 
-KeyMap::KeyMap() : InputHandler(), KeyTick([] {}, [this] {updateKeyMap(this); }, 20)
+KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), _keyTickClient( [this] {updateKeyMap(this); })
 {
+	_keyTickServer.addThreadClient(&_keyTickClient);
+}
+
+KeyMap::KeyMap() : InputHandler(), _keyTickClient( [this] {updateKeyMap(this); })
+{
+	_keyTickServer.addThreadClient(&_keyTickClient);
 }
 
 void KeyMap::addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig)
