@@ -30,6 +30,7 @@ void Game::Run()
 			if (!is3D)
 			{
 				is3D = true;
+				Menu->deactivate();
 				screen.disableCursor();
 				KeyMaps[0]->activate();
 				Engine.getGraphicEngine()->set3D();
@@ -85,13 +86,19 @@ Game::~Game()
 {
 }
 
+void Game::toggleMenu()
+{
+	if (Menu->isActive())
+		Menu->deactivate();
+	else
+		Menu->activate();
+}
+
 void Game::setupKeyMap(KeyMap &k)
 {
 	k.addKeyBind(0, [this](unsigned short, KeyMap::KeyState)
 	{
-		Menu->isActive() ? 
-			[this] { Menu->deactivate(); }() : 
-			[this] { Menu->activate(); }();
+		toggleMenu();
 	}, "Menu", KeyMap::KeyState::ONRELEASE);
 	world.init( &k);
 }

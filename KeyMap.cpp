@@ -113,10 +113,10 @@ void KeyMap::updateKeyMap(KeyMap * k)
 {
 	if (!k->_activated)
 		return;
-	vector<KeyBind>* Bindings = &(k->KeyBindings);
-	for (size_t i = 0; i < Bindings->size(); i++)
+
+	for (KeyBind key : k->KeyBindings)
 	{
-		if ((*Bindings)[i].isPressed)
-			k->onKeyPress((*Bindings)[i].key);
+		if (key.isPressed)
+			k->onKeyPress(key.key);
 	}
 }

@@ -7,12 +7,12 @@ out vec2 texCoord;
 void main()
 {
 	//tex Coord for rectangle might need  to be modified
-	if(pos.x < 0.5)
+	if(pos.x < 0)
 		texCoord.x = 0;
 	else
 		texCoord.x = 1;
 	
-	if(pos.y < 0.5)
+	if(pos.y < 0)
 		texCoord.y = 0;
 	else
 		texCoord.y = 1;

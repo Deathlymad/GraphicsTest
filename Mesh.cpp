@@ -102,6 +102,7 @@ void Mesh::initGL( unsigned char flag)
 
 void Mesh::glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 {
+	_indices = i.size();
 	initGL(!glIsBuffer( *(_vbo.get())) << 1 | !glIsBuffer( *(_ibo.get())));
 
 	if (v.size() == 0)
@@ -124,7 +125,6 @@ void Mesh::glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_STATIC_DRAW);
-	_indices = i.size();
 }
 
 void Mesh::deleteBuffer(GLuint * buf)
@@ -139,14 +139,11 @@ void Mesh::Draw()
 	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get()));
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
 
-	//vec2 = 8 vec3 = 12 vec4 = 16
-
-
 	glDrawElements(GL_TRIANGLES, _indices, GL_UNSIGNED_INT, 0);
-
-	_vao.disableVAO();
 	//Wireframe Shader
 	//glDrawElements( GL_LINE_STRIP, _indices, GL_UNSIGNED_INT, 0);  //for debug purposes
+
+	_vao.disableVAO();
 }
 
 Mesh::~Mesh(void)

@@ -1,21 +1,22 @@
+Schedule 4 Week:
+fix button not rendering with Background
+UI toggle behavoir is strange O.o
+Light broken :P
+
 Short Term:
 	Options UI
-finish Textures (TextureAtlas, multiple Samplers)
-Gamepad/Joystick implementation
-reduce Update calls from constants like Material Data
+finish Textures (TextureAtlas, multiple Samplers, read PNG)
+Gamepad-/Joystick-/MouseHandler implementation
 make the Registration in the TestGame class cleaner
 add Log File
-fix button not rendering with Background
-If window is deselected in the first main menu screen the input is not reacted for (NullPtrException)
 make UI background modifiable
+write GameObject File
+Make the "Borders" of the Lights disappear
 
 Long Term:
 Physics
-create Player
 create World
-Write Regex Algorithms to modify Shaders in order to fit them to the input Data. (rename certain valuies to codes used in the engine)
-write Mousehandler?!
-Make the "Borders" of the Lights disappear
+create Player
 
 Very Long Term:
 add comments
@@ -29,4 +30,3 @@ Use Vulkan
 UI stuffs:
 rendering a virtual mouse
 make the UI able to Drag & Drop window independent
-keep all Data current (Options)

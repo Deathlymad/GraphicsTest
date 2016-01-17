@@ -30,6 +30,8 @@ private: //context
 	CoreEngine Engine;
 
 protected:
+	void toggleMenu();
+
 	Scene world;
 	UI* Menu;
 	CoreEngine* getEngine() { return &Engine; }

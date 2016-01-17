@@ -28,8 +28,8 @@ public:
 		void disableVAO();
 
 		char isVec() { return (_bitset & 3); } //first two bits
-		char isTex() { return (_bitset & 12); }
-		char isNor() { return (_bitset & 48); }
+		char isTex() { return (_bitset & 12) >> 2; }
+		char isNor() { return (_bitset & 48) >> 4; }
 
 		~VertexArrayObject();
 		static unsigned char genBitset(int vec, int tex = 0, int norm = 0) { return (vec | (tex << 2) | (norm << 4)); }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <iostream>
 #include <mutex>
 #include <string>
 #include <queue>
@@ -12,6 +13,7 @@
 
 	#define NSP_UTIL using namespace util;
 	NSP_STD
+	NSP_CHR
 	NSP_UTIL_BEG
 	
 		template <typename T>
@@ -130,10 +132,9 @@
 		class ThreadServer
 		{
 		public:
-			ThreadServer(unsigned int threadCount) : _running(true), _taskList(), _threads( new thread*[threadCount]), _conCount(threadCount)
+			ThreadServer(unsigned int threadCount) : _running(true), _taskList(), _threads(), _conCount(threadCount)
 			{
-				for (unsigned j = 0; j < _conCount; j++) //constructs Threads
-					_threads[_conCount] = new thread([this] {run(); });
+				_threads = vector<thread*>(threadCount, new thread([this] {run(); }));
 			}
 
 			void addThreadClient(ThreadClient* client)
@@ -144,16 +145,30 @@
 				_listGuard.unlock();
 			}
 
+			unsigned int getThreadCount()
+			{
+				return _threads.size();
+			}
+			void changeThreadAmt(unsigned int threadCount)
+			{
+				if ((threadCount - _threads.size()) > 0)
+				{
+					_threads.push_back(new thread([this] {run(); }));
+				}//add decementing
+			}
+
 			~ThreadServer()
 			{
 				_running = false;
-				for (unsigned j = 0; j < _conCount; j++)
-					if (_threads[j]->joinable())
-						_threads[j]->join();
+				for (thread* t : _threads)
+					if (t->joinable())
+						t->join();
 			}
 		private:
 			void run()
 			{
+
+				system_clock::time_point lastTick = system_clock::now();
 				while (_running)
 				{
 					_listGuard.lock();
@@ -173,11 +188,14 @@
 					_listGuard.lock();
 					_taskList.push(curr);
 					_listGuard.unlock();
+
+					this_thread::sleep_for(milliseconds((int)floorf(50.0f/_conCount)) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
+
 				}
 			}
 			mutex _listGuard;
 			queue < ThreadClient*> _taskList;
-			thread** _threads;
+			vector<thread*> _threads;
 			unsigned int _conCount;
 			bool _running;
 		};

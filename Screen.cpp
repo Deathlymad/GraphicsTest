@@ -214,5 +214,6 @@ Screen::~Screen()
 {
 	if (!_winPtr.empty())
 		_winPtr.erase(_winPtr.begin() + getPtr(_winHandle, 0, _winPtr.size() - 1));
-	glfwDestroyWindow(_winHandle);
+	if (glfwGetCurrentContext() == _winHandle)
+		glfwDestroyWindow(_winHandle);
 }

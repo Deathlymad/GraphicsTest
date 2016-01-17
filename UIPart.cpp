@@ -56,7 +56,9 @@ UIPart::~UIPart()
 
 bool UIPart::isInPart(double x, double y)
 {
-	if ((_pos[0].x < convertToScreenSpace(x, false) && convertToScreenSpace( x, false) < _pos[1].x) && (_pos[0].y < convertToScreenSpace( y, true) && convertToScreenSpace(y, true) < _pos[1].y))
+	double convX = convertToScreenSpace( x, false);
+	double convY = convertToScreenSpace( y, true);
+	if ((_pos[0].x < convX && convY < _pos[1].x) && (_pos[0].y < convX && convY < _pos[1].y))
 		return true;
 	return false;
 }
@@ -71,7 +73,7 @@ vec2 UIPart::convertToScreenSpace(vec2 in)
 	return vec2(convertToScreenSpace(in.x, false), convertToScreenSpace(in.y, true));
 }
 
-UIButton::UIButton(UI* parent, vec2 pos1, vec2 pos2, unsigned short shortcut, function<void()> _event) : UIPart(parent, vec2(0.0, 0.0), 0.2f, _event)
+UIButton::UIButton(UI* parent, vec2 pos1, vec2 pos2, unsigned short shortcut, function<void()> _event) : UIPart(parent, pos1, pos2, _event)
 {
 	if (shortcut != -1)
 		_parent->addEvent(shortcut, [this](unsigned short, KeyMap::KeyState) {_pressed = !_pressed; }, "Shortcut", KeyMap::KeyState::ONRELEASE);
