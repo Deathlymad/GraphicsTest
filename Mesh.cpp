@@ -210,7 +210,7 @@ void Mesh::VertexArrayObject::disableVec()
 void Mesh::VertexArrayObject::enableTex()
 {
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, isTex() /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getSize() /*stride*/, (void*)isVec() /*offset*/); //Tex
+	glVertexAttribPointer(1 /*Vertex Attribute Layout Location*/, isTex() /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getSize() /*stride*/, (void*) (isVec() * 4) /*offset*/); //Tex
 }
 
 void Mesh::VertexArrayObject::disableTex()
@@ -221,7 +221,7 @@ void Mesh::VertexArrayObject::disableTex()
 void Mesh::VertexArrayObject::enableNor()
 {
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, isNor() /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getSize() /*stride*/, (void*)(isVec() + isTex()) /*offset*/); //Nor
+	glVertexAttribPointer(2 /*Vertex Attribute Layout Location*/, isNor() /*amount of Type*/, GL_FLOAT /*Type of Data*/, false /* needs to be normalized*/, getSize() /*stride*/, (void*) ((isVec() + isTex()) * 4) /*offset*/); //Nor
 }
 
 void Mesh::VertexArrayObject::disableNor()

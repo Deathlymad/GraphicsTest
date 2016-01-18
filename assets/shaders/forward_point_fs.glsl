@@ -72,6 +72,6 @@ void main()
 	vec4 color =  (difCol + specCol) * texture2D(_tex0, texCoord);
 
     float attenuation = Light.atten.constant + Light.atten.linear * distanceToPoint + Light.atten.exponent * distanceToPoint * distanceToPoint + 0.0001;
-                         
+    
 	gl_FragColor = color / attenuation;
 }

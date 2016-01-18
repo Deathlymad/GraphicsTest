@@ -4,7 +4,7 @@
 #include "RenderingEngine.h"
 #include<GLFW\glfw3.h> //needed for defines
 
-float Camera::speed = 0.05f;
+float Camera::speed = 0.0005f;
 vec3 Camera::YAxis = vec3(0.0f, 1.0f, 0.0f);
 
 Camera::Camera() : InputHandler(), EngineObject()
@@ -73,8 +73,8 @@ Camera::~Camera()
 void Camera::onMouseMove(double dY, double dX)
 {
 	//computing X rotation
-	XAngle += dX * - (speed / 100);
-	YAngle += dY * - (speed / 100);
+	XAngle += dX * - speed;
+	YAngle += dY * - speed;
 
 	vec3 HorizontalAxis = normalize(cross(YAxis, forward));
 

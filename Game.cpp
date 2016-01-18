@@ -99,6 +99,6 @@ void Game::setupKeyMap(KeyMap &k)
 	k.addKeyBind(0, [this](unsigned short, KeyMap::KeyState)
 	{
 		toggleMenu();
-	}, "Menu", KeyMap::KeyState::ONRELEASE);
+	}, "Menu", KeyMap::KeyState::ONPRESS);
 	world.init( &k);
 }

@@ -1,7 +1,6 @@
 Schedule 4 Week:
-fix button not rendering with Background
-UI toggle behavoir is strange O.o
-Light broken :P
+fix UI not rendering
+UI toggle behavior is strange O.o
 
 Short Term:
 	Options UI
@@ -12,6 +11,7 @@ add Log File
 make UI background modifiable
 write GameObject File
 Make the "Borders" of the Lights disappear
+fix normals in mesh constructor
 
 Long Term:
 Physics

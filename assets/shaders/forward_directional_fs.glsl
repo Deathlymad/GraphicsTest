@@ -42,5 +42,6 @@ void main()
             specCol = vec4(Light.color, 1.0) * spec * specularIntensity0;
         }
     }
+
 	gl_FragColor = (difCol + specCol) * texture2D(_tex0, texCoord);
 }
