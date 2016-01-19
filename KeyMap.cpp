@@ -28,10 +28,10 @@ KeyMap::KeyMap() : InputHandler(), _keyTickClient( [this] {updateKeyMap(this); }
 	_keyTickServer.addThreadClient(&_keyTickClient);
 }
 
-void KeyMap::addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig)
+void KeyMap::addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig, unsigned char priority)
 {
 	KeyBind k;
-	k.key = key;
+	k.key = key | ((priority & 32) << 11);
 	k.callback = Func;
 	k.name = name;
 	k.trigger = trig;
@@ -59,28 +59,31 @@ KeyMap::~KeyMap()
 
 void KeyMap::onKeyPress(char button, char action, char mods)
 {
-	unsigned short key = button | (mods << 8);
-	size_t pos= find(key, &KeyBindings, 0, KeyBindings.size());
-	if (pos >= KeyBindings.size())
-		return;
-	if (key != KeyBindings[pos].key)
-		return;
-	if (action == GLFW_PRESS)
+	for (unsigned char ind = 31; ind > 0; ind--) // takes a lot of time
 	{
-		KeyBindings[pos].isPressed = true;
-		if (KeyBindings[pos].trigger & ONPRESS && _activated)
+		unsigned short key = (button & 255) | ((mods & 7) << 8) | ((ind & 32) << 11);
+		size_t pos= find(key, &KeyBindings, 0, KeyBindings.size());
+		if (pos >= KeyBindings.size())
+			continue;
+		if (key != KeyBindings[pos].key)
+			continue;
+		if (action == GLFW_PRESS)
 		{
-			KeyBindings[pos].callback(key, ONPRESS);
-			return;
+			KeyBindings[pos].isPressed = true;
+			if (KeyBindings[pos].trigger & ONPRESS && _activated)
+			{
+				KeyBindings[pos].callback(key, ONPRESS);
+				continue;
+			}
 		}
-	}
-	if (action == GLFW_RELEASE)
-	{
-		KeyBindings[pos].isPressed = false;
-		if (KeyBindings[pos].trigger & ONRELEASE && _activated)
+		if (action == GLFW_RELEASE)
 		{
-			KeyBindings[pos].callback(key, ONRELEASE);
-			return;
+			KeyBindings[pos].isPressed = false;
+			if (KeyBindings[pos].trigger & ONRELEASE && _activated)
+			{
+				KeyBindings[pos].callback(key, ONRELEASE);
+				continue;
+			}
 		}
 	}
 }
@@ -114,9 +117,9 @@ void KeyMap::updateKeyMap(KeyMap * k)
 	if (!k->_activated)
 		return;
 
-	for (KeyBind key : k->KeyBindings)
+	for (unsigned int i = k->KeyBindings.size(); i > 0; i--)
 	{
-		if (key.isPressed)
-			k->onKeyPress(key.key);
+		if (k->KeyBindings[i-1].isPressed)
+			k->onKeyPress(k->KeyBindings[i - 1].key);
 	}
 }

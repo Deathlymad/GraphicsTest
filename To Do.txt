@@ -1,6 +1,6 @@
 Schedule 4 Week:
-fix UI not rendering
-UI toggle behavior is strange O.o
+Texture Atlas
+UIText
 
 Short Term:
 	Options UI
@@ -12,6 +12,8 @@ make UI background modifiable
 write GameObject File
 Make the "Borders" of the Lights disappear
 fix normals in mesh constructor
+make keymap faster or move entirely to a new thread
+
 
 Long Term:
 Physics
@@ -23,8 +25,6 @@ add comments
 autonomous Threadusage and memory optimization
 OpenCL
 Use Vulkan
-
-
 
 
 UI stuffs:

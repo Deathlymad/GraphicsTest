@@ -11,8 +11,7 @@ UI::UI(Game* parent)
 	_owner = parent;
 	_parts.push_back(new UIPart(this, vec2(-1.0f, -1.0f), vec2(1.0f, 1.0f))); //add Background
 	_enabled = true;
-	keyBinds.addKeyBind(0, [this](unsigned short, KeyMap::KeyState) { deactivate(); _owner->Terminate(); }, "Quit", KeyMap::KeyState::ONPRESS);
-	keyBinds.deactivate();
+	keyBinds.activate();
 }
 
 UI::UI(UI* parent)
@@ -22,7 +21,7 @@ UI::UI(UI* parent)
 	_parts.push_back(new UIPart(this, vec2(-1.0f, -1.0f), vec2(1.0f, 1.0f))); //add Background
 	_enabled = true;
 	keyBinds.addKeyBind(0, [this](unsigned short, KeyMap::KeyState) { deactivate(); _parent->activate(); }, "Quit", KeyMap::KeyState::ONPRESS);
-	keyBinds.deactivate();
+	keyBinds.activate();
 }
 
 void UI::add(UI * ui)
@@ -43,8 +42,8 @@ void UI::render()
 	{
 		//internal render
 		renderer->bind();
-		for (UIPart* part : _parts)
-			part->render();
+		for (unsigned int i = _parts.size(); i > 0; i--)
+			_parts[i-1]->render();
 	}
 	//external Render
 	for (UI* child : _children)
@@ -71,7 +70,7 @@ vec2 UI::getScreenSize()
 	return _parent ? _parent->getScreenSize() : _owner->getScreenSize();
 }
 
-void UI::addEvent(unsigned short key, function<void(unsigned short, KeyMap::KeyState)> Func, string name, int trig)
+void UI::addEvent(unsigned short key, function<void(unsigned short, KeyMap::KeyState)> Func, string name, int trig, unsigned char priority)
 {
-	keyBinds.addKeyBind(key, Func, name, trig);
+	keyBinds.addKeyBind(key, Func, name, trig, priority);
 }

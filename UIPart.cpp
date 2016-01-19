@@ -58,7 +58,7 @@ bool UIPart::isInPart(double x, double y)
 {
 	double convX = convertToScreenSpace( x, false);
 	double convY = convertToScreenSpace( y, true);
-	if ((_pos[0].x < convX && convY < _pos[1].x) && (_pos[0].y < convX && convY < _pos[1].y))
+	if ((_pos[0].x < convX && convX < _pos[1].x) && (_pos[0].y < convY && convY < _pos[1].y))
 		return true;
 	return false;
 }

@@ -37,7 +37,7 @@ public:
 	void activate() { _activated = true; }
 	void deactivate() { _activated = false; }
 
-	void addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig = ONHOLD);
+	void addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig = ONHOLD, unsigned char priority = 0);
 
 	void onKeyPress( unsigned short);
 
@@ -47,7 +47,7 @@ public:
 protected:
 	void onKeyPress(char button, char action, char mods);
 private:
-	vector<KeyBind> KeyBindings; // short in binary 00000 3 bit modifier Key (Alt, Shift, Ctrl) 8 bit key
+	vector<KeyBind> KeyBindings; // short in binary 5 bit priority 3 bit modifier Key (Alt, Shift, Ctrl) 8 bit key
 
 	static size_t find(unsigned short, vector<KeyBind>*, int, int);
 

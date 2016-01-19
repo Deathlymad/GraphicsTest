@@ -61,11 +61,6 @@ void Game::addObject(EngineObject & object)
 	world.addObj(&object);
 }
 
-void Game::init()
-{
-	KeyMaps[0]->activate();
-}
-
 void Game::update()
 {
 	if (!Menu->isActive())
@@ -98,7 +93,8 @@ void Game::setupKeyMap(KeyMap &k)
 {
 	k.addKeyBind(0, [this](unsigned short, KeyMap::KeyState)
 	{
-		toggleMenu();
-	}, "Menu", KeyMap::KeyState::ONPRESS);
+		if (!Menu->isActive())
+			Menu->activate();
+	}, "Menu", KeyMap::KeyState::ONRELEASE, 0);
 	world.init( &k);
 }

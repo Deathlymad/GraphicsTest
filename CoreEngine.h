@@ -17,7 +17,6 @@ public:
 
 	~CoreEngine();
 private:
-	void init();
 	void update();
 
 	RenderingEngine GrEngine;

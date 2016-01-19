@@ -19,8 +19,9 @@ public:
 
 	void addObject(EngineObject&);
 
-	virtual void init();
 	virtual void update();
+
+	void toggleMenu();
 
 	KeyMap& addKeyMap();
 
@@ -30,7 +31,6 @@ private: //context
 	CoreEngine Engine;
 
 protected:
-	void toggleMenu();
 
 	Scene world;
 	UI* Menu;

@@ -17,6 +17,7 @@ public:
 
 	void add(UI*);
 	void add(UIPart*);
+	void addEvent(unsigned short, function<void(unsigned short, KeyMap::KeyState)>, string, int trig = KeyMap::KeyState::ONHOLD, unsigned char priority = 0);
 
 	bool isActive() { return _enabled; }
 
@@ -29,7 +30,6 @@ public:
 	~UI();
 private:
 	vec2 getScreenSize();
-	void addEvent(unsigned short, function<void(unsigned short, KeyMap::KeyState)>, string, int);
 
 	KeyMap keyBinds;
 	UI* _parent;
