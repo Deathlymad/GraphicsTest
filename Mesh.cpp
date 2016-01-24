@@ -20,7 +20,7 @@ Mesh::Mesh() : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo
 
 Mesh::Mesh ( string file) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(3, 2, 3)
 {
-	vector<Vertex> v;
+	vector<unnormalizedVertex> v;
 	vector<unsigned int> in;
 	vector<vec3> n;
 	vector<vec2> t;
@@ -39,7 +39,7 @@ Mesh::Mesh ( string file) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new 
 		io::strsep(temp,vec[i]); //vec[i] in teile zerlegen
 		if(temp[0].compare("v") == 0)
 		{
-			v.push_back( Vertex(vec3( stof(temp[1]), stof(temp[2]), stof(temp[3])) , vec2(-1.0, -1.0), vec3(0,0,0))); //writes default Data
+			v.push_back(unnormalizedVertex( Vertex(vec3( stof(temp[1]), stof(temp[2]), stof(temp[3])) , vec2(-1.0, -1.0), vec3(0,0,0)), vector<vec3>())); //writes default Data
 			continue;
 		}
 		
@@ -64,14 +64,14 @@ Mesh::Mesh ( string file) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new 
 				io::strsep( s, temp[i], '/');
 				in.push_back(stoi(s[0]) - 1);
 				if (t.size() > 0) //might search for onexistend data, also this might not be applicable all the time
-					v[stoi(s[0]) - 1].setTexCoord( t[stoi(s[1]) - 1]);
+					v[stoi(s[0]) - 1]._v.setTexCoord( t[stoi(s[1]) - 1]);
 				if(n.size() > 0)
-					v[stoi(s[0]) - 1].setNormal(v[stoi(s[0]) - 1].getNormal() + n[stoi(s[2]) - 1]); // need to renormalize
+					v[stoi(s[0]) - 1]._nor.push_back(n[stoi(s[2]) - 1]); // need to renormalize
 			}
 			continue;
 		}
 	}
-	glDownload(v, in);
+	glDownload(getNormalVertices(v), in);
 }
 
 Mesh::Mesh(vector<Vertex>& vec, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
@@ -98,6 +98,28 @@ void Mesh::initGL( unsigned char flag)
 		glGenBuffers(1, _ibo.get());
 	}
 	_vao.createVertexArray();
+}
+
+vector<Mesh::Vertex> Mesh::getNormalVertices(vector<unnormalizedVertex> vn)
+{
+	vector<Vertex> _v;
+	for (unnormalizedVertex v : vn)
+	{
+		vector<vec3> normals;
+		for (vec3 n : v._nor)
+		{
+			if (!(find(normals.begin(), normals.end(), n) != normals.end()))
+				normals.push_back(n);
+		}
+		vec3 nor = vec3(0, 0, 0);
+		for (vec3 n : normals)
+		{
+			nor += n;
+		}
+		_v.push_back(v._v);
+		_v[_v.size() - 1].setNormal(normalize(nor));
+	}
+	return _v;
 }
 
 void Mesh::glDownload(vector<Vertex>& v, vector < unsigned int>& i)

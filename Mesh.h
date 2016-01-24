@@ -88,8 +88,18 @@ public:
 		float data[9];
 	};
 
+	struct unnormalizedVertex
+	{
+		unnormalizedVertex(Vertex v, vector<vec3> nor) : _v(v)
+		{
+			_nor = nor;
+		}
+		Vertex _v;
+		vector<vec3> _nor;
+	};
+
 	Mesh ( string);
-	Mesh ( vector<Vertex> &vec, unsigned char bitset); //Cube Constructor
+	Mesh ( vector<Vertex> &vec, unsigned char bitset); //Square Constructor
 	Mesh ( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset);
 	Mesh ();
 		
@@ -104,5 +114,6 @@ protected:
 	void deleteBuffer(GLuint* buf);
 	unsigned int _indices;
 private:
-	virtual void glDownload(  vector<Vertex>&, vector <unsigned int>&);
+	vector<Vertex> getNormalVertices(vector<unnormalizedVertex>);
+	void glDownload(  vector<Vertex>&, vector <unsigned int>&);
 };

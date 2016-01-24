@@ -94,8 +94,10 @@ void Image::load(ifstream& file)
 				for (size_t i = 0; i < _tableSize; i++)
 					file.read(&_colorTable[i], 1);
 
-			unsigned int dataSize = ceil((_width * _height * _depth) / 8);
+			unsigned int dataSize = (unsigned int)ceil((_width * _height * _depth) / 8);
 			_data = new char[dataSize];
+
+			_structure = PixelStructure(_depth / 8);
 
 			file.seekg(offset);
 			for (size_t i = 0; i < dataSize; i++)
@@ -111,6 +113,11 @@ void Image::load(ifstream& file)
 	}
 
 	format();
+}
+
+Image::PixelStructure Image::getPixelStructure()
+{
+	return _structure;
 }
 
 void Image::format()
@@ -152,15 +159,26 @@ Image::ImageType Image::getFileImageType(ifstream& file)
 		return PNG;
 }
 
+Texture::Texture(Image i, unsigned int samplerID) : _image(i), _samplerID(samplerID), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
+{}
 
-
-Texture::Texture( Image i) : _image(i), _samplerID(0), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
+Texture::Texture() : _samplerID(-1), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
 {
 }
 
-Texture::Texture(Image i, unsigned int samplerID) : _image(i), _samplerID(0), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
+GLenum Texture::getTextureType(Image::PixelStructure id)
 {
-
+	switch (id)
+	{
+	case Image::PixelStructure::A:
+		return GL_ALPHA;
+	case Image::PixelStructure::RGB:
+		return GL_RGB;
+	case Image::PixelStructure::RGBA:
+		return GL_RGBA;
+	default:
+		return GL_RGB;
+	}
 }
 
 void Texture::deleteTexture(GLuint* tex)
@@ -186,8 +204,8 @@ void Texture::glDownload()
 	glGenTextures(1, _ID.get());
 
 	glBindTexture(GL_TEXTURE_2D, *(_ID.get()));
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _image.getWidth(), _image.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, _image.getData());
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, getTextureType(_image.getPixelStructure()), _image.getWidth(), _image.getHeight(), 0, getTextureType(_image.getPixelStructure()), GL_UNSIGNED_BYTE, _image.getData());
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -207,3 +225,77 @@ void Texture::bind()
 		_lastTexID = *_ID.get();
 	}
 }
+
+LayeredTexture::LayeredTexture(string file)
+{
+	_samplerList.push_back(Texture(Image(file)));
+}
+LayeredTexture::LayeredTexture(vector<string> files)
+{
+	for (unsigned int i = 0; i < files.size(); i++)
+		_samplerList.push_back(Texture(Image(files[i]), i));
+}
+LayeredTexture::LayeredTexture(vector<Image> images) : Texture(), _samplerList()
+{
+	for (unsigned int i = 0; i < images.size();i++)
+		_samplerList.push_back(Texture(images[i], i));
+}
+
+LayeredTexture::~LayeredTexture()
+{
+
+}
+
+void LayeredTexture::glDownload()
+{
+	for (Texture t : _samplerList)
+		t.glDownload();
+}
+void LayeredTexture::writeSampler(Shader*s)
+{
+	for (Texture t : _samplerList)
+		t.init(s);
+}
+void LayeredTexture::bind()
+{
+	for (Texture t : _samplerList)
+		t.bind();
+}
+
+TextureAtlas::TextureAtlas(string file, unsigned int xCount, unsigned int yCount) : LayeredTexture(file)
+{
+	_countX = xCount;
+	_countY = yCount;
+
+	_xRatio = 1.0 / _countX;
+	_yRatio = 1.0 / _countY;
+}
+TextureAtlas::TextureAtlas(vector<string> files, unsigned int xCount, unsigned int yCount) : LayeredTexture(files)
+{
+	_countX = xCount;
+	_countY = yCount;
+
+	_xRatio = 1.0 / _countX;
+	_yRatio = 1.0 / _countY;
+}
+TextureAtlas::TextureAtlas(vector<Image> images, unsigned int xCount, unsigned int yCount) : LayeredTexture(images)
+{
+	_countX = xCount;
+	_countY = yCount;
+
+	_xRatio = 1.0 / _countX;
+	_yRatio = 1.0 / _countY;
+}
+
+TextureAtlas::~TextureAtlas(){}
+
+void TextureAtlas::writeSampler(Shader* s, unsigned int samplerID)
+{
+	float* f;
+	s->addUniform(Shader::Uniform("_tex" + std::to_string(samplerID) + "_xR", f, 1));
+	_xUni.addMemPos(f);
+	f = 0;
+	s->addUniform(Shader::Uniform("_tex" + std::to_string(samplerID) + "_yR", f, 1));
+	_yUni.addMemPos(f);
+}
+

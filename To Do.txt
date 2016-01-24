@@ -1,19 +1,13 @@
-Schedule 4 Week:
-Texture Atlas
 UIText
 
 Short Term:
 	Options UI
-finish Textures (TextureAtlas, multiple Samplers, read PNG)
+make TextureAtlas not based on Squares
+read PNG
 Gamepad-/Joystick-/MouseHandler implementation
-make the Registration in the TestGame class cleaner
 add Log File
 make UI background modifiable
-write GameObject File
-Make the "Borders" of the Lights disappear
-fix normals in mesh constructor
-make keymap faster or move entirely to a new thread
-
+make keymap, ressource loading faster or move entirely to a new thread
 
 Long Term:
 Physics
@@ -25,7 +19,6 @@ add comments
 autonomous Threadusage and memory optimization
 OpenCL
 Use Vulkan
-
 
 UI stuffs:
 rendering a virtual mouse

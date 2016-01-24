@@ -97,3 +97,6 @@ void UIButton::onMouseButton(char button, char action, char mods)
 			_pressed = false;
 	}
 }
+
+Shader UIText::textRendenerer;
+TextureAtlas UIText::glyphMap = TextureAtlas("GlypthMapS.bmp", 32, 7); 

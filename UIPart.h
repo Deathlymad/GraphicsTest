@@ -55,6 +55,9 @@ private:
 
 class UIText : UIPart
 {
+public:
+	virtual void render();
 private:
 	static Shader textRendenerer;
+	static TextureAtlas glyphMap;
 };

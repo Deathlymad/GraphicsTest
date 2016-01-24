@@ -7,6 +7,7 @@ NSP_UTIL
 
 class Shader;
 typedef unsigned int GLuint;
+typedef unsigned int GLenum;
 
 #pragma once
 class Image
@@ -17,12 +18,19 @@ public:
 		BMP,
 		PNG
 	};
+	enum PixelStructure
+	{
+		A = 1,
+		RGB = 3,
+		RGBA = 4
+	};
 
 	Image();
 	Image(string);
 
 	void load(string file);
 	char* getData();
+	PixelStructure getPixelStructure();
 
 	unsigned int getHeight() { return _height; }
 	unsigned int getWidth() { return _width; }
@@ -34,6 +42,7 @@ private:
 
 	char* _data;
 
+	PixelStructure _structure;
 	ImageType _type;
 	unsigned short _depth;
 	unsigned int _compression;
@@ -47,9 +56,8 @@ private:
 #pragma once
 class Texture
 {
-	friend class Layeredtexture;
 public:
-	Texture(Image);
+	Texture(Image, unsigned int samplerID = 0);
 	~Texture();
 	
 	virtual void init(Shader* s);
@@ -57,9 +65,11 @@ public:
 	virtual void glDownload();
 	virtual void bind();
 
+protected:
+	Texture();
 private:
+	GLenum getTextureType(Image::PixelStructure);
 	void deleteTexture(GLuint* tex);
-	Texture(Image, unsigned int samplerID);
 
 	CustomPtr<GLuint> _ID;
 	static GLuint _lastTexID;
@@ -67,30 +77,37 @@ private:
 	unsigned int _samplerID;
 	Image _image;
 };
-/*
 #pragma once
 class LayeredTexture : public Texture
 {
-	LayeredTexture();
+public:
+	LayeredTexture(string);
+	LayeredTexture(vector<string>);
+	LayeredTexture(vector<Image>);
 	~LayeredTexture();
 
 	virtual void glDownload();
-	virtual void writeSampler(string name, Shader*s);
+	virtual void writeSampler(Shader*s);
 	virtual void bind();
-public:
-	vector<Texture> _sampler;
+private:
+	vector<Texture> _samplerList;
 };
-
 #pragma once
 class TextureAtlas : public LayeredTexture
 {
-	TextureAtlas();
+public:
+	TextureAtlas(string, unsigned int xCount, unsigned int yCount);
+	TextureAtlas(vector<string>, unsigned int xCount, unsigned int yCount);
+	TextureAtlas(vector<Image>, unsigned int xCount, unsigned int yCount);
+
 	~TextureAtlas();
 
-	virtual void writeSampler();
+	virtual void writeSampler(Shader*, unsigned int);
 
-public:
-	unsigned int _bitX, _countX;
-	unsigned int _bitY, _countY;
+private:
+	unsigned int _countX;
+	unsigned int _countY;
+
+	double _xRatio, _yRatio;
+	UniformRegistry<1> _xUni, _yUni;
 };
-*/
