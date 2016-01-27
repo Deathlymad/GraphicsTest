@@ -65,7 +65,7 @@ public: //Public structures
 		}
 
 		void create( GLuint* prgm);
-
+		void copy(Uniform& other);
 		void write(GLuint* prgm);
 
 		bool operator==(Uniform& other) { return _name == other._name; }

@@ -4,19 +4,27 @@
 #include "Shader.h"
 
 
-Transformation::Transformation() : EngineObject(), _translation(0.0f, 0.0f, 0.0f), _rotation(0.0f, 0.0f, 0.0f), _scale(1.0f, 1.0f, 1.0f), _ID(-1)
+Transformation::Transformation() : EngineObject(), 
+	_translation(0.0f, 0.0f, 0.0f), _rotation(0.0f, 0.0f, 0.0f), _scale(1.0f, 1.0f, 1.0f), _ID(-1), 
+	TransformationMatrix("TransMatrix")
 {}
 
-Transformation::Transformation(unsigned int ID) : EngineObject(), _translation(0.0f, 0.0f, 0.0f), _rotation(0.0f, 0.0f, 0.0f), _scale(1.0f, 1.0f, 1.0f), _ID(ID)
+Transformation::Transformation(unsigned int ID) : EngineObject(), 
+	_translation(0.0f, 0.0f, 0.0f), _rotation(0.0f, 0.0f, 0.0f), _scale(1.0f, 1.0f, 1.0f), _ID(ID), 
+	TransformationMatrix("TransMatrix" + to_string(ID))
 {
 }
 
 
-Transformation::Transformation(vec3 translation, vec3 rotation, vec3 scale) : EngineObject(), _translation(translation), _rotation(rotation), _scale(scale), _ID(-1)
+Transformation::Transformation(vec3 translation, vec3 rotation, vec3 scale) : EngineObject(), 
+	_translation(translation), _rotation(rotation), _scale(scale), _ID(-1), 
+	TransformationMatrix("TransMatrix")
 {
 }
 
-Transformation::Transformation(unsigned int ID, vec3 translation, vec3 rotation, vec3 scale) : EngineObject(), _translation(translation), _rotation(rotation), _scale(scale), _ID(ID)
+Transformation::Transformation(unsigned int ID, vec3 translation, vec3 rotation, vec3 scale) : EngineObject(), 
+	_translation(translation), _rotation(rotation), _scale(scale), _ID(ID), 
+	TransformationMatrix("TransMatrix" + to_string(ID))
 {
 }
 
@@ -109,17 +117,6 @@ mat4 Transformation::getMatrix()
 	mat4 rot   = getRotMat();
 	mat4 scale = getScaleMat();
 	return trans*rot*scale;
-}
-
-
-void Transformation::init(Shader* prog)
-{
-	float* f = nullptr;
-	if (_ID != -1)
-		prog->addUniform(Shader::Uniform("TransMatrix" + to_string(_ID), f, 16));
-	else
-		prog->addUniform(Shader::Uniform("TransMatrix", f, 16));
-	TransformationMatrix.addMemPos(f);
 }
 
 void Transformation::render(Shader* s, bool firstPass)

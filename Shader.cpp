@@ -50,7 +50,11 @@ void Shader::addShader(ShaderCode &code)
 }
 void Shader::addUniform(Uniform &u)
 {
-	Uniforms.insert(Uniforms.begin() + findUniform(u, 0, Uniforms.size()), u);
+	unsigned int pos = findUniform(u, 0, Uniforms.size());
+	if (Uniforms.size() > pos && Uniforms[pos] == u)
+		u.copy(Uniforms[pos]);
+	else
+		Uniforms.insert(Uniforms.begin() + pos, u);
 }
 void Shader::removeUniform(string& s)
 {
@@ -342,6 +346,14 @@ void Shader::Uniform::create( GLuint* prgm)
 	pos = glGetUniformLocation(*prgm, _name.c_str());
 	if (pos == -1)
 		cout << "couldn't Resolve Uniform: " << _name << endl;
+}
+
+void Shader::Uniform::copy(Uniform & other)
+{
+	if (*this != other)
+		return;
+	_data = other._data;
+	_size = other._size;
 }
 
 void Shader::Uniform::write(GLuint* prgm)

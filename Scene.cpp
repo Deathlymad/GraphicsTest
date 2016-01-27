@@ -4,9 +4,7 @@
 
 
 Scene::Scene(RenderingEngine* r) : root(), View()
-{
-	r->registerGraphicObject(&View);
-}
+{}
 
 void Scene::init(KeyMap * k)
 {

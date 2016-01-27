@@ -111,7 +111,6 @@ void Image::load(ifstream& file)
 			break;
 		}
 	}
-
 	format();
 }
 
@@ -126,11 +125,29 @@ void Image::format()
 	{
 		case BMP:
 		{
-			//convert everything to 24 bit or  32 bit
+			//convert everything to 24 bit or 32 bit
 			//flip Bitmap
 			//level 1, 2 decompression
 			//apply bitfields
 			//removing indexes
+			if (_depth == 1)
+			{
+				char* newData = new char[_width * _height * 3];
+				for (unsigned int i = 0; i < _width * _height * 3; i++)
+					newData[i] = 0;
+				for (unsigned int i = 0; i < (_width * _height) / 8; i++)
+				{
+					char temp = _data[i];
+					for (unsigned int j = 0; j < 8; j++)
+					{
+						if (temp & (1 << j))
+							*((int*)(&newData[(i * 8 + j) * 3])) = 0x00FFFFFF;
+					}
+				}
+				delete[_width * _height] _data;
+				_data = newData;
+			}
+
 			if (_compression == 3 && (_depth & 48))
 				throw std::exception("Wrong compression or Depth. It doesn't work together");
 			for (unsigned int i = 0; i < _width * _height; i++) //flip from BGR to RGB
@@ -157,12 +174,13 @@ Image::ImageType Image::getFileImageType(ifstream& file)
 		return BMP;
 	else if (*Sig == 0x89504E470D0A1A0A) //magic number check for PNG
 		return PNG;
+	return BMP;
 }
 
-Texture::Texture(Image i, unsigned int samplerID) : _image(i), _samplerID(samplerID), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
+Texture::Texture(Image i, unsigned int samplerID) : _image(i), _samplerID(samplerID), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint), _sampler("_tex" + std::to_string(_samplerID))
 {}
 
-Texture::Texture() : _samplerID(-1), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint)
+Texture::Texture() : _samplerID(0), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint), _sampler("_tex" + std::to_string(_samplerID))
 {
 }
 
@@ -189,13 +207,6 @@ void Texture::deleteTexture(GLuint* tex)
 
 Texture::~Texture()
 {
-}
-
-void Texture::init(Shader* s)
-{
-	float* f;
-	s->addUniform(Shader::Uniform("_tex" + std::to_string(_samplerID), f, 1));
-	_sampler.addMemPos(f);
 }
 
 void Texture::glDownload()
@@ -251,18 +262,14 @@ void LayeredTexture::glDownload()
 	for (Texture t : _samplerList)
 		t.glDownload();
 }
-void LayeredTexture::writeSampler(Shader*s)
-{
-	for (Texture t : _samplerList)
-		t.init(s);
-}
+
 void LayeredTexture::bind()
 {
-	for (Texture t : _samplerList)
-		t.bind();
+	for (unsigned int i = 0; i < _samplerList.size(); i++)
+		_samplerList[i].bind();
 }
 
-TextureAtlas::TextureAtlas(string file, unsigned int xCount, unsigned int yCount) : LayeredTexture(file)
+TextureAtlas::TextureAtlas(string file, unsigned int xCount, unsigned int yCount) : LayeredTexture(file), _xUni("_tex" + std::to_string(_samplerID) + "_xR"), _yUni("_tex" + std::to_string(_samplerID) + "_yR")
 {
 	_countX = xCount;
 	_countY = yCount;
@@ -270,7 +277,7 @@ TextureAtlas::TextureAtlas(string file, unsigned int xCount, unsigned int yCount
 	_xRatio = 1.0 / _countX;
 	_yRatio = 1.0 / _countY;
 }
-TextureAtlas::TextureAtlas(vector<string> files, unsigned int xCount, unsigned int yCount) : LayeredTexture(files)
+TextureAtlas::TextureAtlas(vector<string> files, unsigned int xCount, unsigned int yCount) : LayeredTexture(files), _xUni("_tex" + std::to_string(_samplerID) + "_xR"), _yUni("_tex" + std::to_string(_samplerID) + "_yR")
 {
 	_countX = xCount;
 	_countY = yCount;
@@ -278,7 +285,7 @@ TextureAtlas::TextureAtlas(vector<string> files, unsigned int xCount, unsigned i
 	_xRatio = 1.0 / _countX;
 	_yRatio = 1.0 / _countY;
 }
-TextureAtlas::TextureAtlas(vector<Image> images, unsigned int xCount, unsigned int yCount) : LayeredTexture(images)
+TextureAtlas::TextureAtlas(vector<Image> images, unsigned int xCount, unsigned int yCount) : LayeredTexture(images), _xUni("_tex" + std::to_string(_samplerID) + "_xR"), _yUni("_tex" + std::to_string(_samplerID) + "_yR")
 {
 	_countX = xCount;
 	_countY = yCount;
@@ -288,14 +295,3 @@ TextureAtlas::TextureAtlas(vector<Image> images, unsigned int xCount, unsigned i
 }
 
 TextureAtlas::~TextureAtlas(){}
-
-void TextureAtlas::writeSampler(Shader* s, unsigned int samplerID)
-{
-	float* f;
-	s->addUniform(Shader::Uniform("_tex" + std::to_string(samplerID) + "_xR", f, 1));
-	_xUni.addMemPos(f);
-	f = 0;
-	s->addUniform(Shader::Uniform("_tex" + std::to_string(samplerID) + "_yR", f, 1));
-	_yUni.addMemPos(f);
-}
-

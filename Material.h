@@ -5,41 +5,25 @@
 class Material :public EngineObject
 {
 public:
-	Material() : EngineObject()
+	Material() : EngineObject(), specularExponent("specularExponent"), specularIntensity("specularIntensity")
 	{
 		_specularExponent = 0.0f;
 		_specularIntensity = 0.0f;
 		_ID = -1;
 	}
 
-	Material(unsigned int ID) : EngineObject()
+	Material(unsigned int ID) : EngineObject(), specularExponent("specularExponent" + to_string(ID)), specularIntensity("specularIntensity" + to_string(ID))
 	{
 		_specularExponent = 0.0f;
 		_specularIntensity = 0.0f;
 		_ID = ID;
 	}
 
-	Material(unsigned int ID, float intensity, float exponent) : EngineObject()
+	Material(unsigned int ID, float intensity, float exponent) : EngineObject(), specularExponent("specularExponent" + to_string(ID)), specularIntensity("specularIntensity" + to_string(ID))
 	{
 		_specularIntensity = intensity;
 		_specularExponent = exponent;
 		_ID = ID;
-	}
-
-	void init(Shader* prog)
-	{
-		float* f;
-		if (_ID != -1)
-			prog->addUniform(Shader::Uniform("specularIntensity" + std::to_string(_ID), f, 1));
-		else
-			prog->addUniform(Shader::Uniform("specularIntensity", f, 1));
-		specularIntensity.addMemPos(f);
-		f = nullptr;
-		if (_ID != -1)
-			prog->addUniform(Shader::Uniform("specularExponent" + std::to_string(_ID), f, 1));
-		else
-			prog->addUniform(Shader::Uniform("specularExponent", f, 1));
-		specularExponent.addMemPos(f);
 	}
 
 	void render(Shader* s, bool firstPass)

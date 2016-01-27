@@ -7,7 +7,7 @@
 float Camera::speed = 0.0005f;
 vec3 Camera::YAxis = vec3(0.0f, 1.0f, 0.0f);
 
-Camera::Camera() : InputHandler(), EngineObject()
+Camera::Camera() : InputHandler(), EngineObject(), ViewProjMat("ViewProj"), EyePos("EyePos")
 {
 	_pos = vec3(0, 0, -5);
 	forward = vec3(0, 0, -1);
@@ -50,20 +50,6 @@ void Camera::registerKeyBinds(KeyMap * k)
 	k->addKeyBind(83, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Move Backward", KeyMap::KeyState::ONHOLD);//S
 	k->addKeyBind(65, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Strafe Left", KeyMap::KeyState::ONHOLD);//A
 	k->addKeyBind(68, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Strafe Right", KeyMap::KeyState::ONHOLD);//D
-}
-
-void Camera::registerUniform(Shader * s, bool light)
-{
-	float* temp = nullptr;
-	s->addUniform(Shader::Uniform("ViewProj", temp, 16));
-	ViewProjMat.addMemPos(temp);
-	temp = nullptr;
-	if (light)
-	{
-		s->addUniform(Shader::Uniform("EyePos", temp, 3));
-		EyePos.addMemPos(temp);
-	}
-	
 }
 
 Camera::~Camera()

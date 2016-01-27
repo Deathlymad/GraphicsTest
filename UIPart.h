@@ -29,7 +29,7 @@ protected:
 	function<void()> _event;
 	UI* _parent;
 	Mesh _mesh;
-	Texture _tex;
+	Texture* _tex;
 private:
 	vec2 _pos[2]; //from bottom left, top right
 };
@@ -45,7 +45,7 @@ private:
 	bool _pressed;
 };
 
-class UIFader : UIPart
+class UIFader : public UIPart
 {
 public:
 	virtual void render();
@@ -53,11 +53,12 @@ private:
 	UIPart _fader;
 };
 
-class UIText : UIPart
+class UIText : public UIPart
 {
 public:
+	UIText(UI* parent, vec2 pos1, vec2 pos2, function<void()> = [] {});
 	virtual void render();
 private:
-	static Shader textRendenerer;
-	static TextureAtlas glyphMap;
+	static Shader* textRendenerer;
+	static TextureAtlas* glyphMap;
 };

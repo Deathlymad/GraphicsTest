@@ -2,14 +2,41 @@
 #include "CoreEngine.h"
 #include "Screen.h"
 #include "Scene.h"
+#include "Texture.h"
 #include "UI.h"
 
 RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* screen) : ambient("forward_ambient_vs.glsl", "forward_ambient_fs.glsl")
 {
 	this->screen = screen;
 	_parent = parent;
-	MainView = nullptr;
 	setup3DEngineState();
+}
+
+void RenderingEngine::init()
+{
+	UniformRegistry<1>::registerShaderUniforms(&ambient);
+	for (unsigned int j = 0; j < Lights.size() - 1; j++)
+		UniformRegistry<1>::registerShaderUniforms(Lights[j]->getShader());
+
+	UniformRegistry<2>::registerShaderUniforms(&ambient);
+	for (unsigned int j = 0; j < Lights.size() - 1; j++)
+		UniformRegistry<2>::registerShaderUniforms(Lights[j]->getShader());
+
+	UniformRegistry<3>::registerShaderUniforms(&ambient);
+	for (unsigned int j = 0; j < Lights.size() - 1; j++)
+		UniformRegistry<3>::registerShaderUniforms(Lights[j]->getShader());
+
+	UniformRegistry<4>::registerShaderUniforms(&ambient);
+	for (unsigned int j = 0; j < Lights.size() - 1; j++)
+		UniformRegistry<4>::registerShaderUniforms(Lights[j]->getShader());
+
+	UniformRegistry<9>::registerShaderUniforms(&ambient);
+	for (unsigned int j = 0; j < Lights.size() - 1; j++)
+		UniformRegistry<9>::registerShaderUniforms(Lights[j]->getShader());
+
+	UniformRegistry<16>::registerShaderUniforms(&ambient);
+	for (unsigned int j = 0; j < Lights.size() - 1; j++)
+		UniformRegistry<16>::registerShaderUniforms(Lights[j]->getShader());
 }
 
 void RenderingEngine::render(Scene * s)
@@ -61,14 +88,6 @@ void RenderingEngine::set3D()
 void RenderingEngine::registerGraphicObject(BaseLight * b)
 {
 	Lights.push_back(b);
-	if (MainView)
-		MainView->registerUniform(b->getShader(), true);
-}
-
-void RenderingEngine::registerGraphicObject(Camera * c) //needs to be changed
-{
-	MainView = c;
-	initOnShaders([this](Shader* s, bool light) { if(MainView) MainView->registerUniform(s, light); });
 }
 
 RenderingEngine::~RenderingEngine()

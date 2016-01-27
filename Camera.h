@@ -27,7 +27,6 @@ public:
 	void setAspect(float);
 
 	void registerKeyBinds(KeyMap*);
-	void registerUniform(Shader*, bool);
 	void onMouseMove(double x, double y); //move, cameras need to be static too
 
 	~Camera();

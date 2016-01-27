@@ -8,6 +8,7 @@ class Camera;
 class CoreEngine;
 class Screen;
 class Scene;
+class Texture;
 class UI;
 
 #pragma once
@@ -16,7 +17,7 @@ class RenderingEngine
 public:
 	RenderingEngine(CoreEngine* parent, Screen*);
 
-	void initOnShaders(function<void(Shader*, bool)> f) { f(&ambient, false); for (BaseLight* l : Lights) f(l->getShader(), true); }
+	void init();
 
 	void render(Scene*);
 	void render(UI*);
@@ -25,7 +26,6 @@ public:
 	void set3D();
 
 	void registerGraphicObject(BaseLight*);
-	void registerGraphicObject(Camera*);
 
 	RenderingEngine& operator= (RenderingEngine& engine)
 	{
@@ -43,8 +43,6 @@ private:
 	void setup2DEngineState();
 
 	Screen* screen;
-
-	Camera* MainView; //needs way of showing several pictures (PIP, mirrors, etc.) without several renderingengines
 
 	Shader ambient;
 	vector<BaseLight*> Lights;

@@ -52,21 +52,18 @@ private:
 	char* _colorTable;
 	unsigned int _tableSize;
 };
-
 #pragma once
 class Texture
 {
 public:
 	Texture(Image, unsigned int samplerID = 0);
 	~Texture();
-	
-	virtual void init(Shader* s);
 
 	virtual void glDownload();
 	virtual void bind();
-
 protected:
 	Texture();
+	unsigned int _samplerID;
 private:
 	GLenum getTextureType(Image::PixelStructure);
 	void deleteTexture(GLuint* tex);
@@ -74,7 +71,6 @@ private:
 	CustomPtr<GLuint> _ID;
 	static GLuint _lastTexID;
 	UniformRegistry<1> _sampler;
-	unsigned int _samplerID;
 	Image _image;
 };
 #pragma once
@@ -87,7 +83,6 @@ public:
 	~LayeredTexture();
 
 	virtual void glDownload();
-	virtual void writeSampler(Shader*s);
 	virtual void bind();
 private:
 	vector<Texture> _samplerList;
@@ -101,9 +96,6 @@ public:
 	TextureAtlas(vector<Image>, unsigned int xCount, unsigned int yCount);
 
 	~TextureAtlas();
-
-	virtual void writeSampler(Shader*, unsigned int);
-
 private:
 	unsigned int _countX;
 	unsigned int _countY;

@@ -225,6 +225,7 @@
     <None Include="assets\shaders\forward_spot_fs.glsl" />
     <None Include="assets\shaders\forward_spot_vs.glsl" />
     <None Include="assets\shaders\UIRender_fs.glsl" />
+    <None Include="assets\shaders\UIRender_text_vs.glsl" />
     <None Include="assets\shaders\UIRender_vs.glsl" />
     <None Include="assets\shaders\version.glsl" />
     <None Include="assets\shaders\vertex.glsl" />

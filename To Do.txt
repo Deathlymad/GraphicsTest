@@ -1,8 +1,6 @@
-UIText
-
 Short Term:
 	Options UI
-make TextureAtlas not based on Squares
+move Text from UI class
 read PNG
 Gamepad-/Joystick-/MouseHandler implementation
 add Log File
@@ -23,3 +21,5 @@ Use Vulkan
 UI stuffs:
 rendering a virtual mouse
 make the UI able to Drag & Drop window independent
+
+check for uniforms

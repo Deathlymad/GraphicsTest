@@ -1,9 +1,10 @@
 #include "UIPart.h"
+#include "Texture.h"
 #include "UI.h"
 #include <GLFW\glfw3.h>
 
 
-UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex( Image("assets/textures/Test_tex2.bmp"))
+UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex(new Texture( Image("assets/textures/Test_tex2.bmp")))
 {
 	_parent = parent;
 
@@ -23,10 +24,10 @@ UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex
 	
 	_event = e;
 
-	_tex.glDownload();
+	_tex->glDownload();
 }
 
-UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex(Image("assets/textures/Test_tex2.bmp"))
+UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex(new Texture(Image("assets/textures/Test_tex2.bmp")))
 {
 	_parent = parent;
 	_pos[0] = pos1;
@@ -41,12 +42,12 @@ UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex(Ima
 
 	_event = e;
 
-	_tex.glDownload();
+	_tex->glDownload();
 }
 
 void UIPart::render()
 {
-	_tex.bind();
+	_tex->bind();
 	_mesh.Draw();
 }
 
@@ -98,5 +99,20 @@ void UIButton::onMouseButton(char button, char action, char mods)
 	}
 }
 
-Shader UIText::textRendenerer;
-TextureAtlas UIText::glyphMap = TextureAtlas("GlypthMapS.bmp", 32, 7); 
+Shader* UIText::textRendenerer = nullptr;
+TextureAtlas* UIText::glyphMap = new TextureAtlas("assets/textures/GlyphMapS.bmp", 32, 7);
+
+UIText::UIText(UI * parent, vec2 pos1, vec2 pos2, function<void()> _event) : UIPart(parent, pos1, pos2, _event)
+{
+	if (!textRendenerer)
+		textRendenerer = new Shader("UIRender_text_vs.glsl", "UIRender_fs.glsl");
+	_tex = nullptr;
+	glyphMap->glDownload();
+}
+
+void UIText::render()
+{
+	textRendenerer->bind();
+	glyphMap->bind();
+	_mesh.Draw();
+}

@@ -17,11 +17,6 @@ trans( 0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f))
 	getEngine()->getGraphicEngine()->registerGraphicObject(&Light);
 	getEngine()->getGraphicEngine()->registerGraphicObject(&Light1);
 	getEngine()->getGraphicEngine()->registerGraphicObject(&Light2);
-	m.init(Light.getShader());
-	m.init(Light1.getShader());
-	m.init(Light2.getShader());
-
-	getEngine()->getGraphicEngine()->initOnShaders([this](Shader* s, bool) {trans.init(s); });
 
 	//scene Registry
 	trans.add(&obj);
@@ -41,6 +36,9 @@ trans( 0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f))
 			Menu->deactivate();
 	}, "Menu", KeyMap::KeyState::ONPRESS, 0);
 	Menu->add(new UIButton(Menu, vec2(-0.2, -0.2), vec2(0.2, 0.2), -1, [this] {Terminate(); }));
+	Menu->add(new UIText(Menu, vec2(-1.0, 0.5), vec2(-0.5, 1.0)));
+
+	getEngine()->getGraphicEngine()->init();
 }
 
 TestGame::~TestGame()
