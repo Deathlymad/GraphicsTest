@@ -95,9 +95,9 @@ public:
 	
 	void createUniforms( Shader* target, string name)
 	{
-		target->addUniform(name + ".constant", constant);
-		target->addUniform(name + ".linear", linear);
-		target->addUniform(name + ".exponent", exponent);
+		constant = target->getUniformMemPos(name + ".constant");
+		linear = target->getUniformMemPos(name + ".linear");
+		exponent = target->getUniformMemPos(name + ".exponent");
 	}
 	void writeUniforms()
 	{

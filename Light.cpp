@@ -34,10 +34,8 @@ void BaseLight::createUniforms( string name)
 		intensity = nullptr;
 	}
 
-	float* temp = nullptr;
-	shader->addUniform(name + ".color", temp);
-	color = (vec3*)temp;
-	shader->addUniform(name + ".intensity", intensity);
+	color = (vec3*)shader->getUniformMemPos(name + ".color");
+	intensity = shader->getUniformMemPos(name + ".intensity");
 
 	*color = _color;
 	*intensity = _intensity;
@@ -52,15 +50,13 @@ DirectionalLight::DirectionalLight( vec3 c, float i, vec3 dir) : BaseLight( c, i
 
 void DirectionalLight::createUniforms( string name)
 {
-	BaseLight::createUniforms(name + "");
-	float* temp = nullptr;
+	BaseLight::createUniforms(name);
 	if (_name != name && _name.size())
 	{
 		shader->removeUniform(_name + ".direction");
 		normal = nullptr;
 	}
-	shader->addUniform(name + ".direction", temp);
-	normal = (vec3*)temp;
+	normal = (vec3*)shader->getUniformMemPos(name + ".direction");
 
 	*normal = _normal;
 }
@@ -101,10 +97,8 @@ void PointLight::createUniforms(string name)
 		pos = nullptr;
 	}
 	atten.createUniforms(shader, name + ".atten");
-	shader->addUniform(name + ".range", range);
-	float* temp = nullptr;
-	shader->addUniform(name + ".pos", temp);
-	pos = (vec3*)temp;
+	range = shader->getUniformMemPos(name + ".range");
+	pos = (vec3*)shader->getUniformMemPos(name + ".pos");
 
 	atten.writeUniforms();
 	*range = _range;
@@ -144,10 +138,8 @@ void SpotLight::createUniforms(string name)
 		shader->removeUniform(_name + ".cutoff");
 		cutoff = nullptr;
 	}
-	float* temp = nullptr;
-	shader->addUniform(name + ".direction", temp);
-	direction = (vec3*)temp;
-	shader->addUniform(name + ".cutoff", cutoff);
+	direction = (vec3*)shader->getUniformMemPos(name + ".direction");
+	cutoff = shader->getUniformMemPos(name + ".cutoff");
 
 	*direction = _direction;
 	*cutoff = _cutoff;

@@ -7,7 +7,7 @@
 float Camera::speed = 0.0005f;
 vec3 Camera::YAxis = vec3(0.0f, 1.0f, 0.0f);
 
-Camera::Camera() : InputHandler(), EngineObject(), ViewProjMat("ViewProj", 1), EyePos("EyePos", 1)
+Camera::Camera() : InputHandler(), EngineObject(), ViewProjMat("ViewProj", 16), EyePos("EyePos", 3)
 {
 	_pos = vec3(0, 0, -5);
 	forward = vec3(0, 0, -1);

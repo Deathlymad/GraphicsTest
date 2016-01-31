@@ -26,11 +26,7 @@ void UniformRegistry::update(float* data)
 void UniformRegistry::registerShaderUniforms(Shader* shader)
 {
 	for (UniformRegistry* registry : registryList)
-	{
-		float* temp = nullptr;
-		shader->addUniform(registry->_name, temp);
-		registry->addMemPos(temp);
-	}
+		registry->addMemPos(shader->getUniformMemPos(registry->_name));
 }
 
 bool UniformRegistry::localized() { return !MemPos.empty(); }

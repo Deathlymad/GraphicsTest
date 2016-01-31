@@ -108,7 +108,7 @@ public:
 	//getter / setter
 	void addShader(ShaderCode&);
 	void removeUniform(string&);
-	bool addUniform(string, float*&);
+	float* getUniformMemPos(string);
 
 	//functions
 	void load();

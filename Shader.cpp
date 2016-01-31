@@ -49,20 +49,19 @@ void Shader::removeUniform(string& s)
 		Uniforms.erase(Uniforms.begin() + pos);
 }
 
-bool Shader::addUniform(string name, float *& f)
+float* Shader::getUniformMemPos(string name)
 {
 	unsigned int pos = findUniform(name, 0, Uniforms.size());
 
 	if (pos >= Uniforms.size())
-		return false;
+		return nullptr;
 
 	if (Uniforms[pos] == name)
 	{
-		f = Uniforms[pos].getPtr();
-		return true;
+		return Uniforms[pos].getPtr();
 	}
 
-	return false;
+	return nullptr;
 }
 
 void Shader::load()
