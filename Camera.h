@@ -37,13 +37,13 @@ private:
 	vec3 _pos;
 	vec3 forward;
 	vec3 up;
-	UniformRegistry<3> EyePos;
+	UniformRegistry EyePos;
 	
 	mat4 View;
 	float FoV;
 	float Aspect;
 	mat4 projection;
-	UniformRegistry<16> ViewProjMat;
+	UniformRegistry ViewProjMat;
 	bool _update;
 
 	double XAngle, YAngle;

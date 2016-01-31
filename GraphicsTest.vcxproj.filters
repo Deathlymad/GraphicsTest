@@ -105,6 +105,9 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="UniformRegistry.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestGame.h">
@@ -247,12 +250,6 @@
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
     <None Include="assets\shaders\forward_spot_vs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\version.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\vertex.glsl">
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
     <None Include="assets\shaders\UIRender_fs.glsl">

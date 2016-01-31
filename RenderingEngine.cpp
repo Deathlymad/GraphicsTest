@@ -14,29 +14,9 @@ RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* screen) : ambient("
 
 void RenderingEngine::init()
 {
-	UniformRegistry<1>::registerShaderUniforms(&ambient);
+	UniformRegistry::registerShaderUniforms(&ambient);
 	for (unsigned int j = 0; j < Lights.size() - 1; j++)
-		UniformRegistry<1>::registerShaderUniforms(Lights[j]->getShader());
-
-	UniformRegistry<2>::registerShaderUniforms(&ambient);
-	for (unsigned int j = 0; j < Lights.size() - 1; j++)
-		UniformRegistry<2>::registerShaderUniforms(Lights[j]->getShader());
-
-	UniformRegistry<3>::registerShaderUniforms(&ambient);
-	for (unsigned int j = 0; j < Lights.size() - 1; j++)
-		UniformRegistry<3>::registerShaderUniforms(Lights[j]->getShader());
-
-	UniformRegistry<4>::registerShaderUniforms(&ambient);
-	for (unsigned int j = 0; j < Lights.size() - 1; j++)
-		UniformRegistry<4>::registerShaderUniforms(Lights[j]->getShader());
-
-	UniformRegistry<9>::registerShaderUniforms(&ambient);
-	for (unsigned int j = 0; j < Lights.size() - 1; j++)
-		UniformRegistry<9>::registerShaderUniforms(Lights[j]->getShader());
-
-	UniformRegistry<16>::registerShaderUniforms(&ambient);
-	for (unsigned int j = 0; j < Lights.size() - 1; j++)
-		UniformRegistry<16>::registerShaderUniforms(Lights[j]->getShader());
+		UniformRegistry::registerShaderUniforms(Lights[j]->getShader());
 }
 
 void RenderingEngine::render(Scene * s)

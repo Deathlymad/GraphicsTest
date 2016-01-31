@@ -42,7 +42,7 @@ private:
 	vec3 _rotation;
 	vec3 _scale;
 
-	UniformRegistry<16> TransformationMatrix;
+	UniformRegistry TransformationMatrix;
 
 	unsigned int _ID;
 };

@@ -70,7 +70,7 @@ private:
 
 	CustomPtr<GLuint> _ID;
 	static GLuint _lastTexID;
-	UniformRegistry<1> _sampler;
+	UniformRegistry _sampler;
 	Image _image;
 };
 #pragma once
@@ -101,5 +101,5 @@ private:
 	unsigned int _countY;
 
 	double _xRatio, _yRatio;
-	UniformRegistry<1> _xUni, _yUni;
+	UniformRegistry _xUni, _yUni;
 };

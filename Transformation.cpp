@@ -6,25 +6,25 @@
 
 Transformation::Transformation() : EngineObject(), 
 	_translation(0.0f, 0.0f, 0.0f), _rotation(0.0f, 0.0f, 0.0f), _scale(1.0f, 1.0f, 1.0f), _ID(-1), 
-	TransformationMatrix("TransMatrix")
+	TransformationMatrix("TransMatrix", 16)
 {}
 
 Transformation::Transformation(unsigned int ID) : EngineObject(), 
 	_translation(0.0f, 0.0f, 0.0f), _rotation(0.0f, 0.0f, 0.0f), _scale(1.0f, 1.0f, 1.0f), _ID(ID), 
-	TransformationMatrix("TransMatrix" + to_string(ID))
+	TransformationMatrix("TransMatrix" + to_string(ID), 16)
 {
 }
 
 
 Transformation::Transformation(vec3 translation, vec3 rotation, vec3 scale) : EngineObject(), 
 	_translation(translation), _rotation(rotation), _scale(scale), _ID(-1), 
-	TransformationMatrix("TransMatrix")
+	TransformationMatrix("TransMatrix", 16)
 {
 }
 
 Transformation::Transformation(unsigned int ID, vec3 translation, vec3 rotation, vec3 scale) : EngineObject(), 
 	_translation(translation), _rotation(rotation), _scale(scale), _ID(ID), 
-	TransformationMatrix("TransMatrix" + to_string(ID))
+	TransformationMatrix("TransMatrix" + to_string(ID), 16)
 {
 }
 

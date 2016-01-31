@@ -169,6 +169,7 @@
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="UIPart.cpp" />
+    <ClCompile Include="UniformRegistry.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -227,8 +228,6 @@
     <None Include="assets\shaders\UIRender_fs.glsl" />
     <None Include="assets\shaders\UIRender_text_vs.glsl" />
     <None Include="assets\shaders\UIRender_vs.glsl" />
-    <None Include="assets\shaders\version.glsl" />
-    <None Include="assets\shaders\vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="assets\mesh\Stein_einfach.obj">

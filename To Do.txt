@@ -1,11 +1,12 @@
 Short Term:
 	Options UI
+reduce constructor declarations, can be handerled with default parameters
 move Text from UI class
 read PNG
 Gamepad-/Joystick-/MouseHandler implementation
 add Log File
 make UI background modifiable
-make keymap, ressource loading faster or move entirely to a new thread
+make keymap, ressource loading faster or move entirely to a new thread - create Registries for Shaders etc.
 
 Long Term:
 Physics
@@ -21,5 +22,3 @@ Use Vulkan
 UI stuffs:
 rendering a virtual mouse
 make the UI able to Drag & Drop window independent
-
-check for uniforms

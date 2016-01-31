@@ -32,7 +32,9 @@ public: //Public structures
 	};
 	class ShaderCode
 	{
+
 	public:
+		string file;
 		ShaderType _type; //should be made private
 		string _path;
 		CustomPtr<GLuint> pos;
@@ -48,6 +50,8 @@ public: //Public structures
 		{ pos.setDestructor([this](GLuint* s) {clearShader(s); }); }
 		ShaderCode(ShaderType type, char* path) : _type(type), _path(path), pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
 
+		bool contains(string);
+
 		ShaderCode operator=(ShaderCode other) { _type = other._type; _path = other._path; pos = other.pos; return *this; }
 		bool operator==(ShaderCode other) { return _type == other._type && _path == other._path && pos.get() == other.pos.get(); }
 		bool operator!=(ShaderCode other) { return !(*this == other); }
@@ -57,8 +61,9 @@ public: //Public structures
 	{
 	public:
 
-		Uniform() : _name("emptyUniform"), _data(nullptr), _size(0), pos(-1) {}
-		Uniform(string name, float*& data, unsigned size) : _name(name), _data(new float[size]), _size(0), pos(-1)
+		Uniform() : _name("emptyUniform"), _data(nullptr), _size(0), pos(-1), enabled(false) {}
+		Uniform(string name, unsigned int size) : _name(name), _data(new float[size]), _size(size), pos(-1), enabled(false) {}
+		Uniform(string name, float*& data, unsigned size) : _name(name), _data(new float[size]), _size(0), pos(-1), enabled(false)
 		{
 			data = _data.get();
 			_size = size;
@@ -67,6 +72,7 @@ public: //Public structures
 		void create( GLuint* prgm);
 		void copy(Uniform& other);
 		void write(GLuint* prgm);
+		float* getPtr();
 
 		bool operator==(Uniform& other) { return _name == other._name; }
 		bool operator==(string& name) { return _name == name; }
@@ -77,12 +83,14 @@ public: //Public structures
 		bool operator> (Uniform& other) { return _name.compare(other._name) > 0; }
 		bool operator> (string& name) { return _name.compare(name) > 0; }
 
+		static int getUniformSize(string name);
 
 		~Uniform()
 		{
 			_size = 0;
 		}
 
+		bool enabled;
 	private:
 		string _name;
 		Ptr<float> _data;
@@ -99,8 +107,8 @@ public:
 
 	//getter / setter
 	void addShader(ShaderCode&);
-	void addUniform(Uniform&);
 	void removeUniform(string&);
+	bool addUniform(string, float*&);
 
 	//functions
 	void load();
@@ -108,6 +116,7 @@ public:
 	void bind();
 	void setUniforms();
 	
+
 	//operators
 	Shader& operator= (Shader&);
 	Shader& operator= (vector<ShaderCode>);
@@ -127,6 +136,8 @@ private:
 	vector<ShaderCode> Code; //contains Shader variable
 	vector<Uniform> Uniforms;
 
+	vector<vector<string>> structVariables; //sort?
+
 	//functions
 	void makeShader(ShaderCode*);
 	string checkProgram();
@@ -134,8 +145,7 @@ private:
 	string getShaderCode(string);
 	int findUniform(string&, int, int);
 	int findUniform(Uniform&, int, int);
-
-	//common Shader Files
-	const static ShaderCode Vertex;
+	void addUniform(string&);
+	vector<string> resolveStructVariable(string&);
 };
 

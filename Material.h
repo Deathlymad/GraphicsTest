@@ -5,21 +5,21 @@
 class Material :public EngineObject
 {
 public:
-	Material() : EngineObject(), specularExponent("specularExponent"), specularIntensity("specularIntensity")
+	Material() : EngineObject(), specularExponent("specularExponent", 1), specularIntensity("specularIntensity", 1)
 	{
 		_specularExponent = 0.0f;
 		_specularIntensity = 0.0f;
 		_ID = -1;
 	}
 
-	Material(unsigned int ID) : EngineObject(), specularExponent("specularExponent" + to_string(ID)), specularIntensity("specularIntensity" + to_string(ID))
+	Material(unsigned int ID) : EngineObject(), specularExponent("specularExponent" + to_string(ID), 1), specularIntensity("specularIntensity" + to_string(ID), 1)
 	{
 		_specularExponent = 0.0f;
 		_specularIntensity = 0.0f;
 		_ID = ID;
 	}
 
-	Material(unsigned int ID, float intensity, float exponent) : EngineObject(), specularExponent("specularExponent" + to_string(ID)), specularIntensity("specularIntensity" + to_string(ID))
+	Material(unsigned int ID, float intensity, float exponent) : EngineObject(), specularExponent("specularExponent" + to_string(ID), 1), specularIntensity("specularIntensity" + to_string(ID), 1)
 	{
 		_specularIntensity = intensity;
 		_specularExponent = exponent;
@@ -46,8 +46,8 @@ public:
 
 private:
 	float _specularIntensity;
-	UniformRegistry<1> specularIntensity;
+	UniformRegistry specularIntensity;
 	float _specularExponent;
-	UniformRegistry<1> specularExponent;
+	UniformRegistry specularExponent;
 	unsigned int _ID;
 };
