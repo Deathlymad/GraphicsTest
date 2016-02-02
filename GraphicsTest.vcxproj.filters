@@ -37,6 +37,9 @@
     <Filter Include="Graphics\UI">
       <UniqueIdentifier>{980496d2-a6d8-4ac3-966c-f8e5918b8df3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Ressource">
+      <UniqueIdentifier>{47aea068-ee91-4388-a0a1-38b0388b57ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestGame.cpp">
@@ -107,6 +110,9 @@
     </ClCompile>
     <ClCompile Include="UniformRegistry.cpp">
       <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="RessourceHandler.cpp">
+      <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +190,9 @@
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="RessourceHandler.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

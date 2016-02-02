@@ -1,6 +1,6 @@
 Short Term:
 	Options UI
-reduce constructor declarations, can be handerled with default parameters
+reduce constructor declarations, can be handled with default parameters
 move Text from UI class
 read PNG
 Gamepad-/Joystick-/MouseHandler implementation

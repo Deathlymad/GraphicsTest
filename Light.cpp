@@ -80,7 +80,7 @@ PointLight::PointLight( vec3 c, float i,Attenuation a, vec3 p) : BaseLight( c, i
 	float ex = a.getExponent();
 	float li = a.getLinear();
 	float co = a.getConstant() * getIntensity() * std::max(getColor().x, std::max(getColor().y, getColor().z));
-	_range = std::max(abs((-li + sqrtf(li * li - 4 * ex * co)) / (2 * ex)), abs((-li - sqrtf(li * li - 4 * ex * co)) / (2 * ex)));
+	_range = 100;// std::max(abs((-li + sqrtf(li * li - 4 * ex * co)) / (2 * ex)), abs((-li - sqrtf(li * li - 4 * ex * co)) / (2 * ex)));
 	shader = new Shader( "forward_point_vs.glsl",  "forward_point_fs.glsl");
 	createUniforms("Light");
 }

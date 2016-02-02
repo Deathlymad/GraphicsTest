@@ -15,8 +15,8 @@ RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* screen) : ambient("
 void RenderingEngine::init()
 {
 	UniformRegistry::registerShaderUniforms(&ambient);
-	for (unsigned int j = 0; j < Lights.size() - 1; j++)
-		UniformRegistry::registerShaderUniforms(Lights[j]->getShader());
+	for (BaseLight* Light : Lights)
+		UniformRegistry::registerShaderUniforms(Light->getShader());
 }
 
 void RenderingEngine::render(Scene * s)
