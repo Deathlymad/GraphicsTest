@@ -17,6 +17,8 @@ public:
 	UIPart(UI* parent, vec2 center, float range, function<void()> e = []() {});
 	UIPart(UI* parent, vec2 pos1, vec2 pos2, function<void()> e= []() {});
 
+	virtual void load(RessourceLoader*);
+	virtual void init();
 	virtual void render();
 	virtual void update() {}
 

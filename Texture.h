@@ -6,6 +6,7 @@ NSP_STD
 NSP_UTIL
 
 class Shader;
+class RessourceLoader;
 typedef unsigned int GLuint;
 typedef unsigned int GLenum;
 
@@ -28,7 +29,7 @@ public:
 	Image();
 	Image(string);
 
-	void load(string file);
+	void load(RessourceLoader*);
 	char* getData();
 	PixelStructure getPixelStructure();
 
@@ -40,6 +41,7 @@ private:
 	void format();
 	ImageType getFileImageType( ifstream&);
 
+	string path;
 	char* _data;
 
 	PixelStructure _structure;
@@ -56,9 +58,10 @@ private:
 class Texture
 {
 public:
-	Texture(Image, unsigned int samplerID = 0);
+	Texture(string, unsigned int samplerID = 0);
 	~Texture();
 
+	virtual void load(RessourceLoader*);
 	virtual void glDownload();
 	virtual void bind();
 protected:
@@ -79,9 +82,9 @@ class LayeredTexture : public Texture
 public:
 	LayeredTexture(string);
 	LayeredTexture(vector<string>);
-	LayeredTexture(vector<Image>);
 	~LayeredTexture();
 
+	virtual void load(RessourceLoader*);
 	virtual void glDownload();
 	virtual void bind();
 private:
@@ -93,7 +96,6 @@ class TextureAtlas : public LayeredTexture
 public:
 	TextureAtlas(string, unsigned int xCount, unsigned int yCount);
 	TextureAtlas(vector<string>, unsigned int xCount, unsigned int yCount);
-	TextureAtlas(vector<Image>, unsigned int xCount, unsigned int yCount);
 
 	~TextureAtlas();
 private:

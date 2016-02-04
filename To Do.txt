@@ -6,7 +6,8 @@ read PNG
 Gamepad-/Joystick-/MouseHandler implementation
 add Log File
 make UI background modifiable
-make keymap, ressource loading faster or move entirely to a new thread - create Registries for Shaders etc.
+make keymap faster
+create Registries for Shaders, textures etc.
 
 Long Term:
 Physics

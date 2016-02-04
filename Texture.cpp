@@ -10,6 +10,7 @@
 #endif
 
 #include "Shader.h"
+#include "RessourceHandler.h"
 
 GLuint Texture::_lastTexID = -1;
 
@@ -21,25 +22,21 @@ Image::Image()
 }
 Image::Image(string fileName)
 {
-	load(fileName);
+	path = fileName;
 	_bitMasks[0] = -1;
 	_bitMasks[1] = -1;
 	_bitMasks[2] = -1;
 }
 
-void Image::load(string s)
+void Image::load( RessourceLoader* loader)
 {
-	unsigned int termination = s.find_last_of('.');
-	ifstream file(s, ios::binary);
-
-	if (s.compare( termination - 4, 4, ".bmp"))
+	unsigned int termination = path.find_last_of('.');
+	if (path.compare( termination - 4, 4, ".bmp"))
 	{
-		load(file);
+		loader->loadFile(path, [this] (ifstream& f) { load(f); });
 		if (_type != BMP)
 			cout << "File has the wrong Termination." << endl; //add actual type
 	}
-
-	file.close();
 }
 
 char* Image::getData()
@@ -129,7 +126,8 @@ void Image::format()
 			//flip Bitmap
 			//level 1, 2 decompression
 			//apply bitfields
-			//removing indexes
+			if (_compression == 3 && (_depth & 48))
+				throw std::exception("Wrong compression or Depth. It doesn't work together");
 			if (_depth == 1)
 			{
 				char* newData = new char[_width * _height * 3];
@@ -147,14 +145,14 @@ void Image::format()
 				delete[_width * _height] _data;
 				_data = newData;
 			}
-
-			if (_compression == 3 && (_depth & 48))
-				throw std::exception("Wrong compression or Depth. It doesn't work together");
-			for (unsigned int i = 0; i < _width * _height; i++) //flip from BGR to RGB
+			else if (_depth == 24)
 			{
-				char temp = _data[(i*3) + 2];
-				_data[(i * 3) + 2] = _data[(i * 3)];
-				_data[(i * 3)] = temp;
+				for (unsigned int i = 0; i < _width * _height; i++) //flip from BGR to RGB
+				{
+					char temp = _data[(i*3) + 2];
+					_data[(i * 3) + 2] = _data[(i * 3)];
+					_data[(i * 3)] = temp;
+				}
 			}
 		}
 		case PNG:
@@ -177,8 +175,9 @@ Image::ImageType Image::getFileImageType(ifstream& file)
 	return BMP;
 }
 
-Texture::Texture(Image i, unsigned int samplerID) : _image(i), _samplerID(samplerID), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
-{}
+Texture::Texture(string path, unsigned int samplerID) : _image(Image(path)), _samplerID(samplerID), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
+{
+}
 
 Texture::Texture() : _samplerID(0), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
 {
@@ -207,6 +206,12 @@ void Texture::deleteTexture(GLuint* tex)
 
 Texture::~Texture()
 {
+}
+
+void Texture::load(RessourceLoader * loader)
+{
+	if (loader)
+		_image.load(loader);
 }
 
 void Texture::glDownload()
@@ -239,22 +244,23 @@ void Texture::bind()
 
 LayeredTexture::LayeredTexture(string file)
 {
-	_samplerList.push_back(Texture(Image(file)));
+	_samplerList.push_back(Texture(file));
 }
 LayeredTexture::LayeredTexture(vector<string> files)
 {
 	for (unsigned int i = 0; i < files.size(); i++)
-		_samplerList.push_back(Texture(Image(files[i]), i));
-}
-LayeredTexture::LayeredTexture(vector<Image> images) : Texture(), _samplerList()
-{
-	for (unsigned int i = 0; i < images.size();i++)
-		_samplerList.push_back(Texture(images[i], i));
+		_samplerList.push_back(Texture(files[i], i));
 }
 
 LayeredTexture::~LayeredTexture()
 {
 
+}
+
+void LayeredTexture::load(RessourceLoader * loader)
+{
+	for (Texture& tex : _samplerList)
+		tex.load(loader);
 }
 
 void LayeredTexture::glDownload()
@@ -279,15 +285,6 @@ TextureAtlas::TextureAtlas(string file, unsigned int xCount, unsigned int yCount
 	_yRatio = 1.0 / _countY;
 }
 TextureAtlas::TextureAtlas(vector<string> files, unsigned int xCount, unsigned int yCount) : LayeredTexture(files),
-	_xUni("_tex" + std::to_string(_samplerID) + "_xR", 1), _yUni("_tex" + std::to_string(_samplerID) + "_yR", 1)
-{
-	_countX = xCount;
-	_countY = yCount;
-
-	_xRatio = 1.0 / _countX;
-	_yRatio = 1.0 / _countY;
-}
-TextureAtlas::TextureAtlas(vector<Image> images, unsigned int xCount, unsigned int yCount) : LayeredTexture(images), 
 	_xUni("_tex" + std::to_string(_samplerID) + "_xR", 1), _yUni("_tex" + std::to_string(_samplerID) + "_yR", 1)
 {
 	_countX = xCount;

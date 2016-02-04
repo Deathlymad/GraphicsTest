@@ -2,19 +2,20 @@
 #include "Camera.h"
 
 class Shader;
-class RenderingEngine;
+class RessourceLoader;
 
 #pragma once
 class Scene
 {
 public:
-	Scene(RenderingEngine*);
+	Scene();
 
 	void addObj(EngineObject* obj)
 	{
 		root.add(obj); //could lead to class slicing
 	}
 
+	void load(RessourceLoader*);
 	void init(KeyMap*);
 	void update();
 	void render(Shader*, bool);

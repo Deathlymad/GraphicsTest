@@ -12,6 +12,8 @@ class ModelRenderer : public EngineObject
 public:
 	ModelRenderer( string, string);
 
+	void load(RessourceLoader*);
+	void init(KeyMap*);
 	void render(Shader*, bool);
 
 	~ModelRenderer();

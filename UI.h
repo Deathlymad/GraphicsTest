@@ -24,6 +24,8 @@ public:
 	void activate() { _enabled = true; keyBinds.activate(); }
 	void deactivate() { _enabled = false; keyBinds.deactivate(); }
 
+	void load(RessourceLoader*);
+	void init();
 	void render();
 	void update();
 

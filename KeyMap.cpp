@@ -11,7 +11,7 @@
 
 #include "KeyMap.h"
 
-ThreadServer KeyMap::_keyTickServer(1);
+LoopedThreadServer KeyMap::_keyTickServer(1);
 
 KeyMap::KeyMap(Screen* s) : InputHandler(s), _keyTickClient( [this] {updateKeyMap(this); })
 {
@@ -119,7 +119,7 @@ void KeyMap::updateKeyMap(KeyMap * k)
 
 	for (unsigned int i = k->KeyBindings.size(); i > 0; i--)
 	{
-		if (k->KeyBindings[i-1].isPressed)
+		if (k->KeyBindings[i - 1].isPressed)
 			k->onKeyPress(k->KeyBindings[i - 1].key);
 	}
 }

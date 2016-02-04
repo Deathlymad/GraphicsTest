@@ -486,7 +486,7 @@ float * Shader::Uniform::getPtr()
 int Shader::Uniform::getUniformSize(string name)
 {
 	smatch result;
-	if (regex_search(name, result, regex("(vec|mat)[2-4]")) > 0)
+	if (regex_search(name, result, regex("(vec|mat)[2-4]")))
 	{
 		int ObjSize = atoi(&result[0].str()[3]);
 		if (result[0].str()[0] == 'm') //it is a matrix
@@ -494,7 +494,7 @@ int Shader::Uniform::getUniformSize(string name)
 		else
 			return ObjSize;
 	}
-	else if (regex_search(name, result, regex("(sampler[1-3]D)|float")) > 0)
+	else if (regex_search(name, result, regex("(sampler[1-3]D)|float")))
 	{
 		return 1;
 	}

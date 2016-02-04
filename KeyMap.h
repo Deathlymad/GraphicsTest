@@ -53,7 +53,7 @@ private:
 
 	static void updateKeyMap(KeyMap*);
 
-	static ThreadServer _keyTickServer;
+	static LoopedThreadServer _keyTickServer;
 	ThreadClient _keyTickClient;
 
 	bool _activated;

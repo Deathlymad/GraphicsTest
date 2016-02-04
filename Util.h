@@ -115,6 +115,7 @@
 		class ThreadClient
 		{
 			friend class ThreadServer;
+			friend class LoopedThreadServer;
 		public:
 			ThreadClient(function<void()> f) : _func(f), _connected(false)
 			{}
@@ -134,7 +135,15 @@
 		public:
 			ThreadServer(unsigned int threadCount) : _running(true), _taskList(), _threads(), _conCount(threadCount)
 			{
-				_threads = vector<thread*>(threadCount, new thread([this] {run(); }));
+				_threads = vector<thread*>(threadCount, new thread([this] {this->run(); }));
+			}
+
+			bool hasTasks()
+			{
+				_listGuard.lock();
+				size_t activeTasks = _taskList.size();
+				_listGuard.unlock();
+				return activeTasks > 0;
 			}
 
 			void addThreadClient(ThreadClient* client)
@@ -164,8 +173,52 @@
 					if (t->joinable())
 						t->join();
 			}
-		private:
-			void run()
+		protected:
+			ThreadServer(unsigned int threadCount, function<void()> func) : _running(true), _taskList(), _threads(), _conCount(threadCount)
+			{
+				_threads = vector<thread*>(threadCount, new thread(func));
+			}
+
+			virtual void run()
+			{
+
+				system_clock::time_point lastTick = system_clock::now();
+				while (_running)
+				{
+					_listGuard.lock();
+					if (!_taskList.size())
+					{
+						_listGuard.unlock();
+						continue;
+					}
+
+					ThreadClient* curr = _taskList.front();
+					_taskList.pop();
+					_listGuard.unlock();
+
+					if (!curr->_connected) //if Client disconnects the Object gets deleted
+						continue;
+
+					curr->_func();
+
+					curr->disconnect();
+
+					this_thread::sleep_for(milliseconds((int)floorf(50.0f/_conCount)) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
+
+				}
+			}
+			mutex _listGuard;
+			queue < ThreadClient*> _taskList;
+			vector<thread*> _threads;
+			unsigned int _conCount;
+			bool _running;
+		};
+		class LoopedThreadServer : public ThreadServer
+		{
+		public:
+			LoopedThreadServer(unsigned int threadCount) : ThreadServer(threadCount, [this] {_run(); }) {}
+		protected:
+			void _run() //not being used
 			{
 
 				system_clock::time_point lastTick = system_clock::now();
@@ -178,6 +231,7 @@
 						continue;
 					}
 					ThreadClient* curr = _taskList.front();
+					_taskList.pop();
 					_listGuard.unlock();
 
 					if (!curr->_connected) //if Client disconnects the Object gets deleted
@@ -189,16 +243,12 @@
 					_taskList.push(curr);
 					_listGuard.unlock();
 
-					this_thread::sleep_for(milliseconds((int)floorf(50.0f/_conCount)) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
+					this_thread::sleep_for(milliseconds((int)floorf(50.0f / _conCount)) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
 
 				}
 			}
-			mutex _listGuard;
-			queue < ThreadClient*> _taskList;
-			vector<thread*> _threads;
-			unsigned int _conCount;
-			bool _running;
 		};
+
 		NSP_IO_BEG
 			//iofunctions v0.1 by Linus Helfmann
 			//Sonderzeichen (ä,ö,ü,ß) funktionieren nur wenn Datei in ANSI und OEM 850 kodiert

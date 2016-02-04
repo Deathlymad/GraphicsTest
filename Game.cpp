@@ -3,19 +3,22 @@
 #include "RenderingEngine.h"
 
 
-Game::Game() : screen(1366, 768, "Test", char(154)), Engine(&screen, this), world(Engine.getGraphicEngine())
+Game::Game() : _screen(1366, 768, "Test", char(154)), _engine(&_screen, this), _world()
 {
-	screen.handleWindow(InputHandler::registerCallbacks);
-	KeyMaps.push_back(new KeyMap(&screen));
+	_screen.handleWindow(InputHandler::registerCallbacks); //works only once i think
+	KeyMaps.push_back(new KeyMap(&_screen));
 
-	setupKeyMap(*KeyMaps[0]);
 	running = false;
-	Menu = nullptr;
+	_menu = nullptr;
 }
 
 void Game::Start()
 {
-	Engine.start();
+	_world.load(&_ressourceLoader);
+	while (_ressourceLoader.loading()) {}
+	_menu->init();
+	setupKeyMap(*KeyMaps[0]);
+	_engine.start();
 	running = true;
 	Run();
 }
@@ -25,28 +28,28 @@ void Game::Run()
 	bool is3D = true;
 	while (running)
 	{
-		if (!Menu->isActive())
+		if (!_menu->isActive())
 		{
 			if (!is3D)
 			{
 				is3D = true;
-				Menu->deactivate();
-				screen.disableCursor();
+				_menu->deactivate();
+				_screen.disableCursor();
 				KeyMaps[0]->activate();
-				Engine.getGraphicEngine()->set3D();
+				_engine.getGraphicEngine()->set3D();
 			}
-			Engine.getGraphicEngine()->render(&world);
+			_engine.getGraphicEngine()->render(&_world);
 		}
 		else
 		{
 			if (is3D)
 			{
 				is3D = false;
-				screen.enableCursor();
+				_screen.enableCursor();
 				KeyMaps[0]->deactivate();
-				Engine.getGraphicEngine()->set2D();
+				_engine.getGraphicEngine()->set2D();
 			}
-			Engine.getGraphicEngine()->render(Menu);
+			_engine.getGraphicEngine()->render(_menu);
 		}
 	}
 }
@@ -58,15 +61,15 @@ void Game::Terminate()
 
 void Game::addObject(EngineObject & object)
 {
-	world.addObj(&object);
+	_world.addObj(&object);
 }
 
 void Game::update()
 {
-	if (!Menu->isActive())
-		world.update();
-	else if (Menu)
-		Menu->update();
+	if (!_menu->isActive())
+		_world.update();
+	else if (_menu)
+		_menu->update();
 }
 
 KeyMap & Game::addKeyMap()
@@ -83,18 +86,18 @@ Game::~Game()
 
 void Game::toggleMenu()
 {
-	if (Menu->isActive())
-		Menu->deactivate();
+	if (_menu->isActive())
+		_menu->deactivate();
 	else
-		Menu->activate();
+		_menu->activate();
 }
 
 void Game::setupKeyMap(KeyMap &k)
 {
 	k.addKeyBind(0, [this](unsigned short, KeyMap::KeyState)
 	{
-		if (!Menu->isActive())
-			Menu->activate();
+		if (!_menu->isActive())
+			_menu->activate();
 	}, "Menu", KeyMap::KeyState::ONRELEASE, 0);
-	world.init( &k);
+	_world.init( &k);
 }

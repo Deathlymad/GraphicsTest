@@ -34,6 +34,22 @@ void UI::add(UIPart * part)
 	_parts.push_back(part);
 }
 
+void UI::init()
+{
+	for (UIPart* part : _parts)
+		part->init();
+	for (UI* child : _children)
+		child->init();
+}
+
+void UI::load(RessourceLoader *loader)
+{
+	for (UIPart* part : _parts)
+		part->load(loader);
+	for (UI* child : _children)
+		child->load(loader);
+}
+
 void UI::render()
 {
 	if (!renderer)

@@ -5,9 +5,9 @@
 #include "Texture.h"
 #include "UI.h"
 
-RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* screen) : ambient("forward_ambient_vs.glsl", "forward_ambient_fs.glsl")
+RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient("forward_ambient_vs.glsl", "forward_ambient_fs.glsl")
 {
-	this->screen = screen;
+	this->_screen = _screen;
 	_parent = parent;
 	setup3DEngineState();
 }
@@ -21,7 +21,7 @@ void RenderingEngine::init()
 
 void RenderingEngine::render(Scene * s)
 {
-	if (!screen->isFocused())
+	if (!_screen->isFocused())
 		return;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -40,19 +40,19 @@ void RenderingEngine::render(Scene * s)
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND); //resetting to standard State
 	
-	screen->updateScreen();
+	_screen->updateScreen();
 }
 
 void RenderingEngine::render(UI * ui)
 {
-	if (!screen->isFocused())
+	if (!_screen->isFocused())
 		return;
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	ui->render();
 
-	screen->updateScreen();
+	_screen->updateScreen();
 }
 
 void RenderingEngine::set2D()

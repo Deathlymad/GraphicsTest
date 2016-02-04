@@ -27,16 +27,18 @@ trans( 0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f))
 	Light1.add(&m);
 	Light2.add(&m);
 
-	world.addObj(&m);
+	_world.addObj(&m);
 	
-	Menu = new UI(this);
-	Menu->addEvent(0, [this](unsigned short, KeyMap::KeyState)
+	UI* menu = new UI(this);
+	menu->addEvent(0, [this, menu](unsigned short, KeyMap::KeyState)
 	{
-		if (Menu->isActive())
-			Menu->deactivate();
+		if (menu->isActive())
+			menu->deactivate();
 	}, "Menu", KeyMap::KeyState::ONPRESS, 0);
-	Menu->add(new UIButton(Menu, vec2(-0.2, -0.2), vec2(0.2, 0.2), -1, [this] {Terminate(); }));
-	Menu->add(new UIText(Menu, vec2(-1.0, 0.5), vec2(-0.5, 1.0)));
+	menu->add(new UIButton(menu, vec2(-0.2, -0.2), vec2(0.2, 0.2), -1, [this] {Terminate(); }));
+	menu->add(new UIText(menu, vec2(-1.0, 0.5), vec2(-0.5, 1.0)));
+
+	setMenu(menu);
 
 	getEngine()->getGraphicEngine()->init();
 }

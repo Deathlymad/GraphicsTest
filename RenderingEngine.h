@@ -29,7 +29,7 @@ public:
 
 	RenderingEngine& operator= (RenderingEngine& engine)
 	{
-		screen = engine.screen;
+		_screen = engine._screen;
 
 		ambient = engine.ambient;
 
@@ -42,7 +42,7 @@ private:
 	void setup3DEngineState();
 	void setup2DEngineState();
 
-	Screen* screen;
+	Screen* _screen;
 
 	Shader ambient;
 	vector<BaseLight*> Lights;

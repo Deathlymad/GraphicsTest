@@ -4,6 +4,7 @@
 #include "KeyMap.h"
 #include "UI.h"
 #include "Screen.h"
+#include "RessourceHandler.h"
 
 #pragma once
 class Game
@@ -15,7 +16,7 @@ public:
 	void Run();
 	void Terminate();
 
-	vec2 getScreenSize() { return vec2(screen.getWidth(), screen.getHeight()); }
+	vec2 getScreenSize() { return vec2(_screen.getWidth(), _screen.getHeight()); }
 
 	void addObject(EngineObject&);
 
@@ -27,15 +28,18 @@ public:
 
 	~Game();
 private: //context
-	Screen screen;
-	CoreEngine Engine;
+	Screen _screen;
+	CoreEngine _engine;
 
 protected:
-
-	Scene world;
-	UI* Menu;
-	CoreEngine* getEngine() { return &Engine; }
+	RessourceLoader _ressourceLoader;
+	Scene _world;
+	CoreEngine* getEngine() { return &_engine; }
+	void setMenu(UI* ui) { _menu = ui; _menu->load(&_ressourceLoader); }
 private:
+
+	UI* _menu;
+
 	void setupKeyMap(KeyMap&);
 	vector<KeyMap*> KeyMaps;
 

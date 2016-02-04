@@ -3,7 +3,16 @@
 #include "RenderingEngine.h"
 
 
-ModelRenderer::ModelRenderer(string meshFile, string texFile) : EngineObject(), mesh(meshFile), tex(Image(texFile))
+ModelRenderer::ModelRenderer(string meshFile, string texFile) : EngineObject(), mesh(meshFile), tex(texFile)
+{
+}
+
+void ModelRenderer::load(RessourceLoader * loader)
+{
+	tex.load(loader);
+}
+
+void ModelRenderer::init(KeyMap* kr)
 {
 	tex.glDownload();
 }

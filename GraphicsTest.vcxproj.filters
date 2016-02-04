@@ -112,7 +112,7 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="RessourceHandler.cpp">
-      <Filter>Quelldateien</Filter>
+      <Filter>Core\Ressource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -192,7 +192,7 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="RessourceHandler.h">
-      <Filter>Headerdateien</Filter>
+      <Filter>Core\Ressource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

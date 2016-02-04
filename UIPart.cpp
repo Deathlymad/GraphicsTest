@@ -4,7 +4,7 @@
 #include <GLFW\glfw3.h>
 
 
-UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex(new Texture( Image("assets/textures/Test_tex2.bmp")))
+UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex(new Texture("assets/textures/Test_tex2.bmp"))
 {
 	_parent = parent;
 
@@ -23,25 +23,31 @@ UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex
 	_mesh = Mesh(v, Mesh::VertexArrayObject::genBitset(2, 2));
 	
 	_event = e;
-
-	_tex->glDownload();
 }
 
-UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex(new Texture(Image("assets/textures/Test_tex2.bmp")))
+UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex(new Texture("assets/textures/Test_tex2.bmp"))
 {
 	_parent = parent;
 	_pos[0] = pos1;
 	_pos[1] = pos2;
 
 	vector<Mesh::Vertex> v;
-	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[0].y, 0), vec2( 0.0f, 0.0f)));
-	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[0].y, 0), vec2( 1.0f, 0.0f)));
-	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2( 0.0f, 1.0f)));
-	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2( 1.0f, 1.0f)));
+	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[0].y, 0), vec2(0.0f, 0.0f)));
+	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[0].y, 0), vec2(1.0f, 0.0f)));
+	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2(0.0f, 1.0f)));
+	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2(1.0f, 1.0f)));
 	_mesh = Mesh(v, Mesh::VertexArrayObject::genBitset(2, 2));
 
 	_event = e;
+}
 
+void UIPart::load(RessourceLoader * loader)
+{
+	_tex->load(loader);
+}
+
+void UIPart::init()
+{
 	_tex->glDownload();
 }
 
@@ -106,13 +112,12 @@ UIText::UIText(UI * parent, vec2 pos1, vec2 pos2, function<void()> _event) : UIP
 {
 	if (!textRendenerer)
 		textRendenerer = new Shader("UIRender_text_vs.glsl", "UIRender_fs.glsl");
-	_tex = nullptr;
-	glyphMap->glDownload();
+	_tex = glyphMap;
 }
 
 void UIText::render()
 {
 	textRendenerer->bind();
-	glyphMap->bind();
+	_tex->bind();
 	_mesh.Draw();
 }

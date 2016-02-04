@@ -2,7 +2,7 @@
 #include "RenderingEngine.h"
 #include "Game.h"
 
-CoreEngine::CoreEngine(Screen* screen, Game* g) : _game(g), GrEngine( this, screen), UpdateThread([this] {}, [this] { update(); }, 30)
+CoreEngine::CoreEngine(Screen* _screen, Game* g) : _game(g), GrEngine( this, _screen), UpdateThread([this] {}, [this] { update(); }, 30)
 {
 }
 
