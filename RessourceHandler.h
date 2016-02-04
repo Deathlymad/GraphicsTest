@@ -17,8 +17,9 @@ class RessourceLoader
 public:
 	RessourceLoader();
 
-	ThreadClient* loadCode(string file, function<void(future<char**>&)> = [] {});
+	ThreadClient* loadFile(string file, function<void(future<char**>&)> = [] {});
 	ThreadClient* loadFile(string file, function<void(ifstream&)>);
+	ThreadClient* loadFile(string file, function<void(vector<string>)>);
 
 	bool loading() { return fileLoader.hasTasks(); }
 

@@ -33,7 +33,8 @@ void Image::load( RessourceLoader* loader)
 	unsigned int termination = path.find_last_of('.');
 	if (path.compare( termination - 4, 4, ".bmp"))
 	{
-		loader->loadFile(path, [this] (ifstream& f) { load(f); });
+		function<void(ifstream&)> t = [this](ifstream& f) { load(f); };
+		loader->loadFile(path, t);
 		if (_type != BMP)
 			cout << "File has the wrong Termination." << endl; //add actual type
 	}

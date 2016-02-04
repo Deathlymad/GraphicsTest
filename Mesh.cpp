@@ -14,75 +14,38 @@
 
 #include "Mesh.h"
 
+#include "RessourceHandler.h"
+
 Mesh::Mesh() : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao( 3, 2, 3)
 {
 }
 
-Mesh::Mesh ( string file) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(3, 2, 3)
+Mesh::Mesh ( string file) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(3)
 {
-	vector<unnormalizedVertex> v;
-	vector<unsigned int> in;
-	vector<vec3> n;
-	vector<vec2> t;
-	
-	vector<string> vec;
-	vector<string> temp;
-	load(vec, file);
-		
-	for(unsigned int i = 0; i<vec.size(); i++)
-	{
-		temp.clear();
-		if((vec[i].find_first_of('o') != string::npos)) continue; //Object typname irrelevant
-		if((vec[i].find_first_of('m') != string::npos)) continue; //Material Data may be used someday but not now
-		if((vec[i].find_first_of('s') != string::npos)) continue; //some other data
-		if((vec[i].find_first_of('#') != string::npos) || vec[i].size() < 3) continue; //Kommentarzeilen werden KOMPLETT ignoriert, auch wenn Kommentar am Ende steht! oder Leerzeilen oder Zeile hat weniger als 3 Zeichen => bestimmt sinnlos
-		io::strsep(temp,vec[i]); //vec[i] in teile zerlegen
-		if(temp[0].compare("v") == 0)
-		{
-			v.push_back(unnormalizedVertex( Vertex(vec3( stof(temp[1]), stof(temp[2]), stof(temp[3])) , vec2(-1.0, -1.0), vec3(0,0,0)), vector<vec3>())); //writes default Data
-			continue;
-		}
-		
-		if(temp[0].compare("vt") == 0)
-		{
-			t.push_back(vec2(stof(temp[1]),stof(temp[2])));
-			continue;
-		}
-			
-		if(temp[0].compare("vn") == 0)
-		{
-			n.push_back(vec3(stof(temp[1]),stof(temp[2]),stof(temp[3])));
-			continue;
-		}
-		
-		if(temp[0].compare("f") == 0) // needs to have a check wether the face ids are seperated by space or by slash
-		{
-			vector<string> s;
-			
-			for (unsigned int i = 1; i < temp.size(); i++)
-			{
-				io::strsep( s, temp[i], '/');
-				in.push_back(stoi(s[0]) - 1);
-				if (t.size() > 0) //might search for onexistend data, also this might not be applicable all the time
-					v[stoi(s[0]) - 1]._v.setTexCoord( t[stoi(s[1]) - 1]);
-				if(n.size() > 0)
-					v[stoi(s[0]) - 1]._nor.push_back(n[stoi(s[2]) - 1]); // need to renormalize
-			}
-			continue;
-		}
-	}
-	glDownload(getNormalVertices(v), in);
+	_path = file;
 }
 
 Mesh::Mesh(vector<Vertex>& vec, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
 {
 	vector<unsigned int> i = vector<unsigned int>({ 0,1,2,2,1,3 });//2D indices, might need additions later for other sizes
-	glDownload( vec, i);
+	_glDownload( vec, i);
 }
 
 Mesh::Mesh(  vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
 {
-	glDownload( vec, i);
+	_glDownload( vec, i);
+}
+
+void Mesh::load(RessourceLoader * loader)
+{
+	loader->loadFile(_path, (function<void(vector<string>)>)[this](vector<string> s) {_load(s); });
+}
+
+void Mesh::glDownload()
+{
+	_glDownload(getNormalVertices(_vertices), _indices);
+	_vertices.~vector();
+	_indices.~vector();
 }
 
 void Mesh::initGL( unsigned char flag)
@@ -98,6 +61,61 @@ void Mesh::initGL( unsigned char flag)
 		glGenBuffers(1, _ibo.get());
 	}
 	_vao.createVertexArray();
+}
+
+void Mesh::_load(vector<string> vec)
+{
+	vector<vec3> n;
+	vector<vec2> t;
+	unsigned char bitset = 3;
+
+	vector<string> temp;
+
+	for (unsigned int i = 0; i<vec.size(); i++)
+	{
+		temp.clear();
+		if ((vec[i].find_first_of('o') != string::npos)) continue; //Object typname irrelevant
+		if ((vec[i].find_first_of('m') != string::npos)) continue; //Material Data may be used someday but not now
+		if ((vec[i].find_first_of('s') != string::npos)) continue; //some other data
+		if ((vec[i].find_first_of('#') != string::npos) || vec[i].size() < 3) continue; //Kommentarzeilen werden KOMPLETT ignoriert, auch wenn Kommentar am Ende steht! oder Leerzeilen oder Zeile hat weniger als 3 Zeichen => bestimmt sinnlos
+		io::strsep(temp, vec[i]); //vec[i] in teile zerlegen
+		if (temp[0].compare("v") == 0)
+		{
+			_vertices.push_back(unnormalizedVertex(Vertex(vec3(stof(temp[1]), stof(temp[2]), stof(temp[3])), vec2(-1.0, -1.0), vec3(0, 0, 0)), vector<vec3>())); //writes default Data
+			continue;
+		}
+
+		if (temp[0].compare("vt") == 0)
+		{
+			t.push_back(vec2(stof(temp[1]), stof(temp[2])));
+			bitset |= VertexArrayObject::genBitset(0, 2, 0);
+			continue;
+		}
+
+		if (temp[0].compare("vn") == 0)
+		{
+			n.push_back(vec3(stof(temp[1]), stof(temp[2]), stof(temp[3])));
+			bitset |= VertexArrayObject::genBitset(0, 0, 3);
+			continue;
+		}
+
+		if (temp[0].compare("f") == 0) // needs to have a check wether the face ids are seperated by space or by slash
+		{
+			vector<string> s;
+
+			for (unsigned int i = 1; i < temp.size(); i++)
+			{
+				io::strsep(s, temp[i], '/');
+				_indices.push_back(stoi(s[0]) - 1);
+				if (t.size() > 0) //might search for nonexistend data, also this might not be applicable all the time
+					_vertices[stoi(s[0]) - 1]._v.setTexCoord(t[stoi(s[1]) - 1]);
+				if (n.size() > 0)
+					_vertices[stoi(s[0]) - 1]._nor.push_back(n[stoi(s[2]) - 1]); // need to renormalize
+			}
+			continue;
+		}
+	}
+	_vao.setBitset(bitset);
 }
 
 vector<Mesh::Vertex> Mesh::getNormalVertices(vector<unnormalizedVertex> vn)
@@ -122,10 +140,10 @@ vector<Mesh::Vertex> Mesh::getNormalVertices(vector<unnormalizedVertex> vn)
 	return _v;
 }
 
-void Mesh::glDownload(vector<Vertex>& v, vector < unsigned int>& i)
+void Mesh::_glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 {
-	_indices = i.size();
-	initGL(!glIsBuffer( *(_vbo.get())) << 1 | !glIsBuffer( *(_ibo.get())));
+	_VerticesCount = i.size();
+	initGL(!glIsBuffer(*(_vbo.get())) << 1 | !glIsBuffer(*(_ibo.get())));
 
 	if (v.size() == 0)
 		return;
@@ -137,16 +155,16 @@ void Mesh::glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 		if (_vao.isVec())
 			temp.insert(temp.end(), &d[0], &d[_vao.isVec()]);
 		if (_vao.isTex())
-			temp.insert(temp.end(), &d[3], &d[ 3 + _vao.isTex()]);
+			temp.insert(temp.end(), &d[3], &d[3 + _vao.isTex()]);
 		if (_vao.isNor())
-			temp.insert(temp.end(), &d[6], &d[ 6 + _vao.isNor()]);
+			temp.insert(temp.end(), &d[6], &d[6 + _vao.isNor()]);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get())); //contains Vertices
-	glBufferData( GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_STATIC_DRAW);
 	temp.~vector();
 
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
-	glBufferData( GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_STATIC_DRAW);
 }
 
 void Mesh::deleteBuffer(GLuint * buf)
@@ -161,7 +179,7 @@ void Mesh::Draw()
 	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get()));
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
 
-	glDrawElements(GL_TRIANGLES, _indices, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, _VerticesCount, GL_UNSIGNED_INT, 0);
 	//Wireframe Shader
 	//glDrawElements( GL_LINE_STRIP, _indices, GL_UNSIGNED_INT, 0);  //for debug purposes
 

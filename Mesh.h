@@ -9,6 +9,7 @@ NSP_STD
 NSP_GLM
 
 typedef unsigned int GLuint;
+class RessourceLoader;
 
 #pragma once
 class Mesh
@@ -21,6 +22,7 @@ public:
 		VertexArrayObject( int vec, int tex, int norm) : _vao( nullptr), _bitset( vec | (tex << 2) | (norm << 4) ) {}
 		VertexArrayObject(unsigned char _bitset) : _vao( nullptr), _bitset(_bitset) {}
 
+		void setBitset(unsigned char set) { _bitset = set; }
 		void setBitset(int vec, int tex = 0, int norm = 0) { _bitset = (vec | (tex << 2) | (norm << 4)); }
 
 		void createVertexArray();
@@ -102,7 +104,10 @@ public:
 	Mesh ( vector<Vertex> &vec, unsigned char bitset); //Square Constructor
 	Mesh ( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset);
 	Mesh ();
-		
+	
+	void load(RessourceLoader*);
+	void glDownload();
+
 	void Draw();
 
 	~Mesh(void);
@@ -112,8 +117,13 @@ protected:
 	CustomPtr<GLuint> _vbo;
 	CustomPtr<GLuint> _ibo;
 	void deleteBuffer(GLuint* buf);
-	unsigned int _indices;
+	unsigned int _VerticesCount;
 private:
+	string _path;
+	vector<unnormalizedVertex> _vertices;
+	vector<unsigned int> _indices;
+
+	void _load(vector<string>);
+	void _glDownload( vector<Vertex>&, vector <unsigned int>&);
 	vector<Vertex> getNormalVertices(vector<unnormalizedVertex>);
-	void glDownload(  vector<Vertex>&, vector <unsigned int>&);
 };

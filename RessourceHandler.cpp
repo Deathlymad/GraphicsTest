@@ -7,22 +7,40 @@ RessourceLoader::RessourceLoader() : fileLoader(4)
 {
 }
 
-ThreadClient* RessourceLoader::loadCode(string file, function<void(future<char**>&)> callback)
+ThreadClient* RessourceLoader::loadFile(string file, function<void(future<char**>&)> callback)
 {
 	promise<char**> prom;
-	ThreadClient* client = new ThreadClient([this, file, callback, &prom, &client] {
+	ThreadClient* client = new ThreadClient([this, file, callback, &prom] {
 		_load(file, callback, &prom);
-		client->disconnect(); });
+	});
 	fileLoader.addThreadClient(client);
 	return client;
 }
-
 ThreadClient* RessourceLoader::loadFile(string file, function<void(ifstream&)> loader)
 {
 	ThreadClient* client = new ThreadClient([this, file, loader, &client] {
 		ifstream f(file, ios::binary);
 		if (f.is_open())
 			loader(f);
+	});
+	fileLoader.addThreadClient(client);
+	return client;
+}
+ThreadClient* RessourceLoader::loadFile(string file, function<void(vector<string>)> loader)
+{
+	ThreadClient* client = new ThreadClient([this, file, loader, &client] {
+		ifstream f(file, ios::binary);
+		if (f.is_open())
+		{
+			vector<string> temp;
+			string Line = "";
+			while (getline(f, Line))
+			{
+				temp.push_back(Line);
+			}
+			f.close();
+			loader(temp);
+		}
 	});
 	fileLoader.addThreadClient(client);
 	return client;
