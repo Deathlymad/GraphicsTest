@@ -36,8 +36,6 @@ Shader::Shader(vector<ShaderCode> Shaders) : program([this](GLuint* p) {deletePr
 
 Shader::~Shader(){}
 
-
-
 void Shader::addShader(ShaderCode &code)
 {
 	Code.push_back(code);

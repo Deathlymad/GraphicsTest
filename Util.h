@@ -133,80 +133,22 @@
 		class ThreadServer
 		{
 		public:
-			ThreadServer(unsigned int threadCount) : _running(true), _taskList(), _threads(), _conCount(threadCount)
-			{
-				_threads = vector<thread*>(threadCount, new thread([this] {this->run(); }));
-			}
+			ThreadServer(unsigned int threadCount);
 
-			bool hasTasks()
-			{
-				_listGuard.lock();
-				size_t activeTasks = _taskList.size();
-				_listGuard.unlock();
-				return activeTasks > 0;
-			}
+			bool hasTasks();
 
-			void addThreadClient(ThreadClient* client)
-			{
-				client->_connected = true;
-				_listGuard.lock();
-				_taskList.push(client);
-				_listGuard.unlock();
-			}
+			void addThreadClient(ThreadClient* client);
 
-			unsigned int getThreadCount()
-			{
-				return _threads.size();
-			}
-			void changeThreadAmt(unsigned int threadCount)
-			{
-				if ((threadCount - _threads.size()) > 0)
-				{
-					_threads.push_back(new thread([this] {run(); }));
-				}//add decementing
-			}
+			unsigned int getThreadCount();
 
-			~ThreadServer()
-			{
-				_running = false;
-				for (thread* t : _threads)
-					if (t->joinable())
-						t->join();
-			}
+			void changeThreadAmt(unsigned int threadCount);
+
+			~ThreadServer();
 		protected:
-			ThreadServer(unsigned int threadCount, function<void()> func) : _running(true), _taskList(), _threads(), _conCount(threadCount)
-			{
-				_threads = vector<thread*>(threadCount, new thread(func));
-			}
+			ThreadServer(unsigned int threadCount, function<void()> func);
 
-			virtual void run()
-			{
+			virtual void run();
 
-				system_clock::time_point lastTick = system_clock::now();
-				while (_running)
-				{
-					_listGuard.lock();
-					if (!_taskList.size())
-					{
-						_listGuard.unlock();
-						continue;
-					}
-
-					ThreadClient* curr = _taskList.front();
-					_taskList.pop();
-					_listGuard.unlock();
-
-					if (!curr->_connected) //if Client disconnects the Object gets deleted
-						continue;
-
-					curr->_func();
-
-					curr->disconnect();
-
-					this_thread::sleep_for(milliseconds((int)floorf(50.0f/_conCount)) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
-
-				}
-			}
 			mutex _listGuard;
 			queue < ThreadClient*> _taskList;
 			vector<thread*> _threads;
@@ -216,37 +158,9 @@
 		class LoopedThreadServer : public ThreadServer
 		{
 		public:
-			LoopedThreadServer(unsigned int threadCount) : ThreadServer(threadCount, [this] {_run(); }) {}
+			LoopedThreadServer(unsigned int threadCount);
 		protected:
-			void _run() //not being used
-			{
-
-				system_clock::time_point lastTick = system_clock::now();
-				while (_running)
-				{
-					_listGuard.lock();
-					if (!_taskList.size())
-					{
-						_listGuard.unlock();
-						continue;
-					}
-					ThreadClient* curr = _taskList.front();
-					_taskList.pop();
-					_listGuard.unlock();
-
-					if (!curr->_connected) //if Client disconnects the Object gets deleted
-						continue;
-
-					curr->_func();
-
-					_listGuard.lock();
-					_taskList.push(curr);
-					_listGuard.unlock();
-
-					this_thread::sleep_for(milliseconds((int)floorf(50.0f / _conCount)) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
-
-				}
-			}
+			void _run();
 		};
 
 		NSP_IO_BEG
