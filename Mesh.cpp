@@ -107,9 +107,9 @@ void Mesh::_load(vector<string> vec)
 			{
 				io::strsep(s, temp[i], '/');
 				_indices.push_back(stoi(s[0]) - 1);
-				if (t.size() > 0) //might search for nonexistend data, also this might not be applicable all the time
+				if (!t.empty()) //might search for nonexistend data, also this might not be applicable all the time
 					_vertices[stoi(s[0]) - 1]._v.setTexCoord(t[stoi(s[1]) - 1]);
-				if (n.size() > 0)
+				if (!n.empty())
 					_vertices[stoi(s[0]) - 1]._nor.push_back(n[stoi(s[2]) - 1]); // need to renormalize
 			}
 			continue;

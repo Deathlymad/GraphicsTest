@@ -150,7 +150,8 @@
 			virtual void run();
 
 			mutex _listGuard;
-			queue < ThreadClient*> _taskList;
+			vector<ThreadClient*> _taskList;
+			unsigned int _maxElement;
 			vector<thread*> _threads;
 			unsigned int _conCount;
 			bool _running;

@@ -8,6 +8,7 @@ add Log File
 make UI background modifiable
 make keymap faster
 create Registries for Shaders, textures etc.
+Processor Usage way too high
 
 Long Term:
 Physics

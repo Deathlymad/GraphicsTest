@@ -26,6 +26,8 @@ void Game::Start()
 void Game::Run()
 {
 	bool is3D = true;
+	unsigned int minLoopTime = 16;
+	system_clock::time_point lastTick = system_clock::now();
 	while (running)
 	{
 		if (!_menu->isActive())
@@ -37,6 +39,7 @@ void Game::Run()
 				_screen.disableCursor();
 				KeyMaps[0]->activate();
 				_engine.getGraphicEngine()->set3D();
+				minLoopTime = 16;
 			}
 			_engine.getGraphicEngine()->render(&_world);
 		}
@@ -48,9 +51,12 @@ void Game::Run()
 				_screen.enableCursor();
 				KeyMaps[0]->deactivate();
 				_engine.getGraphicEngine()->set2D();
+				minLoopTime = 50;
 			}
 			_engine.getGraphicEngine()->render(_menu);
 		}
+		this_thread::sleep_for(milliseconds(minLoopTime) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
+		lastTick = system_clock::now();
 	}
 }
 
