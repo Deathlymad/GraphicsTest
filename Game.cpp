@@ -14,9 +14,13 @@ Game::Game() : _screen(1366, 768, "Test", char(154)), _engine(&_screen, this), _
 
 void Game::Start()
 {
+	cout << "Beginning to load Ressources" << endl;
 	_world.load(&_ressourceLoader);
+	cout << "Loading Ressources" << endl;
 	while (_ressourceLoader.loading()) {}
+	cout << "Loaded Ressources" << endl;
 	_menu->init();
+	cout << "Initialized Objects" << endl;
 	setupKeyMap(*KeyMaps[0]);
 	_engine.start();
 	running = true;

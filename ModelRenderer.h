@@ -12,7 +12,7 @@ class ModelRenderer : public EngineObject
 public:
 	ModelRenderer( string, string);
 
-	void load(RessourceLoader*);
+	void load(RessourceHandler*);
 	void init(KeyMap*);
 	void render(Shader*, bool);
 

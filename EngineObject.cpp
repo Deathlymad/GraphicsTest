@@ -12,7 +12,7 @@ void EngineObject::init( KeyMap* k)
 		children[i]->init( k);
 }
 
-void EngineObject::load(RessourceLoader * loader)
+void EngineObject::load(RessourceHandler * loader)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
 		children[i]->load(loader);

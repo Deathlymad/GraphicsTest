@@ -7,7 +7,7 @@ ModelRenderer::ModelRenderer(string meshFile, string texFile) : EngineObject(), 
 {
 }
 
-void ModelRenderer::load(RessourceLoader * loader)
+void ModelRenderer::load(RessourceHandler * loader)
 {
 	tex.load(loader);
 	mesh.load(loader);
@@ -16,7 +16,7 @@ void ModelRenderer::load(RessourceLoader * loader)
 void ModelRenderer::init(KeyMap* kr)
 {
 	tex.glDownload();
-	mesh.glDownload();
+	mesh.init();
 }
 
 void ModelRenderer::render(Shader* s, bool)

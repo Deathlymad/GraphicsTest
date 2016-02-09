@@ -41,7 +41,7 @@ UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex(new
 	_event = e;
 }
 
-void UIPart::load(RessourceLoader * loader)
+void UIPart::load(RessourceHandler * loader)
 {
 	_tex->load(loader);
 }

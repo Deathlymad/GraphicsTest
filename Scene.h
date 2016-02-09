@@ -2,7 +2,7 @@
 #include "Camera.h"
 
 class Shader;
-class RessourceLoader;
+class RessourceHandler;
 
 #pragma once
 class Scene
@@ -15,7 +15,7 @@ public:
 		root.add(obj); //could lead to class slicing
 	}
 
-	void load(RessourceLoader*);
+	void load(RessourceHandler*);
 	void init(KeyMap*);
 	void update();
 	void render(Shader*, bool);

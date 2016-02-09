@@ -2,58 +2,72 @@
 
 #include <fstream>
 
+vector<string> RessourceHandler::loaderList = vector<string>();
 
-RessourceLoader::RessourceLoader() : fileLoader(4)
+RessourceHandler::RessourceHandler() : LoadCounter(0)
 {
 }
 
-ThreadClient* RessourceLoader::loadFile(string file, function<void(future<char**>&)> callback)
+shared_future<vector<string>*> RessourceHandler::getRessource(string& file)
 {
-	promise<char**> prom;
-	ThreadClient* client = new ThreadClient([this, file, callback, &prom] {
-		_load(file, callback, &prom);
-	});
-	fileLoader.addThreadClient(client);
-	return client;
+	STDTextLoader _loader;
+	return getRessource<vector<string>>(file, &_loader);
 }
-ThreadClient* RessourceLoader::loadFile(string file, function<void(ifstream&)> loader)
+
+shared_future<void*>* RessourceHandler::RessourceRegistry::find(string& name)
 {
-	ThreadClient* client = new ThreadClient([this, file, loader, &client] {
-		ifstream f(file, ios::binary);
-		if (f.is_open())
-			loader(f);
-	});
-	fileLoader.addThreadClient(client);
-	return client;
+	unsigned int pos = find(name, 0, _registry.size());
+	if (pos >= _registry.size())
+		return nullptr;
+	if (_registry[pos]._name == name)
+		return _registry[pos]._obj;
+	return nullptr;
 }
-ThreadClient* RessourceLoader::loadFile(string file, function<void(vector<string>)> loader)
+
+size_t RessourceHandler::RessourceRegistry::find(string& name, int min, int max)
 {
-	ThreadClient* client = new ThreadClient([this, file, loader, &client] {
-		ifstream f(file, ios::binary);
-		if (f.is_open())
-		{
-			vector<string> temp;
-			string Line = "";
-			while (getline(f, Line))
-			{
-				temp.push_back(Line);
-			}
-			f.close();
-			loader(temp);
+	if (min > max) {
+		return min;
+	}
+	else if (_registry.size() == 0)
+		return 0;
+	else {
+		unsigned int mid = (min + max) / 2;
+		if (mid >= _registry.size())
+			return _registry.size();
+		int comp = _registry[mid]._name.compare(name);
+		if (comp == 0) {
+			return mid;
 		}
-	});
-	fileLoader.addThreadClient(client);
-	return client;
+		else if (comp < 0) {
+			return find(name, mid + 1, max);
+		}
+		else {
+			return find(name, min, mid - 1);
+		}
+	}
+	return 0;
 }
 
-RessourceLoader::~RessourceLoader()
+void RessourceHandler::RessourceRegistry::push(Entry e)
 {
+	_registry.insert(_registry.begin() + find(e._name, 0, _registry.size()), e);
 }
 
-void RessourceLoader::_load(string file, function<void(future<char**>&)> callback, promise<char**>* prom)
+void RessourceHandler::RessourceRegistry::push( string name, shared_future<void*>* data)
+{
+	push(Entry(name, data));
+}
+
+RessourceHandler::RessourceRegistry::~RessourceRegistry()
+{
+	for (Entry& e : _registry)
+		e._obj->~shared_future();
+}
+
+void RessourceHandler::STDBinaryLoader::load(ifstream &Fstream)
 {
 	string fileCode;
-	ifstream Fstream(file);
 	//Read Code from File
 	if (Fstream.is_open())
 	{
@@ -62,11 +76,21 @@ void RessourceLoader::_load(string file, function<void(future<char**>&)> callbac
 		{
 			fileCode += Line + "\n";
 		}
-		Fstream.close();
-		char* charArr = const_cast<char*>(fileCode.c_str());
-		prom->set_value(&charArr);
+		strcpy(_buffer, fileCode.c_str());
 	}
 	else
-		prom->set_value(nullptr);
-	callback(prom->get_future());
+		_buffer = nullptr;
+}
+
+void RessourceHandler::STDTextLoader::load(ifstream &f)
+{
+	_buffer.clear();
+	if (f.is_open())
+	{
+		string Line = "";
+		while (getline(f, Line))
+		{
+			_buffer.push_back(Line);
+		}
+	}
 }

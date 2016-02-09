@@ -42,7 +42,7 @@ void UI::init()
 		child->init();
 }
 
-void UI::load(RessourceLoader *loader)
+void UI::load(RessourceHandler *loader)
 {
 	for (UIPart* part : _parts)
 		part->load(loader);

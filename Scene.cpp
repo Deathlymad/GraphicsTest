@@ -12,7 +12,7 @@ void Scene::init(KeyMap * k)
 	root.init( k);
 }
 
-void Scene::load(RessourceLoader * loader)
+void Scene::load(RessourceHandler * loader)
 {
 	root.load(loader);
 }

@@ -1,12 +1,12 @@
 #include <vector>
 #include "Def.h"
+#include "RessourceHandler.h"
 
 NSP_STD
 
 class Shader;
 class RenderingEngine;
 class KeyMap;
-class RessourceLoader;
 
 #pragma once
 class EngineObject
@@ -16,7 +16,7 @@ public:
 
 	void add(EngineObject* obj) { if (obj && obj != this) children.push_back(obj); }
 
-	virtual void load(RessourceLoader* loader);
+	virtual void load(RessourceHandler* loader);
 	virtual void init( KeyMap* k);
 	virtual void update();
 	virtual void render(Shader*, bool);

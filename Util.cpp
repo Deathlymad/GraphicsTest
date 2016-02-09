@@ -83,14 +83,17 @@ NSP_UTIL_BEG
 			if (!_taskList.empty())
 			{
 				_listGuard.lock();
-				if (_maxElement >= _taskList.size())
-				{
+				if (_maxElement >= _taskList.size()) //resets
 					_maxElement = 0;
+				try {
+					_taskList[_maxElement]->_func();
 				}
-				unsigned int i = _maxElement;
+				catch (bad_function_call except)
+				{
+					cout << except.what() << endl;
+				}
 				_maxElement++;
 					
-				_taskList[i]->_func();
 
 				_listGuard.unlock();
 

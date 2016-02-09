@@ -3,16 +3,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Util.h"
 
+#include "RessourceHandler.h"
+
 NSP_UTIL
 NSP_IO
 NSP_STD
 NSP_GLM
 
 typedef unsigned int GLuint;
-class RessourceLoader;
 
 #pragma once
-class Mesh
+class Mesh : RessourceLoader
 {
 public:
 	class VertexArrayObject //bitset works as long as we stay in 3D space
@@ -105,8 +106,10 @@ public:
 	Mesh ( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset);
 	Mesh ();
 	
-	void load(RessourceLoader*);
-	void glDownload();
+	void load(RessourceHandler*);
+	void load(ifstream&);
+	void* get() { return this; }
+	void init();
 
 	void Draw();
 
@@ -120,6 +123,7 @@ protected:
 	unsigned int _VerticesCount;
 private:
 	string _path;
+
 	vector<unnormalizedVertex> _vertices;
 	vector<unsigned int> _indices;
 

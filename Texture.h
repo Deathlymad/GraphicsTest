@@ -1,17 +1,17 @@
 #include "Util.h"
 #include "UniformRegistry.h"
+#include "RessourceHandler.h"
 #include <fstream>
 
 NSP_STD
 NSP_UTIL
 
 class Shader;
-class RessourceLoader;
 typedef unsigned int GLuint;
 typedef unsigned int GLenum;
 
 #pragma once
-class Image
+class Image : public RessourceLoader
 {
 public:
 	enum ImageType
@@ -29,7 +29,9 @@ public:
 	Image();
 	Image(string);
 
-	void load(RessourceLoader*);
+	string getPath() { return path; }
+	void load(ifstream& f);
+	void* get() { return this; }
 	char* getData();
 	PixelStructure getPixelStructure();
 
@@ -37,7 +39,6 @@ public:
 	unsigned int getWidth() { return _width; }
 
 private:
-	void load(ifstream& f);
 	void format();
 	ImageType getFileImageType( ifstream&);
 
@@ -61,11 +62,12 @@ public:
 	Texture(string, unsigned int samplerID = 0);
 	~Texture();
 
-	virtual void load(RessourceLoader*);
+	virtual void load(RessourceHandler*);
 	virtual void glDownload();
 	virtual void bind();
 protected:
 	Texture();
+
 	unsigned int _samplerID;
 private:
 	GLenum getTextureType(Image::PixelStructure);
@@ -84,7 +86,7 @@ public:
 	LayeredTexture(vector<string>);
 	~LayeredTexture();
 
-	virtual void load(RessourceLoader*);
+	virtual void load(RessourceHandler*);
 	virtual void glDownload();
 	virtual void bind();
 private:

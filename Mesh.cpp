@@ -13,8 +13,7 @@
 #endif
 
 #include "Mesh.h"
-
-#include "RessourceHandler.h"
+#include <fstream>
 
 Mesh::Mesh() : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao( 3, 2, 3)
 {
@@ -25,23 +24,40 @@ Mesh::Mesh ( string file) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new 
 	_path = file;
 }
 
-Mesh::Mesh(vector<Vertex>& vec, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
+Mesh::Mesh( vector<Vertex>& vec, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
 {
 	vector<unsigned int> i = vector<unsigned int>({ 0,1,2,2,1,3 });//2D indices, might need additions later for other sizes
 	_glDownload( vec, i);
 }
 
-Mesh::Mesh(  vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
+Mesh::Mesh( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
 {
 	_glDownload( vec, i);
 }
 
-void Mesh::load(RessourceLoader * loader)
+void Mesh::load(RessourceHandler * loader)
 {
-	loader->loadFile(_path, (function<void(vector<string>)>)[this](vector<string> s) {_load(s); });
+	if (_path != "")
+	{
+		loader->getRessource<Mesh>(_path, this);
+	}
 }
 
-void Mesh::glDownload()
+void Mesh::load(ifstream &f)
+{
+	vector<string> temp;
+	if (f.is_open())
+	{
+		string Line = "";
+		while (getline(f, Line))
+		{
+			temp.push_back(Line);
+		}
+	}
+	_load(temp);
+}
+
+void Mesh::init()
 {
 	_glDownload(getNormalVertices(_vertices), _indices);
 	_vertices.~vector();

@@ -28,18 +28,6 @@ Image::Image(string fileName)
 	_bitMasks[2] = -1;
 }
 
-void Image::load( RessourceLoader* loader)
-{
-	unsigned int termination = path.find_last_of('.');
-	if (path.compare( termination - 4, 4, ".bmp"))
-	{
-		function<void(ifstream&)> t = [this](ifstream& f) { load(f); };
-		loader->loadFile(path, t);
-		if (_type != BMP)
-			cout << "File has the wrong Termination." << endl; //add actual type
-	}
-}
-
 char* Image::getData()
 {
 	return _data;
@@ -98,8 +86,11 @@ void Image::load(ifstream& file)
 			_structure = PixelStructure(_depth / 8);
 
 			file.seekg(offset);
-			for (size_t i = 0; i < dataSize; i++)
-					file.read(&_data[i], 1);
+			unsigned int last = dataSize % 0xffffffff;
+			unsigned int stepSize = (dataSize - last) / 0xffffffff;
+			for (size_t i = 0; i < (dataSize - last); i += stepSize)
+					file.read(&_data[i], stepSize);
+			file.read(&_data[dataSize - last], last);
 
 			break;
 		}
@@ -180,7 +171,7 @@ Texture::Texture(string path, unsigned int samplerID) : _image(Image(path)), _sa
 {
 }
 
-Texture::Texture() : _samplerID(0), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
+Texture::Texture() : _image(Image()), _samplerID(0), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
 {
 }
 
@@ -209,10 +200,9 @@ Texture::~Texture()
 {
 }
 
-void Texture::load(RessourceLoader * loader)
+void Texture::load(RessourceHandler * loader)
 {
-	if (loader)
-		_image.load(loader);
+	loader->getRessource<Image>(_image.getPath(), &_image);
 }
 
 void Texture::glDownload()
@@ -258,7 +248,7 @@ LayeredTexture::~LayeredTexture()
 
 }
 
-void LayeredTexture::load(RessourceLoader * loader)
+void LayeredTexture::load(RessourceHandler * loader)
 {
 	for (Texture& tex : _samplerList)
 		tex.load(loader);
@@ -266,7 +256,7 @@ void LayeredTexture::load(RessourceLoader * loader)
 
 void LayeredTexture::glDownload()
 {
-	for (Texture t : _samplerList)
+	for (Texture& t : _samplerList)
 		t.glDownload();
 }
 

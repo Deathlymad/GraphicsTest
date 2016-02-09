@@ -9,23 +9,98 @@
 NSP_STD
 NSP_UTIL
 
-//define ressource Handler, Ressource
-
 #pragma once
-class RessourceLoader
+class RessourceLoader //Loader Interface
 {
+	enum State {
+		PENDING,
+		PROCESSING,
+		DONE
+	};
 public:
-	RessourceLoader();
+	RessourceLoader() { _state = PENDING; }
 
-	ThreadClient* loadFile(string file, function<void(future<char**>&)> = [] {});
-	ThreadClient* loadFile(string file, function<void(ifstream&)>);
-	ThreadClient* loadFile(string file, function<void(vector<string>)>);
+	virtual void load(ifstream&) = 0;
+	virtual void* get() = 0;
+	State getCurrentState() { return _state; }
+	
+	virtual ~RessourceLoader() {};
+protected:
+	State _state;
+};
 
-	bool loading() { return fileLoader.hasTasks(); }
+class RessourceHandler
+{
+	class STDBinaryLoader : public RessourceLoader
+	{
+	public:
+		void load(ifstream&);
+		void* get() { return (void*)&_buffer; }
+	private:
+		char* _buffer;
+	};
 
-	~RessourceLoader();
+	class STDTextLoader : public RessourceLoader
+	{
+	public:
+		void load(ifstream&);
+		void* get() { return (void*)&_buffer; }
+	private:
+		vector<string> _buffer;
+	};
+public:
+	RessourceHandler();
+
+	template<class T>
+	shared_future<T*> getRessource(string& file, RessourceLoader* loader)
+	{
+		shared_future<T*>* f = (shared_future<T*>*)_registry.find(file);
+		if (f == nullptr)
+		{
+			f = (shared_future<T*>*)&async([this, file, loader] {
+				ifstream f(file);
+				LoadCounter++;
+				loader->load(f);
+				f.close();
+				LoadCounter--;
+				return loader->get();
+			}).share();
+			_registry.push(file, new shared_future<void*>(*((shared_future<void*>*)f)));
+		}
+		return *((shared_future<T*>*)_registry.find(file));
+	}
+	shared_future<vector<string>*> getRessource(string& file);
+
+	bool loading() { return LoadCounter > 0; }
 private:
-	void _load(string file, function<void(future<char**>&)>, promise<char**>*);
 
-	ThreadServer fileLoader;
+	class RessourceRegistry {
+	public:
+		struct Entry
+		{
+			Entry(string s)
+			{
+				_name = s;
+				_obj = new shared_future<void*>();
+			}
+			Entry(string s, shared_future<void*>* obj) : _obj(obj)
+			{
+				_name = s;
+			}
+			string _name;
+			shared_future<void*>* _obj;
+		};
+		shared_future<void*>* find(string&);
+
+		void push(Entry);
+		void push( string, shared_future<void*>*);
+		~RessourceRegistry();
+	private:
+		size_t find(string&, int, int);
+		vector<Entry> _registry;
+	} _registry;
+
+	unsigned int LoadCounter;
+
+	static vector<string> loaderList;
 };

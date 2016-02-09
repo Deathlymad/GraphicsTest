@@ -32,7 +32,7 @@ private: //context
 	CoreEngine _engine;
 
 protected:
-	RessourceLoader _ressourceLoader;
+	RessourceHandler _ressourceLoader;
 	Scene _world;
 	CoreEngine* getEngine() { return &_engine; }
 	void setMenu(UI* ui) { _menu = ui; _menu->load(&_ressourceLoader); }
