@@ -8,7 +8,7 @@ RessourceHandler::RessourceHandler() : LoadCounter(0)
 {
 }
 
-shared_future<vector<string>*> RessourceHandler::getRessource(string& file)
+shared_future<vector<string>*>* RessourceHandler::getRessource(string& file)
 {
 	STDTextLoader _loader;
 	return getRessource<vector<string>>(file, &_loader);
@@ -63,23 +63,6 @@ RessourceHandler::RessourceRegistry::~RessourceRegistry()
 {
 	for (Entry& e : _registry)
 		e._obj->~shared_future();
-}
-
-void RessourceHandler::STDBinaryLoader::load(ifstream &Fstream)
-{
-	string fileCode;
-	//Read Code from File
-	if (Fstream.is_open())
-	{
-		string Line = "";
-		while (getline(Fstream, Line))
-		{
-			fileCode += Line + "\n";
-		}
-		strcpy(_buffer, fileCode.c_str());
-	}
-	else
-		_buffer = nullptr;
 }
 
 void RessourceHandler::STDTextLoader::load(ifstream &f)

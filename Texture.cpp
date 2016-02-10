@@ -86,8 +86,8 @@ void Image::load(ifstream& file)
 			_structure = PixelStructure(_depth / 8);
 
 			file.seekg(offset);
-			unsigned int last = dataSize % 0xffffffff;
-			unsigned int stepSize = (dataSize - last) / 0xffffffff;
+			unsigned int last = dataSize % 0xffffffff; 
+			unsigned int stepSize = (dataSize - last) / 0xffffffff; //if bigger than 32bit separate
 			for (size_t i = 0; i < (dataSize - last); i += stepSize)
 					file.read(&_data[i], stepSize);
 			file.read(&_data[dataSize - last], last);
@@ -202,11 +202,17 @@ Texture::~Texture()
 
 void Texture::load(RessourceHandler * loader)
 {
-	loader->getRessource<Image>(_image.getPath(), &_image);
+	_imgLink = loader->getRessource<Image>(_image.getPath(), &_image);
 }
 
 void Texture::glDownload()
 {
+	//get image
+	if (_image.get() != _imgLink->get())
+	{
+		_image = *(_imgLink->get());
+	}
+
 	glActiveTexture(GL_TEXTURE0 + _samplerID);
 	glGenTextures(1, _ID.get());
 

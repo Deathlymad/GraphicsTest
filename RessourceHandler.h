@@ -31,15 +31,6 @@ protected:
 
 class RessourceHandler
 {
-	class STDBinaryLoader : public RessourceLoader
-	{
-	public:
-		void load(ifstream&);
-		void* get() { return (void*)&_buffer; }
-	private:
-		char* _buffer;
-	};
-
 	class STDTextLoader : public RessourceLoader
 	{
 	public:
@@ -52,28 +43,28 @@ public:
 	RessourceHandler();
 
 	template<class T>
-	shared_future<T*> getRessource(string& file, RessourceLoader* loader)
+	shared_future<T*>* getRessource(string& file, RessourceLoader* loader)
 	{
-		shared_future<T*>* f = (shared_future<T*>*)_registry.find(file);
-		if (f == nullptr)
+		shared_future<T*>* fut = (shared_future<T*>*)_registry.find(file);
+		if (fut == nullptr)
 		{
-			f = (shared_future<T*>*)&async([this, file, loader] {
-				ifstream f(file);
-				LoadCounter++;
-				loader->load(f);
-				f.close();
-				LoadCounter--;
-				return loader->get();
-			}).share();
-			_registry.push(file, new shared_future<void*>(*((shared_future<void*>*)f)));
+			fut = new shared_future<T*>();
+			*fut = async([this] (RessourceHandler* handler, string path, RessourceLoader* _loader) -> T* {
+				return (
+					handler->LoadCounter++,
+					_loader->load(ifstream(path)),
+					handler->LoadCounter--,
+					reinterpret_cast<T*>(_loader->get())
+					);
+			}, this, file, loader).share();
+			_registry.push(file, new shared_future<void*>(*((shared_future<void*>*)fut)));
 		}
-		return *((shared_future<T*>*)_registry.find(file));
+		return ((shared_future<T*>*)_registry.find(file));
 	}
-	shared_future<vector<string>*> getRessource(string& file);
+	shared_future<vector<string>*>* getRessource(string& file);
 
 	bool loading() { return LoadCounter > 0; }
 private:
-
 	class RessourceRegistry {
 	public:
 		struct Entry
