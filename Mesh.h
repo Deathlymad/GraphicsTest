@@ -123,7 +123,9 @@ protected:
 	unsigned int _VerticesCount;
 private:
 	string _path;
-
+	
+	shared_future<Mesh*>* _laodReq;
+	
 	vector<unnormalizedVertex> _vertices;
 	vector<unsigned int> _indices;
 
