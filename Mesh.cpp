@@ -39,7 +39,7 @@ void Mesh::load(RessourceHandler * loader)
 {
 	if (_path != "")
 	{
-		loader->getRessource<Mesh>(_path, this);
+		_loadReq = loader->getRessource<Mesh>(_path, this);
 	}
 }
 
