@@ -59,6 +59,8 @@ void Mesh::load(ifstream &f)
 
 void Mesh::init()
 {
+	if (_loadReq->get() != this)
+		*this = *(_loadReq->get());
 	_glDownload(getNormalVertices(_vertices), _indices);
 	_vertices.~vector();
 	_indices.~vector();
