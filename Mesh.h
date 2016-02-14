@@ -124,7 +124,7 @@ protected:
 private:
 	string _path;
 	
-	shared_future<Mesh*>* _laodReq;
+	shared_future<Mesh*>* _loadReq;
 	
 	vector<unnormalizedVertex> _vertices;
 	vector<unsigned int> _indices;

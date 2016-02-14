@@ -21,7 +21,7 @@
 		public:
 			Ptr<T>() : owned(false), ptr(nullptr) {}
 			Ptr<T>(T* data) : owned(true), ptr(data) {}
-			Ptr<T>(T data) : owned(true), ptr(nullptr)
+			Ptr<T>(T& data) : owned(true), ptr(&data)
 			{
 				ptr = new T;
 				*ptr = data;
@@ -36,7 +36,7 @@
 				setPtr(data);
 			}
 
-			void set(T data, int i)
+			void set(T& data, int i)
 			{
 				ptr[i] = data;
 			}
@@ -63,6 +63,10 @@
 				owned = false;
 
 				return *this;
+			}
+			bool operator==(const Ptr<T>& other)
+			{
+				return ptr == other.ptr;
 			}
 
 			T& operator->()

@@ -12,26 +12,18 @@ Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
 
 Shader::Shader(string vertexPath, string fragPath) : program([this](GLuint* p) {deleteProgram(p); })
 {
-	Code.push_back(ShaderCode(VERTEX, vertexPath));
-	Code.push_back(ShaderCode(FRAGMENT, fragPath));
-
-	load();
-	build();
+	Code.push_back(ShaderCode( this, VERTEX, vertexPath));
+	Code.push_back(ShaderCode( this, FRAGMENT, fragPath));
 }
 
 Shader::Shader(ShaderCode ShaderArr[]) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code.insert(Code.begin() + 3, sizeof(ShaderArr) / sizeof(ShaderCode), ShaderArr[0]);//copies Array in vector
-
-	load();
-	build();
 }
 
 Shader::Shader(vector<ShaderCode> Shaders) : program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code = Shaders;
-	load();
-	build();
 }
 
 Shader::~Shader(){}
@@ -39,12 +31,6 @@ Shader::~Shader(){}
 void Shader::addShader(ShaderCode &code)
 {
 	Code.push_back(code);
-}
-void Shader::removeUniform(string& s)
-{
-	unsigned int pos = findUniform(s, 0, Uniforms.size());
-	if (Uniforms[pos] == s)
-		Uniforms.erase(Uniforms.begin() + pos);
 }
 
 float* Shader::getUniformMemPos(string name)
@@ -58,17 +44,25 @@ float* Shader::getUniformMemPos(string name)
 	{
 		return Uniforms[pos].getPtr();
 	}
-
 	return nullptr;
 }
 
-void Shader::load()
+void Shader::load(RessourceHandler * loader)
 {
-	for (size_t i = 0; i < Code.size(); i++)
-		makeShader(&Code[i]);
+	for (ShaderCode& code : Code)
+		reqArr.push_back(loader->getRessource<ShaderCode>(code.getPath(), (RessourceLoader*)&code));
 }
+
 void Shader::build()
 {
+	if (Code.size() == reqArr.size())
+	{
+		for (size_t i = 0; i < Code.size(); i++)
+		{
+			Code[i] = *reqArr[i]->get();
+			Code[i].makeShader();
+		}
+	}
 	if (!program.get() || !glIsProgram(*(program.get())))
 		program.set( new GLuint( glCreateProgram())); //no Program existent creating
 
@@ -84,12 +78,12 @@ void Shader::build()
 			if (shader != -1) //check if it is a valid shader
 				glDetachShader(*(program.get()), shader); //detaches Shader, DOES NO DELETE
 		attached = 0; //resets counter
-	} else
+	}
 
 	for (ShaderCode shader : Code)
 	{
 		//should check Shader values
-		glAttachShader(*(program.get()), *(shader.pos.get()));
+		glAttachShader(*(program.get()), shader.getPos());
 		int ShaderCount = 0;
 		glGetProgramiv( *(program.get()), GL_ATTACHED_SHADERS, &ShaderCount); //might turn out t be slow since it querries operations and wait for them
 		if (ShaderCount > attached) //used for Error catching
@@ -141,15 +135,13 @@ void Shader::setUniforms()
 Shader& Shader::operator=(Shader& other)
 {
 	Code = other.Code;
-	load(); //handles the Shader changes
 	build();//handles the Shader changes on Program Level
 	return *this;
 }
 
-Shader& Shader::operator=(vector<ShaderCode> Shaders)
+Shader& Shader::operator=(vector<ShaderCode>& Shaders)
 {
 	Code = Shaders;
-	load();
 	build();
 	return *this;
 }
@@ -172,7 +164,7 @@ bool Shader::operator==(ShaderCode& contained)
 	return true;
 }
 
-bool Shader::operator==(vector<ShaderCode> Shaders)
+bool Shader::operator==(vector<ShaderCode>& Shaders)
 {
 	bool res = true;
 	for (ShaderCode s : Shaders)
@@ -182,50 +174,58 @@ bool Shader::operator==(vector<ShaderCode> Shaders)
 	return res;
 }
 
-void Shader::makeShader(ShaderCode* code)
+void Shader::ShaderCode::makeShader()
 {
-	if (!glIsShader(*(code->pos.get())))
+	if (!glIsShader(*(_pos.get())))
 	{
-		code->pos.set( new GLuint(glCreateShader(getShaderType(code->_type)))); //no Shader existent; creating
+		_pos.set( new GLuint(glCreateShader(getShaderType(_type)))); //no Shader existent; creating
 	}
 	else
 	{
 		int type = 0;
-		glGetShaderiv(*(code->pos.get()), GL_SHADER_TYPE, &type); //if there is already a Shader, check if it has the right type
-		if (type != getShaderType(code->_type))
+		glGetShaderiv(*(_pos.get()), GL_SHADER_TYPE, &type); //if there is already a Shader, check if it has the right type
+		if (type != getShaderType(_type))
 		{
-			glDeleteShader(*(code->pos.get())); //clear Shader if it is of the wrong Type (issues with Programs created from it?!)
-			code->pos.set( new GLuint(glCreateShader(getShaderType(code->_type)))); //recreate Shader of right Type
+			glDeleteShader(*(_pos.get())); //clear Shader if it is of the wrong Type (issues with Programs created from it?!)
+			_pos.set( new GLuint(glCreateShader(getShaderType(_type)))); //recreate Shader of right Type
 		}
 	}//if there is a Shader created with the right type then it is going to be rewritten but not recreated should reduce memory
 	
-	code->file = getShaderCode(code->_path);
-	if (code->file.size() > 1)
+	if (_code.size())
 	{
-		const char *c_str = code->file.c_str();
-		glShaderSource(*(code->pos.get()), 1, &c_str, NULL);
+		const char *c_str = _code.c_str();
+		glShaderSource(*(_pos.get()), 1, &c_str, NULL);
 	}
 	else
 		cout << "OpenGL Shader " << "Empty Source." << endl;
 
 	int compiled = 0;
-	glGetShaderiv(*(code->pos.get()), GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(*(_pos.get()), GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
-		glCompileShader(*(code->pos.get()));
+		glCompileShader(*(_pos.get()));
 
-	glGetShaderiv(*(code->pos.get()), GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(*(_pos.get()), GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{ //not compiling
 		GLint maxLength = 0;
-		glGetShaderiv(*(code->pos.get()), GL_INFO_LOG_LENGTH, &maxLength);
+		glGetShaderiv(*(_pos.get()), GL_INFO_LOG_LENGTH, &maxLength);
 		if (maxLength > 1)
 		{
 			//The maxLength includes the NULL character
 			vector<GLchar> infoLog = vector<GLchar>(maxLength);
-			glGetShaderInfoLog(*(code->pos.get()), maxLength, NULL, &infoLog[0]);
+			glGetShaderInfoLog(*(_pos.get()), maxLength, NULL, &infoLog[0]);
 			cout << "OpenGL Shader " << infoLog.data() << endl;
 		}
 	}
+}
+
+Shader::ShaderCode & Shader::ShaderCode::operator=(const Shader::ShaderCode & other)
+{
+	_code = other._code;
+	_owner = other._owner;
+	_type = other._type;
+	_path = other._path;
+	return *this; 
 }
 
 string Shader::checkProgram()
@@ -254,7 +254,7 @@ string Shader::checkProgram()
 	return errText;
 }
 
-GLenum Shader::getShaderType(ShaderType shaderType)
+GLenum Shader::ShaderCode::getShaderType(ShaderType shaderType)
 {
 	switch (shaderType)
 	{
@@ -271,69 +271,6 @@ GLenum Shader::getShaderType(ShaderType shaderType)
 	default:
 		return -1;
 	}
-}
-
-string Shader::getShaderCode(string File)
-{
-	string ShaderCode;
-	ifstream ShaderStream("assets/shaders/" + File);
-	//Read Code from File
-	if (ShaderStream.is_open())
-	{
-		string Line = "";
-		while (getline(ShaderStream, Line))
-		{
-			ShaderCode += Line + "\n";
-		}
-		ShaderStream.close();
-	}
-	else
-		return "";
-
-	//Analyze Code
-	try {
-		//get Structures
-		smatch _structs, _vars;
-
-		regex structRegex = regex("struct .*?\\n?\\{\\n(.*?;\\n)*\\};");
-		auto StructBegin = std::sregex_iterator(ShaderCode.begin(), ShaderCode.end(), structRegex);
-
-		for (auto i = StructBegin; i != std::sregex_iterator(); ++i) {
-			std::string temp = (*i).str();
-			vector<string> structVar = vector<string>();
-			if (temp[0] != 's') //weird things are being read
-				continue;
-			regex_search(temp, _vars, regex("struct .*?\\n\\{\\n"));
-			temp = _vars[0].str();
-			structVar.push_back(temp.substr(7, temp.size() - 10));//adds name
-			temp = (*i).str();
-
-			regex structVarRegex = regex("\\t.*? .*?;\\n");
-			auto StructVarBegin = std::sregex_iterator(temp.begin(), temp.end(), structVarRegex);
-
-			for (std::sregex_iterator i = StructVarBegin; i != std::sregex_iterator(); ++i) {
-				std::string match_str = (*i).str();
-				structVar.push_back(match_str.substr(1, match_str.size() - 3)); //write the variables
-			}
-			structVariables.push_back(structVar);
-		}
-		
-
-		//read uniforms
-
-		regex structVarRegex = regex("uniform .*? .*?;\\n");
-		auto UniformsBegin = std::sregex_iterator(ShaderCode.begin(), ShaderCode.end(), structVarRegex);
-		for (auto i = UniformsBegin; i != std::sregex_iterator(); ++i) {
-			std::string match_str = (*i).str();
-			addUniform(match_str.substr(match_str.find_first_of(' ') + 1, match_str.size() - 3 - match_str.find_first_of(' ')));
-		}
-	}
-	catch (regex_error &e)
-	{
-		cout << e.what() << std::endl;
-	}
-
-	return ShaderCode;
 }
 
 int Shader::findUniform(string& name, int min, int max)
@@ -383,7 +320,7 @@ int Shader::findUniform(Uniform& u, int min, int max)
 	}
 }
 
-void Shader::addUniform(string & name)
+void Shader::ShaderCode::addUniform(string & name)
 {
 	string uniName = "";
 	if (name[name.size() - 1] == ';')
@@ -396,9 +333,7 @@ void Shader::addUniform(string & name)
 	if (size > 0)
 	{
 		Uniform u = Uniform( varName, size);
-		u.enabled = true;
-		Uniforms.insert( Uniforms.begin() + findUniform(varName, 0, Uniforms.size()), u);
-
+		_owner->addUniform(u);
 	}
 	else
 	{
@@ -414,7 +349,7 @@ void Shader::addUniform(string & name)
 		}
 	}
 }
-vector<string> Shader::resolveStructVariable(string& name)
+vector<string> Shader::ShaderCode::resolveStructVariable(string& name)
 {
 	string type = name.substr(0, name.find_first_of(' '));
 	for (vector<string>& _struct : structVariables)
@@ -424,7 +359,6 @@ vector<string> Shader::resolveStructVariable(string& name)
 	}
 	return vector<string>();
 }
-
 
 void Shader::Uniform::create( GLuint* prgm)
 {
@@ -481,7 +415,7 @@ float * Shader::Uniform::getPtr()
 	return _data.get();
 }
 
-int Shader::Uniform::getUniformSize(string name)
+int Shader::Uniform::getUniformSize(string& name)
 {
 	smatch result;
 	if (regex_search(name, result, regex("(vec|mat)[2-4]")))
@@ -502,7 +436,59 @@ int Shader::Uniform::getUniformSize(string name)
 	}
 }
 
-bool Shader::ShaderCode::contains(string s)
+void Shader::ShaderCode::load(ifstream &ShaderStream)
 {
-	return regex_search(file, regex(s));
+	string Line = "";
+	while (getline(ShaderStream, Line))
+	{
+		_code += Line + "\n";
+	}
+	//Analyze Code
+	try {
+		//get Structures
+		smatch _structs, _vars;
+
+		regex structRegex = regex("struct .*?\\n?\\{\\n(.*?;\\n)*\\};");
+		auto StructBegin = std::sregex_iterator(_code.begin(), _code.end(), structRegex);
+
+		for (auto i = StructBegin; i != std::sregex_iterator(); ++i) {
+			std::string temp = (*i).str();
+			vector<string> structVar = vector<string>();
+			if (temp[0] != 's') //weird things are being read
+				continue;
+			regex_search(temp, _vars, regex("struct .*?\\n\\{\\n"));
+			temp = _vars[0].str();
+			structVar.push_back(temp.substr(7, temp.size() - 10));//adds name
+			temp = (*i).str();
+
+			regex structVarRegex = regex("\\t.*? .*?;\\n");
+			auto StructVarBegin = std::sregex_iterator(temp.begin(), temp.end(), structVarRegex);
+
+			for (std::sregex_iterator i = StructVarBegin; i != std::sregex_iterator(); ++i) {
+				std::string match_str = (*i).str();
+				structVar.push_back(match_str.substr(1, match_str.size() - 3)); //write the variables
+			}
+			structVariables.push_back(structVar);
+		}
+
+
+		//read uniforms
+
+		regex structVarRegex = regex("uniform .*? .*?;\\n");
+		auto UniformsBegin = std::sregex_iterator(_code.begin(), _code.end(), structVarRegex);
+		for (auto i = UniformsBegin; i != std::sregex_iterator(); ++i) {
+			std::string match_str = (*i).str();
+			addUniform(match_str.substr(match_str.find_first_of(' ') + 1, match_str.size() - 3 - match_str.find_first_of(' ')));
+		}
+	}
+	catch (regex_error &e)
+	{
+		cout << e.what() << std::endl;
+	}
+
+}
+
+void * Shader::ShaderCode::get()
+{
+	return this;
 }

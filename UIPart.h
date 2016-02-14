@@ -60,8 +60,12 @@ class UIText : public UIPart
 {
 public:
 	UIText(UI* parent, vec2 pos1, vec2 pos2, function<void()> = [] {});
+
+	virtual void load(RessourceHandler*);
+	virtual void init();
+
 	virtual void render();
 private:
-	static Shader* textRendenerer;
+	static Shader* textRenderer;
 	static TextureAtlas* glyphMap;
 };

@@ -105,19 +105,31 @@ void UIButton::onMouseButton(char button, char action, char mods)
 	}
 }
 
-Shader* UIText::textRendenerer = nullptr;
+Shader* UIText::textRenderer = nullptr;
 TextureAtlas* UIText::glyphMap = new TextureAtlas("assets/textures/GlyphMapS.bmp", 32, 7);
 
 UIText::UIText(UI * parent, vec2 pos1, vec2 pos2, function<void()> _event) : UIPart(parent, pos1, pos2, _event)
 {
-	if (!textRendenerer)
-		textRendenerer = new Shader("UIRender_text_vs.glsl", "UIRender_fs.glsl");
+	if (!textRenderer)
+		textRenderer = new Shader("assets/shaders/UIRender_text_vs.glsl", "assets/shaders/UIRender_fs.glsl");
 	_tex = glyphMap;
+}
+
+void UIText::load(RessourceHandler *loader)
+{
+	UIPart::load(loader);
+	textRenderer->load(loader);
+}
+
+void UIText::init()
+{
+	UIPart::init();
+	textRenderer->build();
 }
 
 void UIText::render()
 {
-	textRendenerer->bind();
+	textRenderer->bind();
 	_tex->bind();
 	_mesh.Draw();
 }

@@ -14,6 +14,7 @@
 #endif
 
 #include "Util.h"
+#include "RessourceHandler.h"
 
 NSP_UTIL
 NSP_STD
@@ -21,40 +22,16 @@ NSP_STD
 #pragma once
 class Shader
 {
+	friend class ShaderCode;
 public: //Public structures
 	enum ShaderType
 	{
+		ERR,
 		VERTEX,
 		TESSELATION_CONTROL,
 		TESSELATION_EVALUATION,
 		GEOMETRY,
 		FRAGMENT
-	};
-	class ShaderCode
-	{
-
-	public:
-		string file;
-		ShaderType _type; //should be made private
-		string _path;
-		CustomPtr<GLuint> pos;
-		void clearShader(GLuint* s)
-		{
-			if (pos.get())
-				if (glIsShader(*(pos.get())))
-					glDeleteShader(*(pos.get()));
-		}
-
-		ShaderCode() : _type(TESSELATION_EVALUATION), _path(""), pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
-		ShaderCode(ShaderType type, string path) : _type(type), _path(path), pos([this](GLuint* s) {}, new GLuint())
-		{ pos.setDestructor([this](GLuint* s) {clearShader(s); }); }
-		ShaderCode(ShaderType type, char* path) : _type(type), _path(path), pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
-
-		bool contains(string);
-
-		ShaderCode operator=(ShaderCode other) { _type = other._type; _path = other._path; pos = other.pos; return *this; }
-		bool operator==(ShaderCode other) { return _type == other._type && _path == other._path && pos.get() == other.pos.get(); }
-		bool operator!=(ShaderCode other) { return !(*this == other); }
 	};
 
 	class Uniform
@@ -69,10 +46,12 @@ public: //Public structures
 			_size = size;
 		}
 
-		void create( GLuint* prgm);
+		void create(GLuint* prgm);
 		void copy(Uniform& other);
 		void write(GLuint* prgm);
+
 		float* getPtr();
+		string& getName() { return _name; }
 
 		bool operator==(Uniform& other) { return _name == other._name; }
 		bool operator==(string& name) { return _name == name; }
@@ -83,7 +62,7 @@ public: //Public structures
 		bool operator> (Uniform& other) { return _name.compare(other._name) > 0; }
 		bool operator> (string& name) { return _name.compare(name) > 0; }
 
-		static int getUniformSize(string name);
+		static int getUniformSize(string& name);
 
 		~Uniform()
 		{
@@ -97,6 +76,45 @@ public: //Public structures
 		unsigned _size;
 		GLuint pos;
 	};
+
+	class ShaderCode : public RessourceLoader
+	{
+		string _code;
+		CustomPtr<GLuint> _pos;
+		ShaderType _type; //should be made private
+		string _path;
+		Shader* _owner;
+	public:
+		void clearShader(GLuint* s)
+		{
+			if (s)
+				if (glIsShader(*s))
+					glDeleteShader(*s);
+		}
+
+		ShaderCode() : _owner(nullptr), _type(TESSELATION_EVALUATION), _path(""), _pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
+		ShaderCode(Shader* owner, ShaderType type, string path) : _owner(owner), _type(type), _path(path), _pos([this](GLuint* s) {clearShader(s); }, new GLuint())
+		{ _pos.setDestructor([this](GLuint* s) {clearShader(s); }); }
+		ShaderCode(Shader* owner, ShaderType type, char* path) : _owner(owner), _type(type), _path(path), _pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
+		
+		void load(ifstream&);
+		void* get();
+
+		void makeShader();
+
+		GLuint& getPos() { return *_pos.get(); }
+		string& getPath() { return _path; }
+
+		ShaderCode& operator=(const ShaderCode& other);
+		bool operator==(const ShaderCode& other) { return _type == other._type && _path == other._path && _pos == other._pos; }
+		bool operator!=(const ShaderCode& other) { return !(*this == other); }
+	private:
+		GLenum getShaderType(ShaderType);
+		vector<vector<string>> structVariables;
+		void addUniform(string&);
+		vector<string> resolveStructVariable(string&);
+	};
+
 public:
 	//construction / destruction
 	Shader();
@@ -107,23 +125,27 @@ public:
 
 	//getter / setter
 	void addShader(ShaderCode&);
-	void removeUniform(string&);
 	float* getUniformMemPos(string);
 
 	//functions
-	void load();
+	void load(RessourceHandler* loader);
+
 	void build();
 	void bind();
 	void setUniforms();
-	
 
 	//operators
 	Shader& operator= (Shader&);
-	Shader& operator= (vector<ShaderCode>);
+	Shader& operator= (vector<ShaderCode>&);
 	bool operator== (Shader&);
 	bool operator== (ShaderCode&);
-	bool operator== (vector<ShaderCode>);
+	bool operator== (vector<ShaderCode>&);
 private:
+	void addUniform(Uniform& u) {	
+		u.enabled = true;
+		Uniforms.insert( Uniforms.begin() + findUniform(u.getName(), 0, Uniforms.size()), u);
+	}
+
 	//variables
 	//OpenGL
 	CustomPtr<GLuint> program;
@@ -135,17 +157,11 @@ private:
 
 	vector<ShaderCode> Code; //contains Shader variable
 	vector<Uniform> Uniforms;
-
-	vector<vector<string>> structVariables; //sort?
+	vector<shared_future<ShaderCode*>*> reqArr;
 
 	//functions
-	void makeShader(ShaderCode*);
 	string checkProgram();
-	GLenum getShaderType(ShaderType);
-	string getShaderCode(string);
-	int findUniform(string&, int, int);
 	int findUniform(Uniform&, int, int);
-	void addUniform(string&);
-	vector<string> resolveStructVariable(string&);
+	int findUniform(string&, int, int);
 };
 

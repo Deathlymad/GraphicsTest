@@ -7,8 +7,7 @@ Gamepad-/Joystick-/MouseHandler implementation
 add Log File
 make UI background modifiable
 make keymap faster
-create Registries for Shaders, textures etc.
-Processor Usage way too high
+improve load call to ambient shader
 
 Long Term:
 Physics

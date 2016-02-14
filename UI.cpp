@@ -36,6 +36,7 @@ void UI::add(UIPart * part)
 
 void UI::init()
 {
+	renderer->build();
 	for (UIPart* part : _parts)
 		part->init();
 	for (UI* child : _children)
@@ -44,6 +45,9 @@ void UI::init()
 
 void UI::load(RessourceHandler *loader)
 {
+	if (!renderer)
+		renderer = new Shader("assets/shaders/UIRender_vs.glsl", "assets/shaders/UIRender_fs.glsl");
+	renderer->load(loader);
 	for (UIPart* part : _parts)
 		part->load(loader);
 	for (UI* child : _children)
@@ -52,8 +56,6 @@ void UI::load(RessourceHandler *loader)
 
 void UI::render()
 {
-	if (!renderer)
-		renderer = new Shader("UIRender_vs.glsl", "UIRender_fs.glsl");
 	if (_enabled)
 	{
 		//internal render

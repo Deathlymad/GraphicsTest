@@ -5,11 +5,18 @@
 #include "Texture.h"
 #include "UI.h"
 
-RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient("forward_ambient_vs.glsl", "forward_ambient_fs.glsl")
+RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient("assets/shaders/forward_ambient_vs.glsl", "assets/shaders/forward_ambient_fs.glsl")
 {
 	this->_screen = _screen;
 	_parent = parent;
 	setup3DEngineState();
+}
+
+void RenderingEngine::load(RessourceHandler * loader)
+{
+	ambient.load(loader);
+	while (loader->loading()) {}
+	ambient.build();
 }
 
 void RenderingEngine::init()

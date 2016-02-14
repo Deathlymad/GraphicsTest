@@ -17,6 +17,7 @@ class RenderingEngine
 public:
 	RenderingEngine(CoreEngine* parent, Screen*);
 
+	void load(RessourceHandler* loader);
 	void init();
 
 	void render(Scene*);

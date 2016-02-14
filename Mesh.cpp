@@ -61,9 +61,7 @@ void Mesh::init()
 {
 	if (_loadReq->get() != this)
 		*this = *(_loadReq->get());
-	_glDownload(getNormalVertices(_vertices), _indices);
-	_vertices.~vector();
-	_indices.~vector();
+	_glDownload(getNormalVertices(_vertices), _indices); //delete?
 }
 
 void Mesh::initGL( unsigned char flag)

@@ -11,6 +11,7 @@ class CoreEngine
 public:
 	CoreEngine(Screen*, Game*);
 
+	void load(RessourceHandler*);
 	void start();
 
 	RenderingEngine* getGraphicEngine();

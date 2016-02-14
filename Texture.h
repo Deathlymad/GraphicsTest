@@ -38,6 +38,15 @@ public:
 	unsigned int getHeight() { return _height; }
 	unsigned int getWidth() { return _width; }
 
+	~Image()
+	{
+		if (_data)
+			delete[(unsigned int)ceil((_width * _height * _depth) / 8)] _data;
+		if (_colorTable)
+			delete[_tableSize] _colorTable;
+		_data = nullptr;
+		_colorTable = nullptr;
+	}
 private:
 	void format();
 	ImageType getFileImageType( ifstream&);

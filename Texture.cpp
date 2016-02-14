@@ -14,13 +14,13 @@
 
 GLuint Texture::_lastTexID = -1;
 
-Image::Image()
+Image::Image() : _data(nullptr), _colorTable(nullptr)
 {
 	_bitMasks[0] = -1;
 	_bitMasks[1] = -1;
 	_bitMasks[2] = -1;
 }
-Image::Image(string fileName)
+Image::Image(string fileName) : _data(nullptr), _colorTable(nullptr)
 {
 	path = fileName;
 	_bitMasks[0] = -1;
@@ -212,6 +212,8 @@ void Texture::glDownload()
 	{
 		_image = *(_imgLink->get());
 	}
+
+	_sampler.update((float*)&_samplerID);
 
 	glActiveTexture(GL_TEXTURE0 + _samplerID);
 	glGenTextures(1, _ID.get());

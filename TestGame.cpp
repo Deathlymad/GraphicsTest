@@ -27,7 +27,9 @@ trans( 0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f))
 	Light1.add(&m);
 	Light2.add(&m);
 
-	_world.addObj(&m);
+	_world.addObj(&Light);
+	_world.addObj(&Light1);
+	_world.addObj(&Light2);
 	
 	UI* menu = new UI(this);
 	menu->addEvent(0, [this, menu](unsigned short, KeyMap::KeyState)
@@ -39,8 +41,6 @@ trans( 0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f))
 	menu->add(new UIText(menu, vec2(-1.0, 0.5), vec2(-0.5, 1.0)));
 
 	setMenu(menu);
-
-	getEngine()->getGraphicEngine()->init();
 }
 
 TestGame::~TestGame()

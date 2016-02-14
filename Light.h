@@ -28,6 +28,9 @@ public:
 
 	BaseLight( vec3 c, float i);
 	
+	virtual void load(RessourceHandler* loader);
+	virtual void init(KeyMap*);
+
 	float getIntensity() { return _intensity; }
 	vec3 getColor() { return _color; }
 
@@ -38,7 +41,7 @@ public:
 	{
 	}
 	
-	virtual void createUniforms(string name);
+	virtual void createUniforms(string& name);
 
 	Shader* getShader(){return shader;}
 protected:
@@ -58,7 +61,7 @@ public:
 
 	DirectionalLight( vec3 c, float i, vec3 dir);
 	
-	virtual void createUniforms( string name);
+	virtual void createUniforms( string& name);
 
 	virtual void render(Shader*, bool);
 
@@ -105,16 +108,6 @@ public:
 		*linear = _linear;
 		*exponent = _exponent;
 	}
-	void removeUniforms(Shader* target, string name)
-	{
-
-		target->removeUniform(name + ".constant");
-		constant = nullptr;
-		target->removeUniform(name + ".linear");
-		linear = nullptr;
-		target->removeUniform(name + ".exponent");
-		exponent = nullptr;
-	}
 
 	float getConstant()
 	{
@@ -153,7 +146,7 @@ public:
 
 	PointLight( vec3 c, float i,Attenuation a, vec3 p);
 	
-	virtual void createUniforms(string name);
+	virtual void createUniforms(string& name);
 
 	virtual void render(Shader*, bool);
 
@@ -194,7 +187,7 @@ public:
 	SpotLight() : PointLight() {}
 	SpotLight( vec3 c, float i,Attenuation a, vec3 p, vec3 dir, float cut);
 	
-	virtual void createUniforms(string name);
+	virtual void createUniforms(string& name);
 
 	virtual void render(Shader*, bool);
 
