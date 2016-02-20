@@ -1,13 +1,10 @@
 Short Term:
 	Options UI
-reduce constructor declarations, can be handled with default parameters
 move Text from UI class
 read PNG
 Gamepad-/Joystick-/MouseHandler implementation
 add Log File
-make UI background modifiable
-make keymap faster
-improve load call to ambient shader
+make UI background modifiableshutdown properly (avoid Error Spam)
 
 Long Term:
 Physics

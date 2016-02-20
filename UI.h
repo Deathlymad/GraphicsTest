@@ -7,27 +7,29 @@ class UIPart;
 class Game;
 
 #pragma once
-class UI : EngineObject
+class UI
 {
 	friend class UIPart;
 	friend class UIButton;
 public:
 	UI(Game* parent);
-	UI(UI* parent);
+	UI(UI* parent = nullptr);
 
 	void add(UI*);
 	void add(UIPart*);
-	void addEvent(unsigned short, function<void(unsigned short, KeyMap::KeyState)>, string, int trig = KeyMap::KeyState::ONHOLD, unsigned char priority = 0);
+	void addEvent(unsigned short, function<void(unsigned short, KeyMap::KeyState)>, string, int trig = KeyMap::KeyState::ONHOLD);
 
 	bool isActive() { return _enabled; }
 
 	void activate() { _enabled = true; keyBinds.activate(); }
 	void deactivate() { _enabled = false; keyBinds.deactivate(); }
 
-	void load(RessourceHandler*);
-	void init();
-	void render();
-	void update();
+	virtual void load(RessourceHandler*);
+	virtual void init();
+	virtual void render();
+	virtual void update();
+
+	UI& operator=(UI& other);
 
 	~UI();
 private:

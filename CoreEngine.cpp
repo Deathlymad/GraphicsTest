@@ -6,13 +6,15 @@ CoreEngine::CoreEngine(Screen* _screen, Game* g) : _game(g), GrEngine( this, _sc
 {
 }
 
-void CoreEngine::load(RessourceHandler *loader)
+void CoreEngine::load()
 {
-	GrEngine.load(loader);
+	_game->load(&_ressourceLoader);
+	GrEngine.load(&_ressourceLoader);
 }
 
 void CoreEngine::start()
 {
+	while (_ressourceLoader.loading()) {}
 	GrEngine.init();
 	UpdateThread.run();
 }

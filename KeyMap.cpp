@@ -8,7 +8,6 @@
 #define GLFW
 #endif
 
-
 #include "KeyMap.h"
 
 LoopedThreadServer KeyMap::_keyTickServer(1);
@@ -28,10 +27,10 @@ KeyMap::KeyMap() : InputHandler(), _keyTickClient( [this] {updateKeyMap(this); }
 	_keyTickServer.addThreadClient(&_keyTickClient);
 }
 
-void KeyMap::addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig, unsigned char priority)
+void KeyMap::addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig)
 {
 	KeyBind k;
-	k.key = key | ((priority & 32) << 11);
+	k.key = key;
 	k.callback = Func;
 	k.name = name;
 	k.trigger = trig;
@@ -48,42 +47,46 @@ void KeyMap::onKeyPress(unsigned short key)
 		temp.callback(key, ONHOLD);
 }
 
-KeyMap & KeyMap::operator=(KeyMap & k)
+KeyMap & KeyMap::operator=(KeyMap & other)
 {
-	KeyBindings = k.KeyBindings;
+	KeyBindings = other.KeyBindings;
+
+	_activated = other._activated;
 	return *this;
 }
 
+
 KeyMap::~KeyMap()
-{}
+{
+	_keyTickClient.disconnect();
+}
 
 void KeyMap::onKeyPress(char button, char action, char mods)
 {
-	for (unsigned char ind = 31; ind > 0; ind--) // takes a lot of time
+	unsigned short key = (button & 255) | ((mods & 7) << 8);
+	size_t pos= find(key, &KeyBindings, 0, KeyBindings.size());
+	if (pos >= KeyBindings.size())
+		return;
+	if (key != KeyBindings[pos].key)
+		return;
+	if (action == GLFW_PRESS)
 	{
-		unsigned short key = (button & 255) | ((mods & 7) << 8) | ((ind & 32) << 11);
-		size_t pos= find(key, &KeyBindings, 0, KeyBindings.size());
-		if (pos >= KeyBindings.size())
-			continue;
-		if (key != KeyBindings[pos].key)
-			continue;
-		if (action == GLFW_PRESS)
+		if (KeyBindings[pos].isPressed)
+			return; //cannot cannot press a pressed key
+		KeyBindings[pos].isPressed = true;
+		if (KeyBindings[pos].trigger & ONPRESS && _activated)
 		{
-			KeyBindings[pos].isPressed = true;
-			if (KeyBindings[pos].trigger & ONPRESS && _activated)
-			{
-				KeyBindings[pos].callback(key, ONPRESS);
-				continue;
-			}
+			KeyBindings[pos].callback(key, ONPRESS);
 		}
-		if (action == GLFW_RELEASE)
+	}
+	else if (action == GLFW_RELEASE)
+	{
+		if (!KeyBindings[pos].isPressed)
+			return; //cannot release a key that is not pressed
+		KeyBindings[pos].isPressed = false;
+		if (KeyBindings[pos].trigger & ONRELEASE && _activated)
 		{
-			KeyBindings[pos].isPressed = false;
-			if (KeyBindings[pos].trigger & ONRELEASE && _activated)
-			{
-				KeyBindings[pos].callback(key, ONRELEASE);
-				continue;
-			}
+			KeyBindings[pos].callback(key, ONRELEASE);
 		}
 	}
 }

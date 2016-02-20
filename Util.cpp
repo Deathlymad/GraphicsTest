@@ -85,13 +85,18 @@ NSP_UTIL_BEG
 				_listGuard.lock();
 				if (_maxElement >= _taskList.size()) //resets
 					_maxElement = 0;
-				try {
-					_taskList[_maxElement]->_func();
-				}
-				catch (bad_function_call except)
+				if (_taskList[_maxElement]->_connected)
 				{
-					cout << except.what() << endl;
+					try {
+						_taskList[_maxElement]->_func();
+					}
+					catch (bad_function_call except)
+					{
+						cout << except.what() << endl;
+					}
 				}
+				else
+					_taskList.erase(_taskList.begin() + _maxElement);
 				_maxElement++;
 					
 

@@ -11,7 +11,7 @@ class CoreEngine
 public:
 	CoreEngine(Screen*, Game*);
 
-	void load(RessourceHandler*);
+	void load();
 	void start();
 
 	RenderingEngine* getGraphicEngine();
@@ -20,6 +20,7 @@ public:
 private:
 	void update();
 
+	RessourceHandler _ressourceLoader;
 	RenderingEngine GrEngine;
 	Clock UpdateThread;
 

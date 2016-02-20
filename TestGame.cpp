@@ -27,20 +27,15 @@ trans( 0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f))
 	Light1.add(&m);
 	Light2.add(&m);
 
-	_world.addObj(&Light);
-	_world.addObj(&Light1);
-	_world.addObj(&Light2);
+	getScene().addObj(&Light);
+	getScene().addObj(&Light1);
+	getScene().addObj(&Light2);
 	
-	UI* menu = new UI(this);
-	menu->addEvent(0, [this, menu](unsigned short, KeyMap::KeyState)
-	{
-		if (menu->isActive())
-			menu->deactivate();
-	}, "Menu", KeyMap::KeyState::ONPRESS, 0);
-	menu->add(new UIButton(menu, vec2(-0.2, -0.2), vec2(0.2, 0.2), -1, [this] {Terminate(); }));
-	menu->add(new UIText(menu, vec2(-1.0, 0.5), vec2(-0.5, 1.0)));
+	getScene().setRootUI(UI(this));
+	getScene().addObj(new UIButton(getScene().getMenu(), vec2(-0.2, -0.2), vec2(0.2, 0.2), -1, [this] {getScene().toggleMenu(); }));
+	getScene().addObj(new UIText(getScene().getMenu(), vec2(-1.0, 0.5), vec2(-0.5, 1.0)));
 
-	setMenu(menu);
+	load();
 }
 
 TestGame::~TestGame()

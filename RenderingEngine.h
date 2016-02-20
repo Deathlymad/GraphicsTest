@@ -21,7 +21,6 @@ public:
 	void init();
 
 	void render(Scene*);
-	void render(UI*);
 
 	void set2D();
 	void set3D();
@@ -48,6 +47,10 @@ private:
 	Shader ambient;
 	vector<BaseLight*> Lights;
 
-
+	enum RenderingType
+	{
+		_2D,
+		_3D
+	} _state;
 	CoreEngine* _parent;
 };

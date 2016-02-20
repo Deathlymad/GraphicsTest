@@ -3,24 +3,18 @@
 #include "RenderingEngine.h"
 
 
-Game::Game() : _screen(1366, 768, "Test", char(154)), _engine(&_screen, this), _world()
+Game::Game() : _screen(1366, 768, "Test", char(154)), _engine(&_screen, this), _world(this)
 {
-	_screen.handleWindow(InputHandler::registerCallbacks); //works only once i think
+	_screen.handleWindow(InputHandler::registerCallbacks);
 	KeyMaps.push_back(new KeyMap(&_screen));
 
 	running = false;
-	_menu = nullptr;
 }
 
 void Game::Start()
 {
-	_engine.load(&_ressourceLoader);
-	_world.load(&_ressourceLoader);
-	while (_ressourceLoader.loading()) {}
-	if (_menu)
-		_menu->init();
-	setupKeyMap(*KeyMaps[0]);
 	_engine.start();
+	_world.init(KeyMaps[0]);
 	running = true;
 	Run();
 }
@@ -32,18 +26,16 @@ void Game::Run()
 	system_clock::time_point lastTick = system_clock::now();
 	while (running)
 	{
-		if (!_menu->isActive())
+		if (!_world.getMenuState())
 		{
 			if (!is3D)
 			{
 				is3D = true;
-				_menu->deactivate();
 				_screen.disableCursor();
 				KeyMaps[0]->activate();
 				_engine.getGraphicEngine()->set3D();
 				minLoopTime = 16;
 			}
-			_engine.getGraphicEngine()->render(&_world);
 		}
 		else
 		{
@@ -53,10 +45,10 @@ void Game::Run()
 				_screen.enableCursor();
 				KeyMaps[0]->deactivate();
 				_engine.getGraphicEngine()->set2D();
-				minLoopTime = 50;
+				minLoopTime = 50; //slow ticking
 			}
-			_engine.getGraphicEngine()->render(_menu);
 		}
+		_engine.getGraphicEngine()->render(&_world);
 		this_thread::sleep_for(milliseconds(minLoopTime) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
 		lastTick = system_clock::now();
 	}
@@ -72,40 +64,23 @@ void Game::addObject(EngineObject & object)
 	_world.addObj(&object);
 }
 
+void Game::load(RessourceHandler * loader)
+{
+	_world.load(loader);
+}
+
 void Game::update()
 {
-	if (!_menu->isActive())
-		_world.update();
-	else if (_menu)
-		_menu->update();
+	_world.update();
 }
 
 KeyMap & Game::addKeyMap()
 {
 	unsigned int temp = KeyMaps.size();
 	KeyMaps.insert( KeyMaps.begin() + temp, new KeyMap());
-	setupKeyMap(*KeyMaps[temp]);
 	return *KeyMaps[temp];
 }
 
 Game::~Game()
 {
-}
-
-void Game::toggleMenu()
-{
-	if (_menu->isActive())
-		_menu->deactivate();
-	else
-		_menu->activate();
-}
-
-void Game::setupKeyMap(KeyMap &k)
-{
-	k.addKeyBind(0, [this](unsigned short, KeyMap::KeyState)
-	{
-		if (!_menu->isActive())
-			_menu->activate();
-	}, "Menu", KeyMap::KeyState::ONRELEASE, 0);
-	_world.init( &k);
 }

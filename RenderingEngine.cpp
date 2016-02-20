@@ -33,7 +33,7 @@ void RenderingEngine::render(Scene * s)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	s->render(&ambient, true);
+	s->render(&ambient, true, _state > 0);
 	
 	glEnable(GL_BLEND);  //setting up Multipassing
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -47,18 +47,6 @@ void RenderingEngine::render(Scene * s)
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND); //resetting to standard State
 	
-	_screen->updateScreen();
-}
-
-void RenderingEngine::render(UI * ui)
-{
-	if (!_screen->isFocused())
-		return;
-
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	ui->render();
-
 	_screen->updateScreen();
 }
 
@@ -92,6 +80,8 @@ void RenderingEngine::setup3DEngineState()
 	glDepthFunc(GL_LESS); //Tells OpenGL that Framebuffer values may be overwritten if the new Fragment is closer
 	glEnable(GL_DEPTH_TEST); //Enables Depth Test for Fragments
 	glEnable(GL_ALPHA_TEST);
+
+	_state = _3D;
 }
 
 void RenderingEngine::setup2DEngineState()
@@ -101,4 +91,6 @@ void RenderingEngine::setup2DEngineState()
 	glEnable(GL_CULL_FACE); //Enables Backfaceculling
 	glDisable(GL_DEPTH_TEST); //Enables Depth Test for Fragments
 	glDisable(GL_ALPHA_TEST);
+
+	_state = _2D;
 }

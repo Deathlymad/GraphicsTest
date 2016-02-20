@@ -1,5 +1,6 @@
 #include "EngineObject.h"
 #include "Camera.h"
+#include "UI.h"
 
 class Shader;
 class RessourceHandler;
@@ -8,21 +9,46 @@ class RessourceHandler;
 class Scene
 {
 public:
-	Scene();
+	Scene(Game*);
 
 	void addObj(EngineObject* obj)
 	{
-		root.add(obj); //could lead to class slicing
+		_root.add(obj);
+	}
+	void addObj(UI* child)
+	{
+		_menu.add(child);
+	}
+	void addObj(UIPart* part)
+	{
+		_menu.add(part);
+	}
+	void setRootUI(UI& ui)
+	{
+		_menu = ui;
 	}
 
 	void load(RessourceHandler*);
 	void init(KeyMap*);
 	void update();
-	void render(Shader*, bool);
+	void render(Shader*, bool, bool);
+
+	bool getMenuState() { return _menu.isActive(); }
+
+	void toggleMenu()
+	{
+		if (_menu.isActive())
+			_menu.deactivate();
+		else
+			_menu.activate();
+	}
+
+	UI* getMenu() { return &_menu; }
 
 	~Scene();
 private:
-	EngineObject root;
-	Camera View;
+	EngineObject _root;
+	Camera _view;
+	UI _menu;
 };
 

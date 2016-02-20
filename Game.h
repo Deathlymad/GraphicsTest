@@ -2,9 +2,7 @@
 #include "CoreEngine.h"
 #include "Scene.h"
 #include "KeyMap.h"
-#include "UI.h"
 #include "Screen.h"
-#include "RessourceHandler.h"
 
 #pragma once
 class Game
@@ -20,9 +18,8 @@ public:
 
 	void addObject(EngineObject&);
 
+	virtual void load(RessourceHandler*);
 	virtual void update();
-
-	void toggleMenu();
 
 	KeyMap& addKeyMap();
 
@@ -32,15 +29,12 @@ private: //context
 	CoreEngine _engine;
 
 protected:
-	RessourceHandler _ressourceLoader;
-	Scene _world;
+	Scene& getScene() { return _world; }
 	CoreEngine* getEngine() { return &_engine; }
-	void setMenu(UI* ui) { _menu = ui; _menu->load(&_ressourceLoader); }
+	void load() { _engine.load(); }
 private:
+	Scene _world;
 
-	UI* _menu;
-
-	void setupKeyMap(KeyMap&);
 	vector<KeyMap*> KeyMaps;
 
 	bool running;
