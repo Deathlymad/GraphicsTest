@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <future>
 #include <iostream>
 #include <mutex>
 #include <string>
@@ -145,8 +146,6 @@
 
 			unsigned int getThreadCount();
 
-			void changeThreadAmt(unsigned int threadCount);
-
 			~ThreadServer();
 		protected:
 			ThreadServer(unsigned int threadCount, function<void()> func);
@@ -155,9 +154,8 @@
 
 			mutex _listGuard;
 			vector<ThreadClient*> _taskList;
+			vector<future<void>> _taskResults;
 			unsigned int _maxElement;
-			vector<thread*> _threads;
-			unsigned int _conCount;
 			bool _running;
 		};
 		class LoopedThreadServer : public ThreadServer
@@ -174,9 +172,6 @@
 			//(Kodierung -> Zeichensatz -> Westeuropäisch -> OEM 850 in Notepad++) 
 			bool strsep(vector<string> &vec, string &s);
 			bool strsep(vector<string> &vec, string &s, char c);
-
-			bool load(vector<string>  &vec, string filename);
-			bool load(vector<unsigned char>&vec, string filename);
 
 			bool save(vector<string>  &vec, string filename);
 			bool save(vector<unsigned char>&vec, string filename);

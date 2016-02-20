@@ -451,7 +451,7 @@ void Shader::ShaderCode::load(ifstream &ShaderStream)
 		regex structRegex = regex("struct .*?\\n?\\{\\n(.*?;\\n)*\\};");
 		auto StructBegin = std::sregex_iterator(_code.begin(), _code.end(), structRegex);
 
-		for (auto i = StructBegin; i != std::sregex_iterator(); ++i) {
+		for (auto i = StructBegin; i != std::sregex_iterator(); i++) {
 			std::string temp = (*i).str();
 			vector<string> structVar = vector<string>();
 			if (temp[0] != 's') //weird things are being read
@@ -476,7 +476,7 @@ void Shader::ShaderCode::load(ifstream &ShaderStream)
 
 		regex structVarRegex = regex("uniform .*? .*?;\\n");
 		auto UniformsBegin = std::sregex_iterator(_code.begin(), _code.end(), structVarRegex);
-		for (auto i = UniformsBegin; i != std::sregex_iterator(); ++i) {
+		for (auto i = UniformsBegin; i != std::sregex_iterator(); i++) {
 			std::string match_str = (*i).str();
 			addUniform(match_str.substr(match_str.find_first_of(' ') + 1, match_str.size() - 3 - match_str.find_first_of(' ')));
 		}

@@ -30,10 +30,9 @@ public:
 	RenderingEngine& operator= (RenderingEngine& engine)
 	{
 		_screen = engine._screen;
-
 		ambient = engine.ambient;
-
 		Lights = engine.Lights;
+		_parent = engine._parent;
 		return *this;
 	}
 
@@ -49,8 +48,11 @@ private:
 
 	enum RenderingType
 	{
+		ERR,
 		_2D,
 		_3D
-	} _state;
+	};
+	static RenderingType _state; //that state is global
+
 	CoreEngine* _parent;
 };

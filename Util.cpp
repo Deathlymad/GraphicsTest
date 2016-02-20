@@ -1,12 +1,18 @@
 #include "Util.h"
 #include <stdio.h>
 #include <fstream>
+
 #include <iostream>
 
 NSP_UTIL_BEG
-	ThreadServer::ThreadServer(unsigned int threadCount) : _running(true), _taskList(), _threads(), _conCount(threadCount), _maxElement(0)
+	ThreadServer::ThreadServer(unsigned int threadCount) : _running(true), _taskList(), _maxElement(0)
 	{
-		_threads = vector<thread*>(threadCount, new thread([this] {this->run(); }));
+		unsigned temp = threadCount;
+		while (temp > 0)
+		{
+			_taskResults.push_back(async([this] {run(); }));
+			temp--;
+		}
 	}
 
 	bool ThreadServer::hasTasks()
@@ -20,29 +26,21 @@ NSP_UTIL_BEG
 		_taskList.push_back(client);
 	}
 
-	unsigned int ThreadServer::getThreadCount()
+	ThreadServer::~ThreadServer()
 	{
-		return _threads.size();
-	}
-	void ThreadServer::changeThreadAmt(unsigned int threadCount)
-	{
-		if ((threadCount - _threads.size()) > 0)
-		{
-			_threads.push_back(new thread([this] {run(); }));
-		}//add decementing
+		_running = false;
+		for (future<void>& fut : _taskResults)
+			fut.get();
 	}
 
-		ThreadServer::~ThreadServer()
+	ThreadServer::ThreadServer(unsigned int threadCount, function<void()> func) : _running(true), _taskList(), _maxElement(0)
+	{
+		unsigned temp = threadCount;
+		while (temp > 0)
 		{
-			_running = false;
-			for (thread* t : _threads)
-				if (t->joinable())
-					t->join();
+			_taskResults.push_back(async(func));
+			temp--;
 		}
-
-	ThreadServer::ThreadServer(unsigned int threadCount, function<void()> func) : _running(true), _taskList(), _threads(), _conCount(threadCount)
-	{
-		_threads = vector<thread*>(threadCount, new thread(func));
 	}
 
 	void ThreadServer::run()

@@ -5,6 +5,9 @@
 #include "Texture.h"
 #include "UI.h"
 
+
+RenderingEngine::RenderingType RenderingEngine::_state = ERR;
+
 RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient("assets/shaders/forward_ambient_vs.glsl", "assets/shaders/forward_ambient_fs.glsl")
 {
 	this->_screen = _screen;
@@ -15,7 +18,7 @@ RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient(
 void RenderingEngine::load(RessourceHandler * loader)
 {
 	ambient.load(loader);
-	while (loader->loading()) {}
+	loader->wait();
 	ambient.build();
 }
 
@@ -33,7 +36,7 @@ void RenderingEngine::render(Scene * s)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	s->render(&ambient, true, _state > 0);
+	s->render(&ambient, true, _state > 1);
 	
 	glEnable(GL_BLEND);  //setting up Multipassing
 	glBlendFunc(GL_ONE, GL_ONE);

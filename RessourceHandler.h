@@ -17,6 +17,7 @@ class RessourceLoader //Loader Interface
 		PROCESSING,
 		DONE
 	};
+	friend class RessourceHandler;
 public:
 	RessourceLoader() { _state = PENDING; }
 
@@ -42,6 +43,12 @@ class RessourceHandler
 public:
 	RessourceHandler();
 
+	void wait()
+	{
+		while (loading())
+			this_thread::sleep_for(milliseconds(1000));
+	}
+
 	template<class T>
 	shared_future<T*>* getRessource(string& file, RessourceLoader* loader)
 	{
@@ -49,21 +56,26 @@ public:
 		if (fut == nullptr)
 		{
 			fut = new shared_future<T*>();
-			*fut = async([this] (RessourceHandler* handler, string path, RessourceLoader* _loader) -> T* {
-				return (
-					handler->LoadCounter++,
-					_loader->load(ifstream(path)),
-					handler->LoadCounter--,
-					reinterpret_cast<T*>(_loader->get())
-					);
-			}, this, file, loader).share();
+			promise<T*>* t = new promise<T*>();
+			*fut = t->get_future().share();
+			_loadCounter++;
+			loader->_state = RessourceLoader::State::PROCESSING;
+			_loaderServer.addThreadClient(new ThreadClient( [ this, file, loader, t] (){
+				loader->load(ifstream(file));
+				t->set_value(reinterpret_cast<T*>(loader->get()));
+				_loadCounter--;
+				loader->_state = RessourceLoader::State::DONE;
+			}));
 			_registry.push(file, new shared_future<void*>(*((shared_future<void*>*)fut)));
 		}
 		return ((shared_future<T*>*)_registry.find(file));
 	}
 	shared_future<vector<string>*>* getRessource(string& file);
 
-	bool loading() { return LoadCounter > 0; }
+	bool loading()
+	{
+		return _loadCounter > 1;
+	}
 private:
 	class RessourceRegistry {
 	public:
@@ -91,7 +103,7 @@ private:
 		vector<Entry> _registry;
 	} _registry;
 
-	unsigned int LoadCounter;
-
+	unsigned int _loadCounter;
+	ThreadServer _loaderServer;
 	static vector<string> loaderList;
 };

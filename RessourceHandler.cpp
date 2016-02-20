@@ -4,7 +4,7 @@
 
 vector<string> RessourceHandler::loaderList = vector<string>();
 
-RessourceHandler::RessourceHandler() : LoadCounter(0)
+RessourceHandler::RessourceHandler() : _loadCounter(0), _loaderServer(4)
 {
 }
 
