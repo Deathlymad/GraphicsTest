@@ -176,6 +176,8 @@ bool Shader::operator==(vector<ShaderCode>& Shaders)
 
 void Shader::ShaderCode::makeShader()
 {
+	printErr();
+
 	if (!glIsShader(*(_pos.get())))
 	{
 		_pos.set( new GLuint(glCreateShader(getShaderType(_type)))); //no Shader existent; creating
@@ -438,9 +440,11 @@ int Shader::Uniform::getUniformSize(string& name)
 
 void Shader::ShaderCode::load(ifstream &ShaderStream)
 {
-	string Line = "";
+	string Line = "";;
 	while (getline(ShaderStream, Line))
 	{
+		if (ShaderStream.eof() || ShaderStream.bad())
+			break;
 		_code += Line + "\n";
 	}
 	//Analyze Code
@@ -480,10 +484,12 @@ void Shader::ShaderCode::load(ifstream &ShaderStream)
 			std::string match_str = (*i).str();
 			addUniform(match_str.substr(match_str.find_first_of(' ') + 1, match_str.size() - 3 - match_str.find_first_of(' ')));
 		}
+		_loadingErr = "Successfully loaded Shader: " + _path + "\n";
 	}
 	catch (regex_error &e)
 	{
-		cout << e.what() << std::endl;
+		_loadingErr += string(e.what()) + "\n";
+		_loadingErr += "Could not Resolve Uniforms in Shader \n";
 	}
 
 }
@@ -491,4 +497,9 @@ void Shader::ShaderCode::load(ifstream &ShaderStream)
 void * Shader::ShaderCode::get()
 {
 	return this;
+}
+
+void Shader::ShaderCode::printErr()
+{
+	cout << _loadingErr;
 }

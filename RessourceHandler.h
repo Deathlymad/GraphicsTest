@@ -62,7 +62,8 @@ public:
 			loader->_state = RessourceLoader::State::PROCESSING;
 			_loaderServer.addThreadClient(new ThreadClient( [ this, file, loader, t] (){
 				loader->load(ifstream(file));
-				t->set_value(reinterpret_cast<T*>(loader->get()));
+				T* temp = reinterpret_cast<T*>(loader->get());
+				t->set_value(temp);
 				_loadCounter--;
 				loader->_state = RessourceLoader::State::DONE;
 			}));

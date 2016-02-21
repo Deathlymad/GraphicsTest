@@ -84,6 +84,7 @@ public: //Public structures
 		ShaderType _type; //should be made private
 		string _path;
 		Shader* _owner;
+		string _loadingErr;
 	public:
 		void clearShader(GLuint* s)
 		{
@@ -99,6 +100,8 @@ public: //Public structures
 		
 		void load(ifstream&);
 		void* get();
+
+		void printErr();
 
 		void makeShader();
 

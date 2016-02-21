@@ -61,12 +61,13 @@ NSP_UTIL_BEG
 				ThreadClient* curr = _taskList[i];
 				curr->_func();
 				curr->disconnect();
+				_listGuard.unlock();
 			}
 			else
 			{
+				_listGuard.unlock();
 				this_thread::sleep_for(milliseconds(50));
 			}
-			_listGuard.unlock();
 		}
 	}
 

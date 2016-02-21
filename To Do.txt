@@ -6,6 +6,8 @@ Gamepad-/Joystick-/MouseHandler implementation
 add Log File
 make UI background modifiable
 enable loading after the initial Phase
+shader loading results into infinite loop from time  to time
+fix UI Background
 
 Long Term:
 Physics
