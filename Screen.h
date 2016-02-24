@@ -23,6 +23,8 @@ public:
 	Screen(string title, char flags);
 	Screen(int width, int height, string title, char flags);
 
+	bool isScreenClosed();
+
 	void updateScreen();
 
 	void enableCursor();

@@ -5,25 +5,15 @@
 
 #include "Shader.h"
 
-Shader::Shader() : program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader() : Code(), program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code.clear();
 }
 
-Shader::Shader(string vertexPath, string fragPath) : program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader(string& vertexPath, string& fragPath) : Code(), program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code.push_back(ShaderCode( this, VERTEX, vertexPath));
 	Code.push_back(ShaderCode( this, FRAGMENT, fragPath));
-}
-
-Shader::Shader(ShaderCode ShaderArr[]) : program([this](GLuint* p) {deleteProgram(p); })
-{
-	Code.insert(Code.begin() + 3, sizeof(ShaderArr) / sizeof(ShaderCode), ShaderArr[0]);//copies Array in vector
-}
-
-Shader::Shader(vector<ShaderCode> Shaders) : program([this](GLuint* p) {deleteProgram(p); })
-{
-	Code = Shaders;
 }
 
 Shader::~Shader(){}
@@ -440,13 +430,19 @@ int Shader::Uniform::getUniformSize(string& name)
 
 void Shader::ShaderCode::load(ifstream &ShaderStream)
 {
-	string Line = "";;
-	while (getline(ShaderStream, Line))
+	string Line = "";
+	if (ShaderStream.is_open())
 	{
-		if (ShaderStream.eof() || ShaderStream.bad())
-			break;
-		_code += Line + "\n";
+		while (getline(ShaderStream, Line))
+		{
+			if (ShaderStream.eof() || ShaderStream.bad())
+				break;
+			_code += Line + "\n";
+		}
 	}
+	else
+		return;
+
 	//Analyze Code
 	try {
 		//get Structures
@@ -455,11 +451,10 @@ void Shader::ShaderCode::load(ifstream &ShaderStream)
 		regex structRegex = regex("struct .*?\\n?\\{\\n(.*?;\\n)*\\};");
 		auto StructBegin = std::sregex_iterator(_code.begin(), _code.end(), structRegex);
 
+		unsigned int _counter(0);
 		for (auto i = StructBegin; i != std::sregex_iterator(); i++) {
 			std::string temp = (*i).str();
 			vector<string> structVar = vector<string>();
-			if (temp[0] != 's') //weird things are being read
-				continue;
 			regex_search(temp, _vars, regex("struct .*?\\n\\{\\n"));
 			temp = _vars[0].str();
 			structVar.push_back(temp.substr(7, temp.size() - 10));//adds name
@@ -473,23 +468,23 @@ void Shader::ShaderCode::load(ifstream &ShaderStream)
 				structVar.push_back(match_str.substr(1, match_str.size() - 3)); //write the variables
 			}
 			structVariables.push_back(structVar);
+			_counter++;
 		}
 
-
 		//read uniforms
-
+		_counter = 0;
 		regex structVarRegex = regex("uniform .*? .*?;\\n");
 		auto UniformsBegin = std::sregex_iterator(_code.begin(), _code.end(), structVarRegex);
 		for (auto i = UniformsBegin; i != std::sregex_iterator(); i++) {
 			std::string match_str = (*i).str();
 			addUniform(match_str.substr(match_str.find_first_of(' ') + 1, match_str.size() - 3 - match_str.find_first_of(' ')));
+			_counter++;
 		}
-		_loadingErr = "Successfully loaded Shader: " + _path + "\n";
 	}
 	catch (regex_error &e)
 	{
-		_loadingErr += string(e.what()) + "\n";
-		_loadingErr += "Could not Resolve Uniforms in Shader \n";
+		cout << string(e.what()) + "\n";
+		cout << "Could not Resolve Uniforms in Shader \n";
 	}
 
 }

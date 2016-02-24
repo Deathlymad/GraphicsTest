@@ -94,7 +94,7 @@ public: //Public structures
 		}
 
 		ShaderCode() : _owner(nullptr), _type(TESSELATION_EVALUATION), _path(""), _pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
-		ShaderCode(Shader* owner, ShaderType type, string path) : _owner(owner), _type(type), _path(path), _pos([this](GLuint* s) {clearShader(s); }, new GLuint())
+		ShaderCode(Shader* owner, ShaderType type, string& path) : _owner(owner), _type(type), _path(path), _pos([this](GLuint* s) {clearShader(s); }, new GLuint())
 		{ _pos.setDestructor([this](GLuint* s) {clearShader(s); }); }
 		ShaderCode(Shader* owner, ShaderType type, char* path) : _owner(owner), _type(type), _path(path), _pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
 		
@@ -121,9 +121,7 @@ public: //Public structures
 public:
 	//construction / destruction
 	Shader();
-	Shader(string, string);
-	Shader(ShaderCode[]);
-	Shader(vector<ShaderCode>);
+	Shader(string&, string&);
 	~Shader();
 
 	//getter / setter

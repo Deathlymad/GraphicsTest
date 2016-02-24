@@ -48,6 +48,7 @@ void Game::Run()
 				minLoopTime = 50; //slow ticking
 			}
 		}
+		running = !_screen.isScreenClosed();
 		_engine.getGraphicEngine()->render(&_world);
 		this_thread::sleep_for(milliseconds(minLoopTime) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
 		lastTick = system_clock::now();

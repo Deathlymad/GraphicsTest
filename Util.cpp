@@ -23,7 +23,9 @@ NSP_UTIL_BEG
 	void ThreadServer::addThreadClient(ThreadClient* client)
 	{
 		client->_connected = true;
+		_listGuard.lock();
 		_taskList.push_back(client);
+		_listGuard.unlock();
 	}
 
 	ThreadServer::~ThreadServer()
@@ -45,23 +47,39 @@ NSP_UTIL_BEG
 
 	void ThreadServer::run()
 	{
+		system_clock::time_point lastTick = system_clock::now();
+		ThreadClient* temp = nullptr;
 		while (_running)
 		{
 			_listGuard.lock();
-			if (_maxElement >= _taskList.size())
-			{
-				_taskList.clear();
-				_maxElement = 0;
-			}
-			unsigned int i = _maxElement;
-			_maxElement++;
-
 			if (!_taskList.empty())
 			{
-				ThreadClient* curr = _taskList[i];
-				curr->_func();
-				curr->disconnect();
-				_listGuard.unlock();
+				if (_maxElement >= _taskList.size()) //resets
+					_maxElement = 0;
+				temp = _taskList[_maxElement];
+				if (!temp->_connected || temp->_executing)
+				{
+					_taskList.erase(_taskList.begin() + _maxElement);
+					temp = nullptr;
+					_maxElement++;
+					_listGuard.unlock();
+				}
+				else {
+					temp->_executing = true;
+					_maxElement++;
+					_listGuard.unlock();
+					try {
+						temp->_func();
+						temp->disconnect();
+					}
+					catch (bad_function_call except)
+					{
+						cout << except.what() << endl;//really bad Idea
+					}
+					temp->_executing = false;
+					temp = nullptr;
+					this_thread::sleep_for(milliseconds(50) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
+				}
 			}
 			else
 			{
@@ -75,36 +93,42 @@ NSP_UTIL_BEG
 
 	void LoopedThreadServer::_run()
 	{
-
 		system_clock::time_point lastTick = system_clock::now();
+		ThreadClient* temp = nullptr;
 		while (_running)
 		{
+			_listGuard.lock();
 			if (!_taskList.empty())
 			{
-				_listGuard.lock();
 				if (_maxElement >= _taskList.size()) //resets
 					_maxElement = 0;
-				if (_taskList[_maxElement]->_connected)
+				 temp = _taskList[_maxElement];
+				if (!temp->_connected || temp->_executing)
 				{
+					_taskList.erase(_taskList.begin() + _maxElement);
+					temp = nullptr;
+					_maxElement++;
+					_listGuard.unlock();
+				}
+				else {
+					temp->_executing = true;
+					_maxElement++;
+					_listGuard.unlock();
 					try {
-						_taskList[_maxElement]->_func();
+						temp->_func();
 					}
 					catch (bad_function_call except)
 					{
-						cout << except.what() << endl;
+						cout << except.what() << endl;//really bad Idea
 					}
+					temp->_executing = false;
+					temp = nullptr;
+					this_thread::sleep_for(milliseconds(50) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
 				}
-				else
-					_taskList.erase(_taskList.begin() + _maxElement);
-				_maxElement++;
-					
-
-				_listGuard.unlock();
-
-				this_thread::sleep_for(milliseconds(17) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
 			}
 			else
 			{
+				_listGuard.unlock();
 				this_thread::sleep_for(milliseconds(50));
 			}
 		}

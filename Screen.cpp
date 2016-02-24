@@ -183,6 +183,11 @@ Screen::Screen(int width, int height, string title, char flags)
 	setupGraphicFunctions();
 }
 
+bool Screen::isScreenClosed()
+{
+	return glfwWindowShouldClose(_winHandle);
+}
+
 void Screen::updateScreen()
 {
 	glfwSwapBuffers(_winHandle);

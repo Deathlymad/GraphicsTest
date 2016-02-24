@@ -50,9 +50,10 @@ void BaseLight::createUniforms( string& name)
 DirectionalLight::DirectionalLight( vec3 c, float i, vec3 dir) : BaseLight( c, i)
 {
 	_normal = dir;
-	shader = new Shader("assets/shaders/forward_directional_vs.glsl", "assets/shaders/forward_directional_fs.glsl");
+	shader = new Shader(string("assets/shaders/forward_directional_vs.glsl"), string("assets/shaders/forward_directional_fs.glsl"));
 	_name = "Light";
 }
+
 
 void DirectionalLight::createUniforms( string& name)
 {
@@ -81,7 +82,7 @@ PointLight::PointLight( vec3 c, float i,Attenuation a, vec3 p) : BaseLight( c, i
 	float li = a.getLinear();
 	float co = a.getConstant() * getIntensity() * std::max(getColor().x, std::max(getColor().y, getColor().z));
 	_range = abs((-li + sqrtf(li * li - 4 * ex * co)) / (2 * ex));
-	shader = new Shader( "assets/shaders/forward_point_vs.glsl",  "assets/shaders/forward_point_fs.glsl");
+	shader = new Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_fs.glsl"));
 	_name = "Light";
 }
 	
@@ -116,7 +117,7 @@ SpotLight::SpotLight( vec3 c, float i,Attenuation a, vec3 p, vec3 dir, float cut
 	_cutoff = cut;
 	if (shader)
 		shader->~Shader();
-	shader = new Shader( "assets/shaders/forward_spot_vs.glsl", "assets/shaders/forward_spot_fs.glsl");
+	shader = new Shader(string("assets/shaders/forward_spot_vs.glsl"), string("assets/shaders/forward_spot_fs.glsl"));
 	_name = "Light";
 }
 	

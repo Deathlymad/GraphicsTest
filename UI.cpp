@@ -49,7 +49,7 @@ void UI::init()
 void UI::load(RessourceHandler *loader)
 {
 	if (!renderer) {
-		renderer = new Shader("assets/shaders/UIRender_vs.glsl", "assets/shaders/UIRender_fs.glsl");
+		renderer = new Shader(string("assets/shaders/UIRender_vs.glsl"), string("assets/shaders/UIRender_fs.glsl"));
 		renderer->load(loader);
 	}
 	for (UIPart* part : _parts)

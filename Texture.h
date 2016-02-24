@@ -59,7 +59,7 @@ private:
 	unsigned short _depth;
 	unsigned int _compression;
 	unsigned int _bitMasks[3];
-	unsigned int _width, _height;
+	int _width, _height;
 
 	char* _colorTable;
 	unsigned int _tableSize;

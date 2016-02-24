@@ -19,7 +19,7 @@ class RessourceLoader //Loader Interface
 	};
 	friend class RessourceHandler;
 public:
-	RessourceLoader() { _state = PENDING; }
+	RessourceLoader() : _ex(new mutex()) { _state = PENDING; }
 
 	virtual void load(ifstream&) = 0;
 	virtual void* get() = 0;
@@ -27,6 +27,7 @@ public:
 	
 	virtual ~RessourceLoader() {};
 protected:
+	mutex* _ex;
 	State _state;
 };
 
@@ -43,40 +44,30 @@ class RessourceHandler
 public:
 	RessourceHandler();
 
-	void wait()
-	{
-		while (loading())
-			this_thread::sleep_for(milliseconds(1000));
-	}
-
 	template<class T>
 	shared_future<T*>* getRessource(string& file, RessourceLoader* loader)
 	{
 		shared_future<T*>* fut = (shared_future<T*>*)_registry.find(file);
 		if (fut == nullptr)
 		{
-			fut = new shared_future<T*>();
 			promise<T*>* t = new promise<T*>();
-			*fut = t->get_future().share();
 			_loadCounter++;
 			loader->_state = RessourceLoader::State::PROCESSING;
-			_loaderServer.addThreadClient(new ThreadClient( [ this, file, loader, t] (){
+			cout << "Started Loading " << file << " \n";
+			_loaderServer.addThreadClient(new ThreadClient( [this, file, loader, t] (){
+				cout << "Started Custom Loader " << file << " \n";
+				lock_guard<mutex>(*loader->_ex);
 				loader->load(ifstream(file));
-				T* temp = reinterpret_cast<T*>(loader->get());
-				t->set_value(temp);
+				t->set_value(reinterpret_cast<T*>(loader->get()));
 				_loadCounter--;
 				loader->_state = RessourceLoader::State::DONE;
 			}));
-			_registry.push(file, new shared_future<void*>(*((shared_future<void*>*)fut)));
+			_registry.push(file, new shared_future<void*>(*reinterpret_cast<shared_future<void*>*>(&t->get_future().share())));
 		}
 		return ((shared_future<T*>*)_registry.find(file));
 	}
 	shared_future<vector<string>*>* getRessource(string& file);
 
-	bool loading()
-	{
-		return _loadCounter > 1;
-	}
 private:
 	class RessourceRegistry {
 	public:
@@ -98,6 +89,16 @@ private:
 
 		void push(Entry);
 		void push( string, shared_future<void*>*);
+
+		int loading()
+		{
+			unsigned counter = 0;
+			for (Entry& e : _registry)
+				if (!e._obj->_Is_ready())
+					counter++;
+			return counter;
+		}
+
 		~RessourceRegistry();
 	private:
 		size_t find(string&, int, int);

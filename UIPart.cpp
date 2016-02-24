@@ -106,12 +106,12 @@ void UIButton::onMouseButton(char button, char action, char mods)
 }
 
 Shader* UIText::textRenderer = nullptr;
-TextureAtlas* UIText::glyphMap = new TextureAtlas("assets/textures/GlyphMapS.bmp", 32, 7);
+TextureAtlas* UIText::glyphMap = new TextureAtlas("assets/textures/Text_tex1.bmp", 32, 7);
 
 UIText::UIText(UI * parent, vec2 pos1, vec2 pos2, function<void()> _event) : UIPart(parent, pos1, pos2, _event)
 {
 	if (!textRenderer)
-		textRenderer = new Shader("assets/shaders/UIRender_text_vs.glsl", "assets/shaders/UIRender_fs.glsl");
+		textRenderer = new Shader(string("assets/shaders/UIRender_text_vs.glsl"), string("assets/shaders/UIRender_fs.glsl"));
 	_tex = glyphMap;
 }
 

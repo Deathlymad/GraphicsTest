@@ -54,6 +54,9 @@ void Image::load(ifstream& file)
 			file.seekg(18);
 			file.read((char*)&_width, 4);
 			file.read((char*)&_height, 4);
+			_width = abs(_width); //flip Image
+			_height = abs(_height); //flip Image
+
 
 			file.seekg(28);
 			file.read((char*)&_depth, 2);

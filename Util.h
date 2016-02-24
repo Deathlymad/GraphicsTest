@@ -122,7 +122,7 @@
 			friend class ThreadServer;
 			friend class LoopedThreadServer;
 		public:
-			ThreadClient(function<void()> f) : _func(f), _connected(false)
+			ThreadClient(function<void()> f) : _func(f), _connected(false), _executing(false)
 			{}
 
 			void disconnect() { _connected = false; }
@@ -133,6 +133,7 @@
 			}
 		private:
 			bool _connected;
+			bool _executing;
 			function<void()> _func;
 		};
 		class ThreadServer

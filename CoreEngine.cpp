@@ -14,7 +14,6 @@ void CoreEngine::load()
 
 void CoreEngine::start()
 {
-	while (_ressourceLoader.loading()) {}
 	GrEngine.init();
 	UpdateThread.run();
 }

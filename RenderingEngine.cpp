@@ -8,7 +8,7 @@
 
 RenderingEngine::RenderingType RenderingEngine::_state = ERR;
 
-RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient("assets/shaders/forward_ambient_vs.glsl", "assets/shaders/forward_ambient_fs.glsl")
+RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient(string("assets/shaders/forward_ambient_vs.glsl"), string("assets/shaders/forward_ambient_fs.glsl"))
 {
 	this->_screen = _screen;
 	_parent = parent;
@@ -18,7 +18,6 @@ RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient(
 void RenderingEngine::load(RessourceHandler * loader)
 {
 	ambient.load(loader);
-	loader->wait();
 	ambient.build();
 }
 

@@ -60,7 +60,7 @@ public:
 	DirectionalLight() : BaseLight(){}
 
 	DirectionalLight( vec3 c, float i, vec3 dir);
-	
+
 	virtual void createUniforms( string& name);
 
 	virtual void render(Shader*, bool);
