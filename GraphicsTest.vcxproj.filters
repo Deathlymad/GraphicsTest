@@ -37,7 +37,7 @@
     <Filter Include="Graphics\UI">
       <UniqueIdentifier>{980496d2-a6d8-4ac3-966c-f8e5918b8df3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Ressource">
+    <Filter Include="Core\IO">
       <UniqueIdentifier>{47aea068-ee91-4388-a0a1-38b0388b57ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -112,7 +112,10 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="RessourceHandler.cpp">
-      <Filter>Core\Ressource</Filter>
+      <Filter>Core\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Core\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -192,7 +195,10 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="RessourceHandler.h">
-      <Filter>Core\Ressource</Filter>
+      <Filter>Core\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Core\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

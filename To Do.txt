@@ -4,10 +4,8 @@ move Text from UI class
 read PNG
 Gamepad-/Joystick-/MouseHandler implementation
 make UI background modifiable
-enable loading after the initial Phase
-shader loading results into infinite loop from time  to time
+enable loading after the initial Phase (add the function)
 fix UI Background
-Make Logging a custom OutputStream
 
 Long Term:
 Physics

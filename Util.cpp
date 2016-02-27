@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include "Log.h"
+
 NSP_UTIL_BEG
 	ThreadServer::ThreadServer(unsigned int threadCount) : _running(true), _taskList(), _maxElement(0)
 	{
@@ -74,7 +76,7 @@ NSP_UTIL_BEG
 					}
 					catch (bad_function_call except)
 					{
-						cout << except.what() << endl;//really bad Idea
+						LOG << string(except.what()) + "\n";//really bad Idea
 					}
 					temp->_executing = false;
 					temp = nullptr;
@@ -119,7 +121,7 @@ NSP_UTIL_BEG
 					}
 					catch (bad_function_call except)
 					{
-						cout << except.what() << endl;//really bad Idea
+						LOG << except.what() << "\n";//really bad Idea
 					}
 					temp->_executing = false;
 					temp = nullptr;
@@ -186,7 +188,7 @@ NSP_UTIL_BEG
 			ofstream Save(filename.c_str());
 			while (Save.good() && (i<vec.size()));
 			{
-				Save << vec[i++] << endl;
+				Save << vec[i++] << "\n";
 			}
 			Save.close();
 			vec.clear();
@@ -216,7 +218,7 @@ NSP_UTIL_BEG
 			}
 			else
 			{
-				cout << "IO Thread " << "Fehler beim Schreiben der Datei " + filename << endl;
+				LOG << "IO Thread " << "Fehler beim Schreiben der Datei " + filename << "\n";
 				Save.close();
 				return false;
 			}

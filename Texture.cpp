@@ -126,9 +126,9 @@ void Image::format()
 			if (_depth == 1)
 			{
 				char* newData = new char[_width * _height * 3];
-				for (unsigned int i = 0; i < _width * _height * 3; i++)
+				for (int i = 0; i < _width * _height * 3; i++)
 					newData[i] = 0;
-				for (unsigned int i = 0; i < (_width * _height) / 8; i++)
+				for (int i = 0; i < (_width * _height) / 8; i++)
 				{
 					char temp = _data[i];
 					for (unsigned int j = 0; j < 8; j++)
@@ -142,7 +142,7 @@ void Image::format()
 			}
 			else if (_depth == 24)
 			{
-				for (unsigned int i = 0; i < _width * _height; i++) //flip from BGR to RGB
+				for (int i = 0; i < _width * _height; i++) //flip from BGR to RGB
 				{
 					char temp = _data[(i*3) + 2];
 					_data[(i * 3) + 2] = _data[(i * 3)];

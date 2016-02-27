@@ -5,6 +5,8 @@
 
 #include "Shader.h"
 
+#include "Log.h"
+
 Shader::Shader() : Code(), program([this](GLuint* p) {deleteProgram(p); })
 {
 	Code.clear();
@@ -83,7 +85,7 @@ void Shader::build()
 	if (attached > 0)
 		glLinkProgram(*(program.get()));
 	else
-		cout << "OpenGL Program " << "NO SHADERS ATTACHED." << endl;
+		LOG << "OpenGL Program " << "NO SHADERS ATTACHED." << "\n";
 
 	GLint isLinked = 0;
 	glGetProgramiv(*(program.get()), GL_LINK_STATUS, (int *)&isLinked);
@@ -97,7 +99,7 @@ void Shader::build()
 			//The maxLength includes the NULL character
 			vector<GLchar> infoLog = vector<GLchar>(maxLength);
 			glGetProgramInfoLog(*(program.get()), maxLength, NULL, &infoLog[0]);
-			cout << "OpenGL Program " << infoLog.data() << endl;
+			LOG << "OpenGL Program " << infoLog.data() << "\n";
 		}
 	}
 
@@ -114,7 +116,7 @@ void Shader::bind()
 		setUniforms();
 	}
 	else
-		cout << "OpenGL Shader " << err << endl;
+		LOG << "OpenGL Shader " << err << "\n";
 }
 void Shader::setUniforms()
 {
@@ -189,7 +191,7 @@ void Shader::ShaderCode::makeShader()
 		glShaderSource(*(_pos.get()), 1, &c_str, NULL);
 	}
 	else
-		cout << "OpenGL Shader " << "Empty Source." << endl;
+		LOG << "OpenGL Shader " << "Empty Source." << "\n";
 
 	int compiled = 0;
 	glGetShaderiv(*(_pos.get()), GL_COMPILE_STATUS, &compiled);
@@ -206,7 +208,7 @@ void Shader::ShaderCode::makeShader()
 			//The maxLength includes the NULL character
 			vector<GLchar> infoLog = vector<GLchar>(maxLength);
 			glGetShaderInfoLog(*(_pos.get()), maxLength, NULL, &infoLog[0]);
-			cout << "OpenGL Shader " << infoLog.data() << endl;
+			LOG << "OpenGL Shader " << infoLog.data() << "\n";
 		}
 	}
 }
@@ -358,7 +360,7 @@ void Shader::Uniform::create( GLuint* prgm)
 		return;
 	pos = glGetUniformLocation(*prgm, _name.c_str());
 	if (pos == -1)
-		cout << "couldn't Resolve Uniform: " << _name << endl;
+		LOG << "couldn't Resolve Uniform: " << _name << "\n";
 }
 
 void Shader::Uniform::copy(Uniform & other)
@@ -441,7 +443,10 @@ void Shader::ShaderCode::load(ifstream &ShaderStream)
 		}
 	}
 	else
+	{
+		LOG << string(_path) + " wasn't open :/\n";
 		return;
+	}
 
 	//Analyze Code
 	try {
@@ -470,6 +475,7 @@ void Shader::ShaderCode::load(ifstream &ShaderStream)
 			structVariables.push_back(structVar);
 			_counter++;
 		}
+		LOG << string(_path) + " contains " + to_string(_counter) + " Structures\n";
 
 		//read uniforms
 		_counter = 0;
@@ -480,11 +486,12 @@ void Shader::ShaderCode::load(ifstream &ShaderStream)
 			addUniform(match_str.substr(match_str.find_first_of(' ') + 1, match_str.size() - 3 - match_str.find_first_of(' ')));
 			_counter++;
 		}
+		LOG << string(_path) + " contains " + to_string(_counter) + " Uniforms\n";
 	}
 	catch (regex_error &e)
 	{
-		cout << string(e.what()) + "\n";
-		cout << "Could not Resolve Uniforms in Shader \n";
+		LOG << string(e.what()) + "\n";
+		LOG << "Could not Resolve Uniforms in Shader \n";
 	}
 
 }
@@ -496,5 +503,5 @@ void * Shader::ShaderCode::get()
 
 void Shader::ShaderCode::printErr()
 {
-	cout << _loadingErr;
+	LOG << _loadingErr;
 }

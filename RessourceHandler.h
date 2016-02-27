@@ -6,6 +6,8 @@
 #include "Clock.h"
 #include "Util.h"
 
+#include "Log.h"
+
 NSP_STD
 NSP_UTIL
 
@@ -53,9 +55,9 @@ public:
 			promise<T*>* t = new promise<T*>();
 			_loadCounter++;
 			loader->_state = RessourceLoader::State::PROCESSING;
-			cout << "Started Loading " << file << " \n";
+			LOG << string("Started Loading ") + file + " \n";
 			_loaderServer.addThreadClient(new ThreadClient( [this, file, loader, t] (){
-				cout << "Started Custom Loader " << file << " \n";
+				LOG << string("Started Custom Loader ") + file + " \n";
 				lock_guard<mutex>(*loader->_ex);
 				loader->load(ifstream(file));
 				t->set_value(reinterpret_cast<T*>(loader->get()));

@@ -18,10 +18,11 @@
 	#define GLFW
 #endif
 
-#include <iostream>
 #include <vector>
 
 #include "Screen.h"
+
+#include "Log.h"
 
 bool Screen::initializedGLFW = false;
 vector<Screen*> Screen::_winPtr;
@@ -32,8 +33,8 @@ void Screen::initGraphicContexCreation()
 		return;
 	//Context Setup with GLFW
 	if (!glfwInit())
-		cout << "GLFW" << "startup of GLFW errored" << endl;
-	cout << "GLFW" << "started GLFW" << endl;
+		LOG << "GLFW" << "startup of GLFW errored" << "\n";
+	LOG << "GLFW" << "started GLFW" << "\n";
 	
 	initializedGLFW = true;
 }
@@ -101,7 +102,7 @@ void Screen::createWindow(int width, int height, string title, char flags)
 	if (!_winHandle)
 		return;
 
-	cout << "Created Window" << endl;
+	LOG << "Created Window" << "\n";
 	
 	glfwSetInputMode(_winHandle, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetInputMode(_winHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -116,23 +117,23 @@ void Screen::setupGraphicFunctions()
 	if (initializedGLEW)
 		return;
 
-	cout << "GLEW" << "start init of GLEW" << endl;
+	LOG << "GLEW" << "start init of GLEW" << "\n";
 	glewExperimental = true; // Needed for core profile
-	cout << "GLEW" << "using experimental version of GLEW" << endl;
+	LOG << "GLEW" << "using experimental version of GLEW" << "\n";
 	if (glewInit() != GLEW_OK) {
-		cout << "GLEW" << "Failed to initialize GLEW" << endl;
+		LOG << "GLEW" << "Failed to initialize GLEW" << "\n";
 	}
-	cout << "GLEW" << "done with GLEW" << endl;
+	LOG << "GLEW" << "done with GLEW" << "\n";
 
 	glGetError(); //catches the Invalid Enum Error that GLEW Throws, not a error but a bug
-	cout << string("Running Versions: \n").c_str() <<
-		"  Graphics Data:\n" << endl <<
-		"    Graphic Renderer: " << (char*)glGetString(GL_RENDERER) << endl <<
-		"    Graphics Vendor:  " << (char*)glGetString(GL_VENDOR) << endl <<
-		"    OpenGL:           " << (char*)glGetString(GL_VERSION) << endl <<
-		"    GLSL:             " << (char*)glGetString(GL_SHADING_LANGUAGE_VERSION) << endl <<
-		"    GLFW:             " << (char*)glfwGetVersionString() << endl <<
-		"    GLEW:             " << (char*)glewGetString(GLEW_VERSION) << endl;
+	LOG << string("Running Versions: \n") +
+		"  Graphics Data:\n\n" +
+		"    Graphic Renderer: " + (char*)glGetString(GL_RENDERER) + "\n" +
+		"    Graphics Vendor:  " + (char*)glGetString(GL_VENDOR) + "\n" +
+		"    OpenGL:           " + (char*)glGetString(GL_VERSION) + "\n" +
+		"    GLSL:             " + (char*)glGetString(GL_SHADING_LANGUAGE_VERSION) + "\n" +
+		"    GLFW:             " + (char*)glfwGetVersionString() + "\n" +
+		"    GLEW:             " + (char*)glewGetString(GLEW_VERSION) + "\n";
 
 	initializedGLEW = true;
 }
@@ -185,7 +186,7 @@ Screen::Screen(int width, int height, string title, char flags)
 
 bool Screen::isScreenClosed()
 {
-	return glfwWindowShouldClose(_winHandle);
+	return glfwWindowShouldClose(_winHandle) > 0;
 }
 
 void Screen::updateScreen()
