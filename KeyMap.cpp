@@ -38,7 +38,7 @@ void KeyMap::onKeyPress(unsigned short key)
 {
 	KeyBind temp = KeyBindings[find(key, &KeyBindings, 0, KeyBindings.size())];
 
-	if (temp.trigger & ONHOLD)
+	if (temp.trigger & ONHOLD && temp.isPressed == true)
 		temp.callback(key, ONHOLD);
 }
 
@@ -63,12 +63,14 @@ void KeyMap::onKeyPress(char button, char action, char mods)
 		return;
 	if (key != KeyBindings[pos].key)
 		return;
+	KeyBind& temp = KeyBindings[pos];
 
+	temp.isPressed = action ? true : false;
 	int state = (action ? action : 4);
 
-	if ((KeyBindings[pos].trigger & state) && _activated)
+	if ((temp.trigger & state) && _activated)
 	{
-		KeyBindings[pos].callback(key, KeyState(state));
+		temp.callback(key, KeyState(state));
 	}
 }
 

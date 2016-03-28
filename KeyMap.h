@@ -39,19 +39,18 @@ public:
 
 	void addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig = ONHOLD);
 
-	void onKeyPress( unsigned short);
-
 	KeyMap& operator=(KeyMap& other);
 
 	~KeyMap();
+
+	static void updateKeyMap(KeyMap*);
 protected:
 	void onKeyPress(char button, char action, char mods);
 private:
 	vector<KeyBind> KeyBindings; // short in binary 3 bit modifier Key (Alt, Shift, Ctrl) 8 bit key
 
 	static size_t find(unsigned short, vector<KeyBind>*, int, int);
-
-	static void updateKeyMap(KeyMap*);
-	
+	void onKeyPress( unsigned short); //simulate a keypress this is not logged
+		
 	bool _activated;
 };

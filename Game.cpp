@@ -26,6 +26,7 @@ void Game::Run()
 	{
 		running = !_screen.isScreenClosed();
 		_engine.getGraphicEngine()->render(&_world);
+		for (KeyMap* k : KeyMaps) KeyMap::updateKeyMap(k); //pulls Key updates if button is pressed
 		this_thread::sleep_for(milliseconds(16) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
 		lastTick = system_clock::now();
 	}
