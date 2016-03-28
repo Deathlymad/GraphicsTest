@@ -100,9 +100,7 @@ public: //Public structures
 		
 		void load(ifstream&);
 		void* get();
-
-		void printErr();
-
+		
 		void makeShader();
 
 		GLuint& getPos() { return *_pos.get(); }

@@ -90,6 +90,7 @@ void main()
     {
 		color = calcPointLight(Light.point) * (1.0 - (1.0 - spotFactor)/(1.0 - Light.cutoff));
     }
-	
+
 	gl_FragColor = color;
+	
 }

@@ -153,6 +153,11 @@
 
 			virtual void run();
 
+
+			condition_variable _cond;
+			mutex _condMut;
+			int _update;
+
 			mutex _listGuard;
 			vector<ThreadClient*> _taskList;
 			vector<future<void>> _taskResults;

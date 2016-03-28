@@ -34,11 +34,11 @@
     <Filter Include="Core">
       <UniqueIdentifier>{ad5ee55d-b56c-4a67-a038-8175d5990c56}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics\UI">
-      <UniqueIdentifier>{980496d2-a6d8-4ac3-966c-f8e5918b8df3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\IO">
       <UniqueIdentifier>{47aea068-ee91-4388-a0a1-38b0388b57ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\UI">
+      <UniqueIdentifier>{93398a99-2f28-4a6d-9093-120a610161ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -95,12 +95,6 @@
     </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="UI.cpp">
-      <Filter>Graphics\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="UIPart.cpp">
-      <Filter>Graphics\UI</Filter>
     </ClCompile>
     <ClCompile Include="OptionRegistry.cpp">
       <Filter>Quelldateien</Filter>
@@ -181,12 +175,6 @@
     </ClInclude>
     <ClInclude Include="Util.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="UI.h">
-      <Filter>Graphics\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="UIPart.h">
-      <Filter>Graphics\UI</Filter>
     </ClInclude>
     <ClInclude Include="OptionRegistry.h">
       <Filter>Headerdateien</Filter>

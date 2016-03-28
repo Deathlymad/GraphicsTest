@@ -6,8 +6,6 @@
 #include "UI.h"
 
 
-RenderingEngine::RenderingType RenderingEngine::_state = ERR;
-
 RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient(string("assets/shaders/forward_ambient_vs.glsl"), string("assets/shaders/forward_ambient_fs.glsl"))
 {
 	this->_screen = _screen;
@@ -35,7 +33,7 @@ void RenderingEngine::render(Scene * s)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	s->render(&ambient, true, _state > 1);
+	s->render(&ambient, true);
 	
 	glEnable(GL_BLEND);  //setting up Multipassing
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -50,11 +48,6 @@ void RenderingEngine::render(Scene * s)
 	glDisable(GL_BLEND); //resetting to standard State
 	
 	_screen->updateScreen();
-}
-
-void RenderingEngine::set2D()
-{
-	setup2DEngineState();
 }
 
 void RenderingEngine::set3D()
@@ -82,17 +75,4 @@ void RenderingEngine::setup3DEngineState()
 	glDepthFunc(GL_LESS); //Tells OpenGL that Framebuffer values may be overwritten if the new Fragment is closer
 	glEnable(GL_DEPTH_TEST); //Enables Depth Test for Fragments
 	glEnable(GL_ALPHA_TEST);
-
-	_state = _3D;
-}
-
-void RenderingEngine::setup2DEngineState()
-{
-	glFrontFace(GL_CCW); //defines the Front face having counterclockwise vertices for culling
-	glCullFace(GL_BACK); //Deletes the Backface
-	glEnable(GL_CULL_FACE); //Enables Backfaceculling
-	glDisable(GL_DEPTH_TEST); //Enables Depth Test for Fragments
-	glDisable(GL_ALPHA_TEST);
-
-	_state = _2D;
 }

@@ -4,8 +4,8 @@ move Text from UI class
 read PNG
 Gamepad-/Joystick-/MouseHandler implementation
 make UI background modifiable
-enable loading after the initial Phase (add the function)
 fix UI Background
+completely disable threads if there is no workload, globalize work pool
 
 Long Term:
 Physics

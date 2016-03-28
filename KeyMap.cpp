@@ -10,21 +10,16 @@
 
 #include "KeyMap.h"
 
-LoopedThreadServer KeyMap::_keyTickServer(1);
-
-KeyMap::KeyMap(Screen* s) : InputHandler(s), _keyTickClient( [this] {updateKeyMap(this); })
+KeyMap::KeyMap(Screen* s) : InputHandler(s), _activated(true)
 {
-	_keyTickServer.addThreadClient(&_keyTickClient);
 }
 
-KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), _keyTickClient( [this] {updateKeyMap(this); })
+KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), _activated(true)
 {
-	_keyTickServer.addThreadClient(&_keyTickClient);
 }
 
-KeyMap::KeyMap() : InputHandler(), _keyTickClient( [this] {updateKeyMap(this); })
+KeyMap::KeyMap() : InputHandler(), _activated(true)
 {
-	_keyTickServer.addThreadClient(&_keyTickClient);
 }
 
 void KeyMap::addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig)
@@ -58,7 +53,6 @@ KeyMap & KeyMap::operator=(KeyMap & other)
 
 KeyMap::~KeyMap()
 {
-	_keyTickClient.disconnect();
 }
 
 void KeyMap::onKeyPress(char button, char action, char mods)
@@ -69,25 +63,12 @@ void KeyMap::onKeyPress(char button, char action, char mods)
 		return;
 	if (key != KeyBindings[pos].key)
 		return;
-	if (action == GLFW_PRESS)
+
+	int state = (action ? action : 4);
+
+	if ((KeyBindings[pos].trigger & state) && _activated)
 	{
-		if (KeyBindings[pos].isPressed)
-			return; //cannot cannot press a pressed key
-		KeyBindings[pos].isPressed = true;
-		if (KeyBindings[pos].trigger & ONPRESS && _activated)
-		{
-			KeyBindings[pos].callback(key, ONPRESS);
-		}
-	}
-	else if (action == GLFW_RELEASE)
-	{
-		if (!KeyBindings[pos].isPressed)
-			return; //cannot release a key that is not pressed
-		KeyBindings[pos].isPressed = false;
-		if (KeyBindings[pos].trigger & ONRELEASE && _activated)
-		{
-			KeyBindings[pos].callback(key, ONRELEASE);
-		}
+		KeyBindings[pos].callback(key, KeyState(state));
 	}
 }
 

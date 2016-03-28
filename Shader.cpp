@@ -168,8 +168,6 @@ bool Shader::operator==(vector<ShaderCode>& Shaders)
 
 void Shader::ShaderCode::makeShader()
 {
-	printErr();
-
 	if (!glIsShader(*(_pos.get())))
 	{
 		_pos.set( new GLuint(glCreateShader(getShaderType(_type)))); //no Shader existent; creating
@@ -499,9 +497,4 @@ void Shader::ShaderCode::load(ifstream &ShaderStream)
 void * Shader::ShaderCode::get()
 {
 	return this;
-}
-
-void Shader::ShaderCode::printErr()
-{
-	LOG << _loadingErr;
 }

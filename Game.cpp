@@ -3,7 +3,7 @@
 #include "RenderingEngine.h"
 
 
-Game::Game() : _screen(1366, 768, "Test", char(154)), _engine(&_screen, this), _world(this)
+Game::Game() : _screen(1366, 768, "Test", char(154)), _engine(&_screen, this), _world()
 {
 	_screen.handleWindow(InputHandler::registerCallbacks);
 	KeyMaps.push_back(new KeyMap(&_screen));
@@ -21,36 +21,12 @@ void Game::Start()
 
 void Game::Run()
 {
-	bool is3D = true;
-	unsigned int minLoopTime = 16;
 	system_clock::time_point lastTick = system_clock::now();
 	while (running)
 	{
-		if (!_world.getMenuState())
-		{
-			if (!is3D)
-			{
-				is3D = true;
-				_screen.disableCursor();
-				KeyMaps[0]->activate();
-				_engine.getGraphicEngine()->set3D();
-				minLoopTime = 16;
-			}
-		}
-		else
-		{
-			if (is3D)
-			{
-				is3D = false;
-				_screen.enableCursor();
-				KeyMaps[0]->deactivate();
-				_engine.getGraphicEngine()->set2D();
-				minLoopTime = 50; //slow ticking
-			}
-		}
 		running = !_screen.isScreenClosed();
 		_engine.getGraphicEngine()->render(&_world);
-		this_thread::sleep_for(milliseconds(minLoopTime) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
+		this_thread::sleep_for(milliseconds(16) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
 		lastTick = system_clock::now();
 	}
 }

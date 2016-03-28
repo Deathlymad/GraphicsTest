@@ -11,5 +11,5 @@ uniform float yRatio;
 void main()
 {
 	texCoord = vec2(tex.x * xRatio, tex.y * yRatio);
-	gl_Position = vec4(pos.xyz, 1.0);
+	gl_Position = vec4(pos.xy, 0.0, 1.0);
 }

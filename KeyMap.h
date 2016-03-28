@@ -52,9 +52,6 @@ private:
 	static size_t find(unsigned short, vector<KeyBind>*, int, int);
 
 	static void updateKeyMap(KeyMap*);
-
-	static LoopedThreadServer _keyTickServer;
-	ThreadClient _keyTickClient;
-
+	
 	bool _activated;
 };

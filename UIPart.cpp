@@ -4,7 +4,13 @@
 #include <GLFW\glfw3.h>
 
 
-UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex(new Texture("assets/textures/Test_tex2.bmp"))
+UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex(new Texture("assets/textures/Test_tex2.bmp")),
+_mesh(vector<Mesh::Vertex>({
+	Mesh::Vertex(vec3(_pos[0].x, _pos[0].y, 0), vec2(0.0f, 0.0f)),
+	Mesh::Vertex(vec3(_pos[1].x, _pos[0].y, 0), vec2(1.0f, 0.0f)),
+	Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2(0.0f, 1.0f)),
+	Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2(1.0f, 1.0f))
+}), Mesh::VertexArrayObject::genBitset(3, 2))
 {
 	_parent = parent;
 
@@ -15,29 +21,21 @@ UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex
 	_pos[1].x -= range;
 	_pos[1].y -= range;
 
-	vector<Mesh::Vertex> v;
-	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[0].y, 0), vec2( 0.0f,  0.0f)));
-	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[0].y, 0), vec2( 1.0f,  0.0f)));
-	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2( 0.0f,  1.0f)));
-	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2( 1.0f,  1.0f)));
-	_mesh = Mesh(v, Mesh::VertexArrayObject::genBitset(2, 2));
-	
 	_event = e;
 }
 
-UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex(new Texture("assets/textures/Test_tex2.bmp"))
+UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex(new Texture("assets/textures/Test_tex2.bmp")),
+_mesh(vector<Mesh::Vertex>({
+	Mesh::Vertex(vec3(pos1.x, pos1.y, 0), vec2(0.0f, 0.0f)),
+	Mesh::Vertex(vec3(pos2.x, pos1.y, 0), vec2(1.0f, 0.0f)),
+	Mesh::Vertex(vec3(pos1.x, pos2.y, 0), vec2(0.0f, 1.0f)),
+	Mesh::Vertex(vec3(pos2.x, pos2.y, 0), vec2(1.0f, 1.0f))
+}), Mesh::VertexArrayObject::genBitset(3, 2))
 {
 	_parent = parent;
 	_pos[0] = pos1;
 	_pos[1] = pos2;
-
-	vector<Mesh::Vertex> v;
-	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[0].y, 0), vec2(0.0f, 0.0f)));
-	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[0].y, 0), vec2(1.0f, 0.0f)));
-	v.push_back(Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2(0.0f, 1.0f)));
-	v.push_back(Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2(1.0f, 1.0f)));
-	_mesh = Mesh(v, Mesh::VertexArrayObject::genBitset(2, 2));
-
+	
 	_event = e;
 }
 

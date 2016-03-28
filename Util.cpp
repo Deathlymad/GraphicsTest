@@ -28,6 +28,8 @@ NSP_UTIL_BEG
 		_listGuard.lock();
 		_taskList.push_back(client);
 		_listGuard.unlock();
+		_update++;
+		_cond.notify_all();
 	}
 
 	ThreadServer::~ThreadServer()
@@ -53,7 +55,7 @@ NSP_UTIL_BEG
 		ThreadClient* temp = nullptr;
 		while (_running)
 		{
-			_listGuard.lock();
+				_listGuard.lock();
 			if (!_taskList.empty())
 			{
 				if (_maxElement >= _taskList.size()) //resets
@@ -80,13 +82,14 @@ NSP_UTIL_BEG
 					}
 					temp->_executing = false;
 					temp = nullptr;
-					this_thread::sleep_for(milliseconds(50) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
+					this_thread::yield();
 				}
 			}
 			else
 			{
 				_listGuard.unlock();
-				this_thread::sleep_for(milliseconds(50));
+				_cond.wait(unique_lock<mutex>(_condMut), [this] {return _update; });
+				_update--;
 			}
 		}
 	}
@@ -99,9 +102,9 @@ NSP_UTIL_BEG
 		ThreadClient* temp = nullptr;
 		while (_running)
 		{
-			_listGuard.lock();
 			if (!_taskList.empty())
 			{
+				_listGuard.lock();
 				if (_maxElement >= _taskList.size()) //resets
 					_maxElement = 0;
 				 temp = _taskList[_maxElement];
@@ -121,7 +124,7 @@ NSP_UTIL_BEG
 					}
 					catch (bad_function_call except)
 					{
-						LOG << except.what() << "\n";//really bad Idea
+						LOG << except.what() << "\n";
 					}
 					temp->_executing = false;
 					temp = nullptr;
@@ -130,7 +133,6 @@ NSP_UTIL_BEG
 			}
 			else
 			{
-				_listGuard.unlock();
 				this_thread::sleep_for(milliseconds(50));
 			}
 		}

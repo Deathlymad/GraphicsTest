@@ -169,8 +169,6 @@
     <ClCompile Include="TestGame.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transformation.cpp" />
-    <ClCompile Include="UI.cpp" />
-    <ClCompile Include="UIPart.cpp" />
     <ClCompile Include="UniformRegistry.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
@@ -198,8 +196,6 @@
     <ClInclude Include="TestGame.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transformation.h" />
-    <ClInclude Include="UI.h" />
-    <ClInclude Include="UIPart.h" />
     <ClInclude Include="UniformRegistry.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>

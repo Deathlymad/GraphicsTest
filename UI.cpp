@@ -63,10 +63,10 @@ void UI::render()
 	if (_enabled)
 	{
 		//internal render
-		for (unsigned int i = _parts.size(); i > 0; i--)
+		for(UIPart*& _part : _parts)
 		{
 			renderer->bind();
-			_parts[i-1]->render();
+			_part->render();
 		}
 		//external Render
 		for (UI* child : _children)

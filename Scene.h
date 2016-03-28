@@ -9,46 +9,21 @@ class RessourceHandler;
 class Scene
 {
 public:
-	Scene(Game*);
+	Scene();
 
 	void addObj(EngineObject* obj)
 	{
 		_root.add(obj);
 	}
-	void addObj(UI* child)
-	{
-		_menu.add(child);
-	}
-	void addObj(UIPart* part)
-	{
-		_menu.add(part);
-	}
-	void setRootUI(UI& ui)
-	{
-		_menu = ui;
-	}
-
+	
 	void load(RessourceHandler*);
 	void init(KeyMap*);
 	void update();
-	void render(Shader*, bool, bool);
-
-	bool getMenuState() { return _menu.isActive(); }
-
-	void toggleMenu()
-	{
-		if (_menu.isActive())
-			_menu.deactivate();
-		else
-			_menu.activate();
-	}
-
-	UI* getMenu() { return &_menu; }
+	void render(Shader*, bool);
 
 	~Scene();
 private:
 	EngineObject _root;
 	Camera _view;
-	UI _menu;
 };
 

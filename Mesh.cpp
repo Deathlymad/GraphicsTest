@@ -164,6 +164,7 @@ void Mesh::_glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 	if (v.size() == 0)
 		return;
 
+
 	vector<float> temp;
 	for (unsigned int i = 0; i < v.size(); i++)
 	{
@@ -197,7 +198,7 @@ void Mesh::Draw()
 
 	glDrawElements(GL_TRIANGLES, _VerticesCount, GL_UNSIGNED_INT, 0);
 	//Wireframe Shader
-	//glDrawElements( GL_LINE_STRIP, _indices, GL_UNSIGNED_INT, 0);  //for debug purposes
+	//glDrawElements( GL_LINE_STRIP, _VerticesCount, GL_UNSIGNED_INT, 0);  //for debug purposes
 
 	_vao.disableVAO();
 }
