@@ -379,16 +379,16 @@ void Shader::Uniform::write(GLuint* prgm)
 	switch (_size)
 	{
 	case 1:
-		glUniform1fv(pos, 1, _data.get());
+		glUniform1f(pos, *_data.get());
 		break;
 	case 2:
-		glUniform2fv(pos, 1, _data.get());
+		glUniform2f(pos, *_data.get(0), *_data.get(1));
 		break;
 	case 3:
-		glUniform3fv(pos, 1, _data.get());
+		glUniform3f(pos, *_data.get(0), *_data.get(1), *_data.get(2));
 		break;
 	case 4:
-		glUniform4fv(pos, 1, _data.get());
+		glUniform4f(pos, *_data.get(0), *_data.get(1), *_data.get(2), *_data.get(3));
 		break;
 	case 9:
 		glUniformMatrix3fv(pos, 1, false, _data.get());
@@ -397,7 +397,6 @@ void Shader::Uniform::write(GLuint* prgm)
 		glUniformMatrix4fv(pos, 1, false, _data.get());
 		break;
 	default:
-		glUniform1fv(pos, _size, _data.get());
 		break;
 	}
 }

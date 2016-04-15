@@ -35,10 +35,10 @@ void RenderingEngine::render(Scene * s)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	s->render(&ambient, RenderState::AMBIENT_PASS);
-	
 	glEnable(GL_BLEND);  //setting up Multipassing
 	glBlendFunc(GL_ONE, GL_ONE);
+	s->render(&ambient, RenderState::AMBIENT_PASS);
+	
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_EQUAL);
 

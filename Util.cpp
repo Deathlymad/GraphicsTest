@@ -78,7 +78,7 @@ NSP_UTIL_BEG
 					}
 					catch (bad_function_call except)
 					{
-						LOG << string(except.what()) + "\n";//really bad Idea
+						LOG << string(except.what()) + "\n";
 					}
 					temp->_executing = false;
 					temp = nullptr;

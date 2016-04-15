@@ -40,55 +40,47 @@ uniform vec3 EyePos;
 uniform float specularIntensity0;
 uniform float specularExponent0;
 
-vec4 calcPointLight(PointLight pointLight)
-{
-    vec3 lightDirection = worldPos - pointLight.pos;
-    float distanceToPoint = length(lightDirection);
-    
-    if(distanceToPoint > pointLight.range)
-        return vec4(0,0,0,0);
-    
-    lightDirection = normalize(lightDirection);
-    
-	vec3 n = normalize(normal);
-	float dif = dot(n, -lightDirection);
-	float spec = 0;
-    
-    vec4 difCol = vec4(0,0,0,0);
-    vec4 specCol = vec4(0,0,0,0);
-    
-    if(dif > 0)
-    {
-        difCol = vec4(pointLight.base.color, 1.0) * pointLight.base.intensity * dif;
-        
-        vec3 dirToEye = normalize(EyePos - worldPos);
-        vec3 hDir = normalize(dirToEye - lightDirection);
-        
-        spec = dot(hDir, n);
-        spec = pow(spec, specularExponent0);
-        
-        if(spec > 0)
-        {
-            specCol = vec4(pointLight.base.color, 1.0) * spec * specularIntensity0;
-        }
-    }
-	vec4 color = (difCol + specCol) * texture2D(_tex0, texCoord);
-
-    float attenuation = pointLight.atten.constant + pointLight.atten.linear * distanceToPoint + pointLight.atten.exponent * distanceToPoint * distanceToPoint + 0.0001;
-    
-    return color/attenuation;
-}
-
 void main()
 {
-	vec3 lightDirection = normalize(worldPos - Light.point.pos);
-    float spotFactor = dot(lightDirection, Light.direction);
     
     vec4 color = vec4(0,0,0,0);
+
+	vec3 lightDirection = worldPos - Light.point.pos;
+	float distanceToPoint = length(lightDirection);
     
-    if(spotFactor > Light.cutoff)
-    {
-		color = calcPointLight(Light.point) * (1.0 - (1.0 - spotFactor)/(1.0 - Light.cutoff));
+	float spec = 0;
+    
+	vec4 difCol = vec4(0,0,0,0);
+	vec4 specCol = vec4(0,0,0,0);
+
+	float spot = (1.0 - dot(lightDirection, Light.direction))/(1.0 - Light.cutoff);
+	if (spot > 0 && distanceToPoint <= Light.point.range)
+	{
+		lightDirection = normalize(lightDirection);
+    
+		vec3 n = normalize(normal);
+		float dif = dot(n, -lightDirection);
+    
+		if(dif > 0)
+		{
+			difCol = vec4(Light.point.base.color, 1.0) * Light.point.base.intensity * dif;
+        
+			vec3 dirToEye = normalize(EyePos - worldPos);
+			vec3 hDir = normalize(dirToEye - lightDirection);
+        
+			spec = dot(hDir, n);
+			spec = pow(spec, specularExponent0);
+        
+			if(spec > 0)
+			{
+				specCol = vec4(Light.point.base.color, 1.0) * spec * specularIntensity0;
+			}
+		}
+		color = (difCol + specCol) * texture2D(_tex0, texCoord);
+
+		float attenuation = Light.point.atten.constant + Light.point.atten.linear * distanceToPoint + Light.point.atten.exponent * distanceToPoint * distanceToPoint + 0.0001;
+    
+		color *= spot / attenuation;
     }
 
 	gl_FragColor = color;

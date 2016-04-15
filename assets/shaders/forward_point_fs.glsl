@@ -41,7 +41,7 @@ void main()
     if(distanceToPoint > Light.range)
 	{
         gl_FragColor = vec4(0,0,0,0);
-		return;
+		//return;
 	}
     
     lightDirection = normalize(lightDirection);

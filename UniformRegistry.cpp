@@ -1,5 +1,6 @@
 #include "UniformRegistry.h"
 #include "Shader.h"
+#include "Log.h"
 
 vector<UniformRegistry*> UniformRegistry::registryList;
 
@@ -18,7 +19,7 @@ void UniformRegistry::addMemPos(float * data)
 void UniformRegistry::update(float* data)
 {
 	for (float* pos : MemPos)
-		if (pos)
+		if (pos && data)
 			for (size_t i = 0; i < _size; i++)
 				pos[i] = data[i];
 }

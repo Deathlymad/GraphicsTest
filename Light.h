@@ -152,6 +152,8 @@ private:
 		float li = atten.getLinear();
 		float co = atten.getConstant() * getIntensity() * std::max(getColor().x, std::max(getColor().y, getColor().z));
 		_range = abs((-li + sqrtf(li * li - 4 * ex * co)) / (2 * ex));
+		if ( isnan(_range))
+			_range = 100.0f;
 	}
 
 	Attenuation atten;
