@@ -19,7 +19,7 @@ void ModelRenderer::init(KeyMap* kr)
 	mesh.init();
 }
 
-void ModelRenderer::render(Shader* s, bool)
+void ModelRenderer::render(Shader* s, RenderingEngine::RenderState)
 {
 	s->bind();
 	tex.bind();

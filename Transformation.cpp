@@ -115,7 +115,7 @@ mat4 Transformation::getMatrix()
 	return trans*rot*scale;
 }
 
-void Transformation::render(Shader* s, bool firstPass)
+void Transformation::render(Shader* s, RenderingEngine::RenderState firstPass)
 {
 	mat4 mat = getMatrix();
 	TransformationMatrix.update(&mat[0][0]);

@@ -1,5 +1,6 @@
 Short Term:
 	Options UI
+recreate UI using View Plane
 move Text from UI class
 read PNG
 Gamepad-/Joystick-/MouseHandler implementation

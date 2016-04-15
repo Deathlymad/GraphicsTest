@@ -2,7 +2,6 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "RenderingEngine.h"
-#include<GLFW\glfw3.h> //needed for defines
 
 float Camera::speed = 0.05f;
 vec3 Camera::YAxis = vec3(0.0f, 1.0f, 0.0f);
@@ -23,9 +22,9 @@ void Camera::update()
 	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
 }
 
-void Camera::render(Shader *, bool firstPass)
+void Camera::render(Shader *, RenderingEngine::RenderState firstPass)
 {
-	if (firstPass)
+	if (firstPass == RenderingEngine::RenderState::AMBIENT_PASS)
 	{
 		ViewProjMat.update(&View[0][0]);
 		EyePos.update(&_pos[0]);

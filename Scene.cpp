@@ -23,7 +23,7 @@ void Scene::update()
 	_root.update();
 }
 
-void Scene::render(Shader* s, bool firstPass)
+void Scene::render(Shader* s, RenderingEngine::RenderState firstPass)
 {
 	_view.render(s, firstPass);
 	_root.render(s, firstPass);

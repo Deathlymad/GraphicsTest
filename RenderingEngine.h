@@ -1,8 +1,11 @@
 #include <functional>
+#include <vector>
 
-#include "ExclusiveObject.h"
-#include "Light.h"
+#include "Def.h"
 #include "Shader.h"
+
+NSP_STD
+
 
 class Camera;
 class CoreEngine;
@@ -10,18 +13,27 @@ class Screen;
 class Scene;
 class Texture;
 class UI;
+class BaseLight;
+class RessourceHandler;
 
 #pragma once
 class RenderingEngine
 {
 public:
+	enum RenderState
+	{
+		AMBIENT_PASS,
+		FWD_RENDER,
+		POST_RENDER
+	};
+
 	RenderingEngine(CoreEngine* parent, Screen*);
 
 	void load(RessourceHandler* loader);
 	void init();
 
 	void render(Scene*);
-
+	
 	void set3D();
 
 	void registerGraphicObject(BaseLight*);
@@ -37,6 +49,7 @@ public:
 
 	~RenderingEngine();
 private:
+
 	void setup3DEngineState();
 
 	Screen* _screen;

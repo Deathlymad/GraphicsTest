@@ -21,7 +21,7 @@ public:
 	Camera();
 
 	void update();
-	void render(Shader*, bool);
+	void render(Shader*, RenderingEngine::RenderState);
 
 	void setFoV(float);
 	void setAspect(float);

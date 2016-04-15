@@ -14,7 +14,7 @@ public:
 
 	void load(RessourceHandler*);
 	void init(KeyMap*);
-	void render(Shader*, bool);
+	void render(Shader*, RenderingEngine::RenderState);
 
 	~ModelRenderer();
 private:

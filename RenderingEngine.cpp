@@ -4,6 +4,8 @@
 #include "Scene.h"
 #include "Texture.h"
 #include "UI.h"
+#include "Light.h"
+#include "RessourceHandler.h"
 
 
 RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient(string("assets/shaders/forward_ambient_vs.glsl"), string("assets/shaders/forward_ambient_fs.glsl"))
@@ -33,7 +35,7 @@ void RenderingEngine::render(Scene * s)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	s->render(&ambient, true);
+	s->render(&ambient, RenderState::AMBIENT_PASS);
 	
 	glEnable(GL_BLEND);  //setting up Multipassing
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -41,7 +43,9 @@ void RenderingEngine::render(Scene * s)
 	glDepthFunc(GL_EQUAL);
 
 	for (BaseLight* light : Lights)
+	{
 		light->render();
+	}
 
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);

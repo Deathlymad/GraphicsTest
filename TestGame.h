@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "ModelRenderer.h"
 #include "Transformation.h"
+#include "Light.h"
 
 class TestGame :
 	public Game

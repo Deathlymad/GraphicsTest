@@ -13,6 +13,7 @@
 #include "EngineObject.h"
 #include "Shader.h"
 #include "Def.h"
+#include"UniformRegistry.h"
 
 NSP_STD
 NSP_GLM
@@ -23,10 +24,7 @@ class RenderingEngine;
 class BaseLight :public EngineObject
 {
 public:
-
-	BaseLight() {}
-
-	BaseLight( vec3 c, float i);
+	BaseLight( vec3 c, float i, string& name = string("Light"));
 	
 	virtual void load(RessourceHandler* loader);
 	virtual void init(KeyMap*);
@@ -34,36 +32,32 @@ public:
 	float getIntensity() { return _intensity; }
 	vec3 getColor() { return _color; }
 
-	virtual void render(Shader*, bool);
-	void render() { this->render(shader, false); }
+	virtual void render(Shader*, RenderingEngine::RenderState);
+	virtual void postRender(Shader*);
+	void render() { this->render(shader, RenderingEngine::RenderState::FWD_RENDER); }
 
 	~BaseLight(void)
 	{
 	}
 	
-	virtual void createUniforms(string& name);
-
 	Shader* getShader(){return shader;}
 protected:
 	Shader* shader;
-	string _name;
+	Shader* postShader;
 private:
-	vec3 _color, *color;
-	float _intensity, *intensity;
+	vec3 _color;
+	UniformRegistry color;
+	float _intensity;
+	UniformRegistry intensity;
 };
 
 #pragma once
 class DirectionalLight  : public BaseLight
 {
 public:
+	DirectionalLight( vec3 c, float i, vec3 dir, string& name = string("Light"));
 
-	DirectionalLight() : BaseLight(){}
-
-	DirectionalLight( vec3 c, float i, vec3 dir);
-
-	virtual void createUniforms( string& name);
-
-	virtual void render(Shader*, bool);
+	virtual void render(Shader*, RenderingEngine::RenderState);
 
 	void setNormal( vec3 n)
 	{
@@ -80,33 +74,25 @@ public:
 	}
 
 private:
-	vec3 _normal, *normal;
+	vec3 _normal;
+	UniformRegistry normal;
 };
 
 #pragma once
 class Attenuation
 {
 public:
-	Attenuation(){};
-
-	Attenuation( float c, float l, float e)
+	Attenuation( float c, float l, float e, string& name) : constant(name + ".constant", 1), linear(name + ".linear", 1), exponent(name + ".exponent", 1)
 	{
 		_constant = c;
 		_linear = l;
 		_exponent = e;
 	}
-	
-	void createUniforms( Shader* target, string name)
+	void update()
 	{
-		constant = target->getUniformMemPos(name + ".constant");
-		linear = target->getUniformMemPos(name + ".linear");
-		exponent = target->getUniformMemPos(name + ".exponent");
-	}
-	void writeUniforms()
-	{
-		*constant = _constant;
-		*linear = _linear;
-		*exponent = _exponent;
+		constant.update(&_constant);
+		linear.update(&_linear);
+		exponent.update(&_exponent);
 	}
 
 	float getConstant()
@@ -135,32 +121,17 @@ public:
 	}
 private:
 	float _constant, _linear, _exponent;
-	float* constant, *linear, *exponent;
+	UniformRegistry constant, linear, exponent;
 };
 
 #pragma once
 class PointLight : public BaseLight
 {
 public:
-	PointLight() : BaseLight(){}
-
-	PointLight( vec3 c, float i,Attenuation a, vec3 p);
+	PointLight( vec3 c, float i,Attenuation a, vec3 p, string& name = string("Light"));
+	PointLight(vec3 c, float i, float ex, float lin, float con, vec3 p, string& name = string("Light"));
 	
-	virtual void createUniforms(string& name);
-
-	virtual void render(Shader*, bool);
-
-	void setAttenuation( Attenuation b)
-	{
-		atten = b;
-		float ex = atten.getExponent();
-		float li = atten.getLinear() / ex;
-		float co = atten.getConstant() / ex;
-		if (((li * li) / 4 - co) > 0)
-			_range = (-li / 2 + sqrt((li * li) / 4 - co)); //calculate point where equation returns 0
-		else
-			_range = 1000.0f;
-	}
+	virtual void render(Shader*, RenderingEngine::RenderState);
 
 	Attenuation getAttenuation()
 	{
@@ -175,21 +146,28 @@ public:
 		return _pos;
 	}
 private:
+	void calcRange()
+	{
+		float ex = atten.getExponent();
+		float li = atten.getLinear();
+		float co = atten.getConstant() * getIntensity() * std::max(getColor().x, std::max(getColor().y, getColor().z));
+		_range = abs((-li + sqrtf(li * li - 4 * ex * co)) / (2 * ex));
+	}
+
 	Attenuation atten;
-	vec3 _pos, *pos;
-	float _range, *range;
+	vec3 _pos;
+	UniformRegistry pos;
+	float _range;
+	UniformRegistry range;
 };
 
 #pragma once
 class SpotLight : public PointLight
 {
 public:
-	SpotLight() : PointLight() {}
-	SpotLight( vec3 c, float i,Attenuation a, vec3 p, vec3 dir, float cut);
+	SpotLight( vec3 c, float i, float ex, float lin, float con, vec3 p, vec3 dir, float cut, string& name = string("Light"));
 	
-	virtual void createUniforms(string& name);
-
-	virtual void render(Shader*, bool);
+	virtual void render(Shader*, RenderingEngine::RenderState);
 
 	vec3 getDirection(){ return _direction;}
 	float getCutoff(){return _cutoff;}
@@ -197,6 +175,8 @@ public:
 	~SpotLight(){};
 	
 private:
-	vec3 _direction, *direction;
-	float _cutoff, *cutoff;
+	vec3 _direction;
+	UniformRegistry direction;
+	float _cutoff;
+	UniformRegistry cutoff;
 };

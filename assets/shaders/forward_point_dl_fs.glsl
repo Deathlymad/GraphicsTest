@@ -21,7 +21,6 @@ struct PointLight
 	float range;
 };
 
-
 in vec3 worldPos;
 in vec2 texCoord;
 in vec3 normal;
@@ -49,23 +48,26 @@ void main()
 
     vec3 n = normalize(normal);
 	float dif = dot(n, -lightDirection);
+	float spec = 0;
     
     vec4 difCol = vec4(0,0,0,0);
     vec4 specCol = vec4(0,0,0,0);
     
     if(dif > 0)
     {
-        difCol = vec4(Light.base.color, 1.0) * Light.base.intensity * dif;
+		vec3 temp = Light.base.color * Light.base.intensity * dif;
+        difCol = vec4( temp, length(temp));
         
         vec3 dirToEye = normalize(EyePos - worldPos);
         vec3 hDir = normalize(dirToEye - lightDirection);
         
-        float spec = dot(hDir, n);
+        spec = dot(hDir, n);
         spec = pow(spec, specularExponent0);
         
         if(spec > 0)
         {
-            specCol = vec4(Light.base.color, 1.0) * spec * specularIntensity0;
+			temp = Light.base.color * spec * specularIntensity0;
+            specCol = vec4( temp, length(temp));
         }
     }
 	vec4 color =  (difCol + specCol) * texture2D(_tex0, texCoord);

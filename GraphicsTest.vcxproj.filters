@@ -264,6 +264,18 @@
     <None Include="assets\shaders\UIRender_text_vs.glsl">
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
+    <None Include="assets\shaders\forward_ambient_dl_fs.glsl">
+      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\forward_directional_dl_fs.glsl">
+      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\forward_point_dl_fs.glsl">
+      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\forward_spot_dl_fs.glsl">
+      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="assets\mesh\Stein_einfach.obj">

@@ -1,12 +1,13 @@
 #include <vector>
 #include "Def.h"
-#include "RessourceHandler.h"
+#include "RenderingEngine.h"
 
 NSP_STD
 
 class Shader;
 class RenderingEngine;
 class KeyMap;
+class RessourceHandler;
 
 #pragma once
 class EngineObject
@@ -19,7 +20,7 @@ public:
 	virtual void load(RessourceHandler* loader);
 	virtual void init( KeyMap* k);
 	virtual void update();
-	virtual void render(Shader*, bool);
+	virtual void render(Shader*, RenderingEngine::RenderState);
 
 	~EngineObject();
 private:

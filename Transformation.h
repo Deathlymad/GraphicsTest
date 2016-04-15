@@ -28,7 +28,7 @@ public:
 
 
 	void init(Shader*);
-	void render(Shader*, bool);
+	void render(Shader*, RenderingEngine::RenderState);
 
 
 	~Transformation();

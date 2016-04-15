@@ -19,7 +19,7 @@ public:
 	void load(RessourceHandler*);
 	void init(KeyMap*);
 	void update();
-	void render(Shader*, bool);
+	void render(Shader*, RenderingEngine::RenderState);
 
 	~Scene();
 private:

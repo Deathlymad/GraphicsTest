@@ -215,14 +215,18 @@
     <Text Include="World\World, Space &amp; Time.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\forward_ambient_dl_fs.glsl" />
     <None Include="assets\shaders\forward_ambient_fs.glsl" />
     <None Include="assets\shaders\forward_ambient_vs.glsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </None>
+    <None Include="assets\shaders\forward_directional_dl_fs.glsl" />
     <None Include="assets\shaders\forward_directional_fs.glsl" />
     <None Include="assets\shaders\forward_directional_vs.glsl" />
+    <None Include="assets\shaders\forward_point_dl_fs.glsl" />
     <None Include="assets\shaders\forward_point_fs.glsl" />
     <None Include="assets\shaders\forward_point_vs.glsl" />
+    <None Include="assets\shaders\forward_spot_dl_fs.glsl" />
     <None Include="assets\shaders\forward_spot_fs.glsl" />
     <None Include="assets\shaders\forward_spot_vs.glsl" />
     <None Include="assets\shaders\UIRender_fs.glsl" />
