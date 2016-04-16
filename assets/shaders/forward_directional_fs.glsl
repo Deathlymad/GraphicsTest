@@ -9,10 +9,15 @@ uniform vec3 EyePos;
 uniform float specularExponent0;
 uniform float specularIntensity0;
 
-struct DirectionalLight
+struct BaseLight
 {
 	vec3 color;
 	float intensity;
+};
+
+struct DirectionalLight
+{
+	BaseLight base;
 	vec3 direction;
 };
 
@@ -29,7 +34,7 @@ void main()
     
     if(dif > 0)
     {
-        difCol = vec4(Light.color, 1.0) * Light.intensity * dif;
+        difCol = vec4(Light.base.color, 1.0) * Light.base.intensity * dif;
         
         vec3 dirToEye = normalize(EyePos - worldPos);
         vec3 hDir = normalize(dirToEye - Light.direction);
@@ -39,7 +44,7 @@ void main()
         
         if(spec > 0)
         {
-            specCol = vec4(Light.color, 1.0) * spec * specularIntensity0;
+            specCol = vec4(Light.base.color, 1.0) * spec * specularIntensity0;
         }
     }
 

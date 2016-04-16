@@ -40,7 +40,7 @@ void BaseLight::render(Shader * s, RenderingEngine::RenderState firstPass)
 		intensity.update(&_intensity);
 
 		EngineObject::render(s, firstPass);
-		//postRender(postShader);
+		postRender(postShader);
 	}
 	else
 		EngineObject::render(s, firstPass);
@@ -50,7 +50,7 @@ void BaseLight::postRender(Shader* s)
 	EngineObject::render(s, RenderingEngine::RenderState::POST_RENDER);
 }
 
-DirectionalLight::DirectionalLight( vec3 c, float i, vec3 dir, string& name) : BaseLight( c, i, name), normal(name + ".direction", 3)
+DirectionalLight::DirectionalLight( vec3 c, float i, vec3 dir, string& name) : BaseLight( c, i, name + ".base"), normal(name + ".direction", 3)
 {
 	_normal = dir;
 	if (shader)
@@ -58,7 +58,7 @@ DirectionalLight::DirectionalLight( vec3 c, float i, vec3 dir, string& name) : B
 	shader = new Shader(string("assets/shaders/forward_directional_vs.glsl"), string("assets/shaders/forward_directional_fs.glsl"));
 	if (postShader)
 		postShader->~Shader();
-	//postShader = new Shader(string("assets/shaders/forward_directional_vs.glsl"), string("assets/shaders/forward_directional_dl_fs.glsl"));
+	postShader = new Shader(string("assets/shaders/forward_directional_vs.glsl"), string("assets/shaders/forward_directional_dl_fs.glsl"));
 }
 
 void DirectionalLight::render(Shader * s, RenderingEngine::RenderState firstPass)
@@ -81,7 +81,7 @@ PointLight::PointLight( vec3 c, float i,Attenuation a, vec3 p, string& name) : B
 	shader = new Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_fs.glsl"));
 	if (postShader)
 		postShader->~Shader();
-	//postShader = new Shader(string("assets/shaders/forward_spot_vs.glsl"), string("assets/shaders/forward_point_dl_fs.glsl"));
+	postShader = new Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_dl_fs.glsl"));
 }
 
 PointLight::PointLight(vec3 c, float i, float ex, float lin, float con, vec3 p, string& name) : BaseLight(c, i, name + ".base"), pos(name + ".pos", 3), range(name + ".range", 3), atten(con, lin, ex, name + ".atten")
@@ -93,7 +93,7 @@ PointLight::PointLight(vec3 c, float i, float ex, float lin, float con, vec3 p, 
 	shader = new Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_fs.glsl"));
 	if (postShader)
 		postShader->~Shader();
-	//postShader = new Shader(string("assets/shaders/forward_spot_vs.glsl"), string("assets/shaders/forward_point_dl_fs.glsl"));
+	postShader = new Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_dl_fs.glsl"));
 }
 
 void PointLight::render(Shader * s, RenderingEngine::RenderState firstPass)
@@ -118,7 +118,7 @@ SpotLight::SpotLight(vec3 c, float i, float ex, float lin, float con, vec3 p, ve
 	shader = new Shader(string("assets/shaders/forward_spot_vs.glsl"), string("assets/shaders/forward_spot_fs.glsl"));
 	if (postShader)
 		postShader->~Shader();
-	//postShader = new Shader(string("assets/shaders/forward_spot_vs.glsl"), string("assets/shaders/forward_spot_dl_fs.glsl"));
+	postShader = new Shader(string("assets/shaders/forward_spot_vs.glsl"), string("assets/shaders/forward_spot_dl_fs.glsl"));
 }
 
 void SpotLight::render(Shader * s, RenderingEngine::RenderState firstPass)
