@@ -43,9 +43,7 @@ void RenderingEngine::render(Scene * s)
 	glDepthFunc(GL_EQUAL);
 
 	for (BaseLight* light : Lights)
-	{
 		light->render();
-	}
 
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);

@@ -212,3 +212,5 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 *.opendb
+/GraphicsTest.VC.db
+/Log.txt
