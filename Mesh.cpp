@@ -53,15 +53,15 @@ void Mesh::load(ifstream &f)
 		{
 			temp.push_back(Line);
 		}
+		_load(temp);
 	}
-	_load(temp);
 }
 
 void Mesh::init()
 {
 	if (_loadReq->get() != this)
 		*this = *(_loadReq->get());
-	_glDownload(getNormalVertices(_vertices), _indices); //delete?
+	_glDownload(_vertices, _indices); //delete?
 }
 
 void Mesh::initGL( unsigned char flag)
@@ -79,8 +79,15 @@ void Mesh::initGL( unsigned char flag)
 	_vao.createVertexArray();
 }
 
+void Mesh::updateVertices()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, *_vbo.get());
+
+}
+
 void Mesh::_load(vector<string> vec)
 {
+	vector<unnormalizedVertex> _tempVertices;
 	vector<vec3> n;
 	vector<vec2> t;
 	unsigned char bitset = 3;
@@ -97,7 +104,7 @@ void Mesh::_load(vector<string> vec)
 		io::strsep(temp, vec[i]); //vec[i] in teile zerlegen
 		if (temp[0].compare("v") == 0)
 		{
-			_vertices.push_back(unnormalizedVertex(Vertex(vec3(stof(temp[1]), stof(temp[2]), stof(temp[3])), vec2(-1.0, -1.0), vec3(0, 0, 0)), vector<vec3>())); //writes default Data
+			_tempVertices.push_back(unnormalizedVertex(Vertex(vec3(stof(temp[1]), stof(temp[2]), stof(temp[3])), vec2(-1.0, -1.0), vec3(0, 0, 0)), vector<vec3>())); //writes default Data
 			continue;
 		}
 
@@ -124,14 +131,15 @@ void Mesh::_load(vector<string> vec)
 				io::strsep(s, temp[i], '/');
 				_indices.push_back(stoi(s[0]) - 1);
 				if (!t.empty()) //might search for nonexistend data, also this might not be applicable all the time
-					_vertices[stoi(s[0]) - 1]._v.setTexCoord(t[stoi(s[1]) - 1]);
+					_tempVertices[stoi(s[0]) - 1]._v.setTexCoord(t[stoi(s[1]) - 1]);
 				if (!n.empty())
-					_vertices[stoi(s[0]) - 1]._nor.push_back(n[stoi(s[2]) - 1]); // need to renormalize
+					_tempVertices[stoi(s[0]) - 1]._nor.push_back(n[stoi(s[2]) - 1]); // need to renormalize
 			}
 			continue;
 		}
 	}
 	_vao.setBitset(bitset);
+	_vertices = getNormalVertices(_tempVertices);
 }
 
 vector<Mesh::Vertex> Mesh::getNormalVertices(vector<unnormalizedVertex> vn)

@@ -19,9 +19,6 @@
     <Filter Include="Ressourcendateien\Assets\Shaders">
       <UniqueIdentifier>{b6225adc-e0dc-4cee-a8ca-92dffa6fa47d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Ressourcendateien\Assets\Mesh">
-      <UniqueIdentifier>{0f88661b-be69-4256-b6fd-51994b1c5cb6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Ressourcendateien\World">
       <UniqueIdentifier>{688e69c0-6d86-49ea-900a-393154bcf1c8}</UniqueIdentifier>
     </Filter>
@@ -276,22 +273,5 @@
     <None Include="assets\shaders\forward_spot_dl_fs.glsl">
       <Filter>Ressourcendateien\Assets\Shaders</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="assets\mesh\Stein_einfach.obj">
-      <Filter>Ressourcendateien\Assets\Mesh</Filter>
-    </Object>
-    <Object Include="assets\mesh\Tanne_einfach.obj">
-      <Filter>Ressourcendateien\Assets\Mesh</Filter>
-    </Object>
-    <Object Include="assets\mesh\Tanne_einfach_newExport.obj">
-      <Filter>Ressourcendateien\Assets\Mesh</Filter>
-    </Object>
-    <Object Include="assets\mesh\Test_Block.obj">
-      <Filter>Ressourcendateien\Assets\Mesh</Filter>
-    </Object>
-    <Object Include="assets\mesh\Test_Objektfile_001.obj">
-      <Filter>Ressourcendateien\Assets\Mesh</Filter>
-    </Object>
   </ItemGroup>
 </Project>

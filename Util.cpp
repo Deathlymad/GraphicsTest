@@ -142,7 +142,7 @@ NSP_UTIL_BEG
 
 		bool strsep(vector<string> &vec, string &s)
 		{
-			unsigned int begin = 0, end = 0;
+			size_t begin = 0, end = 0;
 			vec.clear();
 			while (begin<s.length())
 			{

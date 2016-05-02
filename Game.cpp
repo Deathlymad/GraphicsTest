@@ -13,8 +13,8 @@ Game::Game() : _screen(1366, 768, "Test", char(154)), _engine(&_screen, this), _
 
 void Game::Start()
 {
-	_engine.start();
 	_world.init(KeyMaps[0]);
+	_engine.start();
 	running = true;
 	Run();
 }

@@ -50,6 +50,9 @@ public: //Public structures
 		void copy(Uniform& other);
 		void write(GLuint* prgm);
 
+		void enable() { enabled = true; }
+		void disable() { enabled = false; }
+
 		float* getPtr();
 		string& getName() { return _name; }
 
@@ -69,8 +72,8 @@ public: //Public structures
 			_size = 0;
 		}
 
-		bool enabled;
 	private:
+		bool enabled;
 		string _name;
 		Ptr<float> _data;
 		unsigned _size;
@@ -85,6 +88,7 @@ public: //Public structures
 		string _path;
 		Shader* _owner;
 		string _loadingErr;
+		vector<Uniform> uniforms;
 	public:
 		void clearShader(GLuint* s)
 		{
@@ -105,6 +109,7 @@ public: //Public structures
 
 		GLuint& getPos() { return *_pos.get(); }
 		string& getPath() { return _path; }
+		vector<Uniform>& getUniforms() { return uniforms; }
 
 		ShaderCode& operator=(const ShaderCode& other);
 		bool operator==(const ShaderCode& other) { return _type == other._type && _path == other._path && _pos == other._pos; }
@@ -140,10 +145,6 @@ public:
 	bool operator== (ShaderCode&);
 	bool operator== (vector<ShaderCode>&);
 private:
-	void addUniform(Uniform& u) {	
-		u.enabled = true;
-		Uniforms.insert( Uniforms.begin() + findUniform(u.getName(), 0, Uniforms.size()), u);
-	}
 
 	//variables
 	//OpenGL

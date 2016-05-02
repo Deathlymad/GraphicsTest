@@ -18,11 +18,11 @@ RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient(
 void RenderingEngine::load(RessourceHandler * loader)
 {
 	ambient.load(loader);
-	ambient.build();
 }
 
 void RenderingEngine::init()
 {
+	ambient.build();
 	UniformRegistry::registerShaderUniforms(&ambient);
 	for (BaseLight* Light : Lights)
 		UniformRegistry::registerShaderUniforms(Light->getShader());

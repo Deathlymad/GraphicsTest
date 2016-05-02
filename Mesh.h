@@ -115,21 +115,25 @@ public:
 
 	~Mesh(void);
 protected:
-	void initGL(unsigned char);
-	VertexArrayObject _vao;
-	CustomPtr<GLuint> _vbo;
-	CustomPtr<GLuint> _ibo;
-	void deleteBuffer(GLuint* buf);
+	vector<Vertex> getNormalVertices(vector<unnormalizedVertex>);
+
+	void updateVertices();
+
+	vector<Vertex> _vertices;
 	unsigned int _VerticesCount;
+	vector<unsigned int> _indices;
 private:
+	void initGL(unsigned char);
+
 	string _path;
 	
 	shared_future<Mesh*>* _loadReq;
 	
-	vector<unnormalizedVertex> _vertices;
-	vector<unsigned int> _indices;
+	VertexArrayObject _vao;
+	CustomPtr<GLuint> _vbo;
+	CustomPtr<GLuint> _ibo;
 
 	void _load(vector<string>);
 	void _glDownload( vector<Vertex>&, vector <unsigned int>&);
-	vector<Vertex> getNormalVertices(vector<unnormalizedVertex>);
+	void deleteBuffer(GLuint* buf);
 };

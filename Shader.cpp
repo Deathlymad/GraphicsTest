@@ -34,6 +34,7 @@ float* Shader::getUniformMemPos(string name)
 
 	if (Uniforms[pos] == name)
 	{
+		Uniforms[pos].enable();
 		return Uniforms[pos].getPtr();
 	}
 	return nullptr;
@@ -53,8 +54,12 @@ void Shader::build()
 		{
 			Code[i] = *reqArr[i]->get();
 			Code[i].makeShader();
+			vector<Uniform>& t = Code[i].getUniforms();
+			for (Uniform& temp : t)
+				Uniforms.insert(Uniforms.begin() + findUniform(temp.getName(), 0, Uniforms.size()), temp);
 		}
 	}
+
 	if (!program.get() || !glIsProgram(*(program.get())))
 		program.set( new GLuint( glCreateProgram())); //no Program existent creating
 
@@ -217,6 +222,7 @@ Shader::ShaderCode & Shader::ShaderCode::operator=(const Shader::ShaderCode & ot
 	_owner = other._owner;
 	_type = other._type;
 	_path = other._path;
+	uniforms = other.uniforms;
 	return *this; 
 }
 
@@ -325,7 +331,7 @@ void Shader::ShaderCode::addUniform(string & name)
 	if (size > 0)
 	{
 		Uniform u = Uniform( varName, size);
-		_owner->addUniform(u);
+		uniforms.push_back(u);
 	}
 	else
 	{
