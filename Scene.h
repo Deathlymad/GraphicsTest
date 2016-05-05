@@ -21,6 +21,8 @@ public:
 	void update();
 	void render(Shader*, RenderingEngine::RenderState);
 
+	Camera& getCam() { return _view; }
+
 	~Scene();
 private:
 	EngineObject _root;

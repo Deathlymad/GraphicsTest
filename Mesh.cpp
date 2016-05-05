@@ -41,6 +41,9 @@ void Mesh::load(RessourceHandler * loader)
 	{
 		_loadReq = loader->getRessource<Mesh>(_path, this);
 	}
+	else {
+		_loadReq = nullptr;
+	}
 }
 
 void Mesh::load(ifstream &f)
@@ -59,9 +62,9 @@ void Mesh::load(ifstream &f)
 
 void Mesh::init()
 {
-	if (_loadReq->get() != this)
+	if (_loadReq != nullptr && _loadReq->get() != this)
 		*this = *(_loadReq->get());
-	_glDownload(_vertices, _indices); //delete?
+	_glDownload(_vertices, _indices);
 }
 
 void Mesh::initGL( unsigned char flag)
@@ -81,8 +84,48 @@ void Mesh::initGL( unsigned char flag)
 
 void Mesh::updateVertices()
 {
-	glBindBuffer(GL_ARRAY_BUFFER, *_vbo.get());
+	updateVertices(0, _vertices.size(), 0, _indices.size());
+}
+void Mesh::updateVertices(unsigned int offset, unsigned int end)
+{
+	updateVertices(offset, end, 0, 0);
+}
+void Mesh::updateIndices(unsigned int offset, unsigned int end)
+{
+	updateVertices(0, 0, offset, end);
+}
+void Mesh::updateVertices(unsigned int offset, unsigned int end, unsigned int indOffset, unsigned int indEnd)
+{
+	if (end - offset > 0)
+	{
+		const unsigned int size = end-offset;
+		const unsigned int dataSize = size * (_vao.isNor() + _vao.isTex() + _vao.isVec());
+		glBindBuffer(GL_ARRAY_BUFFER, *_vbo.get());
 
+		vector<float> temp;
+		for (unsigned int i = offset; i < end; i++)
+		{
+			float* d = _vertices[i].getData();
+			if (_vao.isVec())
+				temp.insert(temp.end(), &d[0], &d[_vao.isVec()]);
+			if (_vao.isTex())
+				temp.insert(temp.end(), &d[3], &d[3 + _vao.isTex()]);
+			if (_vao.isNor())
+				temp.insert(temp.end(), &d[6], &d[6 + _vao.isNor()]);
+		}
+
+		glBufferSubData(GL_ARRAY_BUFFER, offset * 4, temp.size() * 4, temp.data());
+	}
+
+	if (indEnd - indOffset)
+	{
+		_VerticesCount = glm::max(_indices.size(), _VerticesCount); //might be dangerous
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *_ibo.get());
+		vector<unsigned int> t1;
+		t1.insert(t1.end(), _indices.begin() + offset, _indices.begin() + end);
+		glBufferSubData(GL_ARRAY_BUFFER, indOffset * 4, (indOffset + indEnd) * 4, t1.data());
+	}
 }
 
 void Mesh::_load(vector<string> vec)
@@ -185,11 +228,11 @@ void Mesh::_glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 			temp.insert(temp.end(), &d[6], &d[6 + _vao.isNor()]);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get())); //contains Vertices
-	glBufferData(GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
 	temp.~vector();
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_DYNAMIC_DRAW);
 }
 
 void Mesh::deleteBuffer(GLuint * buf)

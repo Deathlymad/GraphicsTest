@@ -108,6 +108,9 @@
     <ClCompile Include="Log.cpp">
       <Filter>Core\IO</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>TestGame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestGame.h">
@@ -184,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="Log.h">
       <Filter>Core\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>TestGame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

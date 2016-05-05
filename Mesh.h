@@ -79,6 +79,7 @@ public:
 
 		void setNormal( vec3 nor) { data[6] = nor.x; data[7] = nor.y; data[8] = nor.z; }
 
+		vec3& getPos() { return vec3(data[0], data[1], data[2]); }
 		vec3 getNormal() { return vec3(data[6], data[7], data[8]); }
 
 		float* getData()
@@ -102,25 +103,27 @@ public:
 	};
 
 	Mesh ( string);
-	Mesh ( vector<Vertex> &vec, unsigned char bitset); //Square Constructor
+	Mesh ( vector<Vertex> &vec, unsigned char bitset); //Rectangle Constructor
 	Mesh ( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset);
 	Mesh ();
 	
-	void load(RessourceHandler*);
-	void load(ifstream&);
+	virtual void load(RessourceHandler*);
+	virtual void load(ifstream&);
 	void* get() { return this; }
-	void init();
+	virtual void init();
 
-	void Draw();
+	virtual void Draw();
 
 	~Mesh(void);
 protected:
 	vector<Vertex> getNormalVertices(vector<unnormalizedVertex>);
 
-	void updateVertices();
+	void updateVertices(); //updates both Buffers completely
+	void updateVertices(unsigned int offset, unsigned int end); //updates Vertices Buffer from off to end
+	void updateIndices (unsigned int offset, unsigned int end); //iüdates Indices Buffer from off to end
+	void updateVertices(unsigned int offset, unsigned int end, unsigned int indOffset, unsigned int indEnd); //updates everything
 
 	vector<Vertex> _vertices;
-	unsigned int _VerticesCount;
 	vector<unsigned int> _indices;
 private:
 	void initGL(unsigned char);
@@ -132,6 +135,7 @@ private:
 	VertexArrayObject _vao;
 	CustomPtr<GLuint> _vbo;
 	CustomPtr<GLuint> _ibo;
+	unsigned int _VerticesCount;
 
 	void _load(vector<string>);
 	void _glDownload( vector<Vertex>&, vector <unsigned int>&);
