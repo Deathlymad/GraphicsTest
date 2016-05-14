@@ -23,10 +23,5 @@ private:
 	Camera* _player;
 	vec3 oldOff;
 
-	static int p[512], permutation[];
-	double noise(double, double, double);
-	double Terrain::fade(double t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-	double Terrain::lerp(double t, double a, double b) { return a + t * (b - a); }
-	double Terrain::grad(int hash, double x, double y, double z);
 };
 

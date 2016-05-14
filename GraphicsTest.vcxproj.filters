@@ -111,6 +111,9 @@
     <ClCompile Include="Terrain.cpp">
       <Filter>TestGame</Filter>
     </ClCompile>
+    <ClCompile Include="LSystem.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestGame.h">
@@ -190,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="Terrain.h">
       <Filter>TestGame</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

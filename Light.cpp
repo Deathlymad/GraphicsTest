@@ -47,7 +47,7 @@ void BaseLight::render(Shader * s, RenderingEngine::RenderState firstPass)
 }
 void BaseLight::postRender(Shader* s)
 {
-	EngineObject::render(s, RenderingEngine::RenderState::POST_RENDER);
+	//EngineObject::render(s, RenderingEngine::RenderState::POST_RENDER);
 }
 
 DirectionalLight::DirectionalLight( vec3 c, float i, vec3 dir, string& name) : BaseLight( c, i, name + ".base"), normal(name + ".direction", 3)
