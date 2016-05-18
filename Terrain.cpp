@@ -3,7 +3,7 @@
 Terrain::Terrain(Camera* ref) : Mesh(), _player(ref), oldOff(0, 0, 0), hexAmtPerLine(50), hexLines(50), initialized(false), generator(2), heightApplied(false)
 {}
 
-void Terrain::init()
+void Terrain::init() //holes
 {
 	if (initialized)
 		return;
@@ -110,15 +110,15 @@ void Terrain::init()
 
 void Terrain::Draw()
 {
-	if (generator.isFinished() && !heightApplied)
+	if ( generator.isFinished() && !heightApplied)
 	{
-		for (Vertex& v : _vertices)
+		for (unsigned int i = 0; i < _vertices.size(); i++) //remove lag gap
 		{
-			vec3 pos = v.getPos();
-			pos.y = generator.get(pos.x/10, pos.z/10);
-			v.setPos(pos);
+			vec3& t = _vertices[i].getPos();
+			t.y = getHeight(t.x, t.z);
+			_vertices[i].setTexCoord(vec2(static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX)));
 		}
-		updateVertices( 0 , _vertices.size());
+		updateVertices( 0, _vertices.size());
 		heightApplied = true;
 	}
 	Mesh::Draw();
@@ -135,5 +135,5 @@ Mesh::Vertex Terrain::getVertex(float x, float z)
 
 float Terrain::getHeight(float x, float z)
 {
-	return sin(x/100) * cos(z/100);// noise(x / 100, sinf(x / 100) * cos(z / 100), z / 100);
+	return generator.get(x, z) * 2;// noise(x / 100, sinf(x / 100) * cos(z / 100), z / 100);
 }
