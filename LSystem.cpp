@@ -21,6 +21,10 @@ LSystem::LSystem(std::string axiom, unsigned maxDepth) : _sentence(axiom), _maxD
 
 }
 
+LSystem::LSystem(LSystem & other) : _sentence(other._sentence), _maxDepth(other._maxDepth), alphabet(other.alphabet), _rules(other._rules)
+{
+}
+
 void LSystem::start()
 {
 	_result = async(launch::async | launch::deferred, [this] {return generate(); });
@@ -35,7 +39,7 @@ void LSystem::addRule(Rule& rule)
 string LSystem::getResult()
 {
 	if (_result.wait_for(seconds(0)) == std::future_status::ready)
-		return _result.get();
+		return _sentence;
 	else
 		return "";
 }
@@ -44,20 +48,18 @@ LSystem::~LSystem()
 {
 }
 
-string& LSystem::applyRules(string& str, unsigned depth)
+string LSystem::applyRules(string& str, unsigned depth)
 {
+	string newSentence = "";
+	for (const char& c : str)
+		newSentence.append(_rules[alphabet.find(c, 0)].getRes()); // add exceptions
 	if (depth == _maxDepth)
-		return str;
+		return newSentence;
 	else
-	{
-		string newSentence = "";
-		for (const char& c : str)
-			newSentence.append(_rules[alphabet.find(c, 0)].getRes()); // add exceptions
-		return applyRules(newSentence, depth++);
-	}
+		return applyRules(newSentence, depth+1);
 }
 
-string LSystem::generate()
+void LSystem::generate()
 {
 	//generate Alphabet from Rules
 	for (Rule& rule : _rules)

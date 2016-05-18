@@ -247,9 +247,9 @@ void Mesh::Draw()
 	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get()));
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
 
-	glDrawElements(GL_TRIANGLES, _VerticesCount, GL_UNSIGNED_INT, 0);
+	//glDrawElements(GL_TRIANGLES, _VerticesCount, GL_UNSIGNED_INT, 0);
 	//Wireframe Shader
-	//glDrawElements( GL_LINE_STRIP, _VerticesCount, GL_UNSIGNED_INT, 0);  //for debug purposes
+	glDrawElements( GL_LINE_STRIP, _VerticesCount, GL_UNSIGNED_INT, 0);  //for debug purposes
 
 	_vao.disableVAO();
 }

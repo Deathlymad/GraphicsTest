@@ -114,6 +114,9 @@
     <ClCompile Include="LSystem.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="NoiseGraph.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestGame.h">
@@ -195,6 +198,9 @@
       <Filter>TestGame</Filter>
     </ClInclude>
     <ClInclude Include="LSystem.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="NoiseGraph.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

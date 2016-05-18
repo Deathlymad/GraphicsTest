@@ -5,6 +5,7 @@
 #include "Def.h"
 
 NSP_STD
+NSP_CHR
 
 #pragma once
 class LSystem
@@ -34,8 +35,11 @@ public:
 	LSystem(string axiom);
 	LSystem(char axiom, unsigned maxDepth);
 	LSystem(string axiom, unsigned maxDepth);
+	LSystem(LSystem& other);
 
 	void start();
+
+	bool isFinished() { return _result.wait_for(seconds(0)) == std::future_status::ready; }
 
 	void addRule(Rule&);
 
@@ -43,10 +47,10 @@ public:
 
 	~LSystem();
 private:
-	future<string> _result;
+	future<void> _result;
 
-	string& applyRules(string&, unsigned);
-	string generate();
+	string applyRules(string&, unsigned);
+	void generate();
 
 	//recursion Data
 	unsigned _maxDepth;

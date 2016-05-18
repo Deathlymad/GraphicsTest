@@ -1,6 +1,6 @@
 #include "Terrain.h"
 
-Terrain::Terrain(Camera* ref) : Mesh(), _player(ref), oldOff(0, 0, 0), hexAmtPerLine(50), hexLines(50), initialized(false)
+Terrain::Terrain(Camera* ref) : Mesh(), _player(ref), oldOff(0, 0, 0), hexAmtPerLine(50), hexLines(50), initialized(false), generator(2), heightApplied(false)
 {}
 
 void Terrain::init()
@@ -22,7 +22,7 @@ void Terrain::init()
 		float vertOff = 0;
 		while (j <= hexAmtPerLine)
 		{
-			_vertices.push_back(getVertex(offset - 0.5, vertOff));
+			_vertices.push_back(getVertex(offset - 0.5f, vertOff));
 			vertOff += 2 * _sinD;
 			j++;
 		}
@@ -108,9 +108,20 @@ void Terrain::init()
 	initialized = true;
 }
 
-void Terrain::update()
+void Terrain::Draw()
 {
-
+	if (generator.isFinished() && !heightApplied)
+	{
+		for (Vertex& v : _vertices)
+		{
+			vec3 pos = v.getPos();
+			pos.y = generator.get(pos.x/10, pos.z/10);
+			v.setPos(pos);
+		}
+		updateVertices( 0 , _vertices.size());
+		heightApplied = true;
+	}
+	Mesh::Draw();
 }
 
 Terrain::~Terrain()
@@ -126,4 +137,3 @@ float Terrain::getHeight(float x, float z)
 {
 	return sin(x/100) * cos(z/100);// noise(x / 100, sinf(x / 100) * cos(z / 100), z / 100);
 }
-
