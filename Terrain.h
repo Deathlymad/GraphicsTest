@@ -6,7 +6,8 @@ class Terrain :
 	public Mesh
 {
 public:
-	Terrain(Camera* ref);
+	Terrain(NoiseGraph& generator, float xOff, float yOff, unsigned xSize, unsigned ySize);
+	Terrain(Terrain&);
 
 	virtual void init();
 	virtual void Draw();
@@ -14,17 +15,21 @@ public:
 	~Terrain();
 private:
 	bool initialized;
-	bool heightApplied;
 
-	unsigned hexAmtPerLine;
-	unsigned hexLines;
+	unsigned length;
+	unsigned depth;
+	float _xOff, _yOff;
 
-	NoiseGraph generator;
+	NoiseGraph& _generator;
+	future<void> heightRequest;
+	future<void> normalRequest;
+	bool heightRequested, genNormals; //merge to integral value
+	unsigned updatePos;
+
 
 	Vertex getVertex(float x, float z);
 	float getHeight(float x, float z);
 
-	Camera* _player;
 	vec3 oldOff;
 
 };

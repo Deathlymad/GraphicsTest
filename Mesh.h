@@ -95,10 +95,20 @@ public:
 
 	struct unnormalizedVertex
 	{
+		unnormalizedVertex() : _v( vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0))
+		{
+		}
 		unnormalizedVertex(Vertex v, vector<vec3> nor) : _v(v)
 		{
 			_nor = nor;
 		}
+
+		void operator=(Vertex& v)
+		{
+			_v = v;
+			_nor = vector<vec3>();
+		}
+
 		Vertex _v;
 		vector<vec3> _nor;
 	};

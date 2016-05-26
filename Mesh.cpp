@@ -96,14 +96,16 @@ void Mesh::updateIndices(unsigned int offset, unsigned int end)
 }
 void Mesh::updateVertices(unsigned int offset, unsigned int end, unsigned int indOffset, unsigned int indEnd)
 {
-	if (end - offset > 0)
+	unsigned int _end = end > _vertices.size() ? _vertices.size() : end;
+	if (_end - offset > 0)
 	{
-		const unsigned int size = end-offset;
-		const unsigned int dataSize = size * (_vao.isNor() + _vao.isTex() + _vao.isVec());
+		const unsigned int size = _end-offset;
+		const unsigned int vertexSize = _vao.isNor() + _vao.isTex() + _vao.isVec();
+		const unsigned int dataSize = size * vertexSize;
 		glBindBuffer(GL_ARRAY_BUFFER, *_vbo.get());
 
 		vector<float> temp;
-		for (unsigned int i = offset; i < end; i++)
+		for (unsigned int i = offset; i < _end; i++)
 		{
 			float* d = _vertices[i].getData();
 			if (_vao.isVec())
@@ -114,17 +116,18 @@ void Mesh::updateVertices(unsigned int offset, unsigned int end, unsigned int in
 				temp.insert(temp.end(), &d[6], &d[6 + _vao.isNor()]);
 		}
 
-		glBufferSubData(GL_ARRAY_BUFFER, offset * 4, temp.size() * 4, temp.data());
+		glBufferSubData(GL_ARRAY_BUFFER, offset * vertexSize * 4, temp.size() * 4, temp.data());
 	}
 
-	if (indEnd - indOffset)
+	unsigned int _IndEnd = indEnd > _indices.size() ? _indices.size() : indEnd;
+	if (_IndEnd - indOffset)
 	{
 		_VerticesCount = glm::max(_indices.size(), _VerticesCount); //might be dangerous
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *_ibo.get());
 		vector<unsigned int> t1;
-		t1.insert(t1.end(), _indices.begin() + offset, _indices.begin() + end);
-		glBufferSubData(GL_ARRAY_BUFFER, indOffset * 4, (indOffset + indEnd) * 4, t1.data());
+		t1.insert(t1.end(), _indices.begin() + offset, _indices.begin() + _end);
+		glBufferSubData(GL_ARRAY_BUFFER, indOffset * 4, (indOffset + _IndEnd) * 4, t1.data());
 	}
 }
 

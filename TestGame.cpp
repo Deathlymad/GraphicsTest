@@ -12,7 +12,7 @@ TestGame::TestGame() : Game(),
 	m(0, 2, 32),
 	obj("assets/mesh/untitled.obj", "assets/textures/Test_tex2.bmp"),
 	trans(0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f)),
-	_testField(&getScene().getCam()),
+	_testField( *new NoiseGraph(2)),
 	_fieldRenderer(_testField)
 {
 	//Rendering Registry

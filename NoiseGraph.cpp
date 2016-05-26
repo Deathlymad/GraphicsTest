@@ -18,7 +18,7 @@ LSystem::Rule NoiseGraph::rules[] = {
 	LSystem::Rule('K', "EJK"),
 	LSystem::Rule('L', "ELA")
 };
-NoiseGraph::NoiseGraph(unsigned dimension) : noiseGenSystem( LSystem('A' + rand() % 11, 1)), nullFloat(0.0f)
+NoiseGraph::NoiseGraph(unsigned dimension) : noiseGenSystem( LSystem('A' + rand() % 11, 1))
 {
 	for (LSystem::Rule rule : rules)
 		noiseGenSystem.addRule(rule);
@@ -30,11 +30,21 @@ NoiseGraph::~NoiseGraph()
 
 }
 
+future<void> NoiseGraph::getCalcYForPlane(vector<Mesh::Vertex>& vec)
+{
+	return async([this, &vec]
+	{
+		for (unsigned i = 0; i< vec.size(); i++)
+		{
+			vec3& pos = vec[i].getPos();
+			vec[i].setPos( vec3(pos.x, get(pos.x, pos.z), pos.z));
+		}
+	});
+}
+
 float NoiseGraph::get( float x, float y)
 {
-	if (nullFloat == 0 && noiseGenSystem.isFinished())
-		nullFloat = getNoise(0, 0) * 5;
-	return (getNoise(x/20, y/20) * 5) - nullFloat;
+	return getNoise(x/20, y/20) * 5;
 }
 
 float NoiseGraph::getNoise(float x, float y, unsigned depth)

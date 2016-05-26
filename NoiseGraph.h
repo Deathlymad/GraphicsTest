@@ -5,6 +5,7 @@
 
 #include "Def.h"
 #include "LSystem.h"
+#include "Mesh.h"
 
 NSP_STD
 
@@ -17,9 +18,9 @@ public:
 
 	bool isFinished() { return noiseGenSystem.isFinished(); }
 
+	future<void> getCalcYForPlane(vector<Mesh::Vertex>&);
 	float get(float x, float y); //implement Operator
 private:
-	float nullFloat;
 	static LSystem::Rule rules[];
 	LSystem noiseGenSystem;
 

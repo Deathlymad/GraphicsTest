@@ -1,125 +1,149 @@
 #include "Terrain.h"
 
-Terrain::Terrain(Camera* ref) : Mesh(), _player(ref), oldOff(0, 0, 0), hexAmtPerLine(50), hexLines(50), initialized(false), generator(2), heightApplied(false)
+NSP_GLM
+
+Terrain::Terrain(NoiseGraph& generator, float xOff, float yOff, unsigned xSize, unsigned ySize) : Mesh(),
+oldOff(0, 0, 0),
+length(xSize),
+depth(ySize),
+_xOff(xOff),
+_yOff(yOff),
+initialized(false), 
+_generator(generator), 
+heightRequested(false), 
+updatePos(0), 
+genNormals(false)
 {}
 
-void Terrain::init() //holes
+Terrain::Terrain(Terrain &other) : Mesh(other), 
+oldOff(other.oldOff), 
+length(other.length),
+depth(other.depth),
+initialized(other.initialized), 
+_generator(other._generator), 
+heightRequested(other.heightRequested), 
+updatePos(other.updatePos), 
+genNormals(other.genNormals)
+{
+}
+
+void Terrain::init()
 {
 	if (initialized)
 		return;
-	float _sinD = sinf(1.0472f); //60 degrees in Radiens
-	float _cosD = cosf(1.0472f);
 
-	_vertices.clear();
-	_indices.clear();
+	float _sinD = sinf(1.0472f);
 
-	unsigned i = 0, j; //running Var
-	float offset = 0;
-	while (i < hexLines)
+	unsigned  x = 0, y = 0;
+	bool toggle = false;
+	while (y <= depth)
 	{
-		j = 0;
-
-		float vertOff = 0;
-		while (j <= hexAmtPerLine)
+		x = 0.0f;
+		float offset = toggle ? 0 : 0.5;
+		if (offset != 0.0f)
+			_vertices.push_back(Vertex(vec3(_xOff, 0, y * _sinD + _yOff), vec2()));
+		while (x < length)
 		{
-			_vertices.push_back(getVertex(offset - 0.5f, vertOff));
-			vertOff += 2 * _sinD;
-			j++;
+			_vertices.push_back(Vertex(vec3(offset + x + _xOff, 0, y * _sinD + _yOff), vec2()));
+			x+=1;
 		}
+		_vertices.push_back(Vertex(vec3(ceil(x) + _xOff, 0, y * _sinD + _yOff), vec2()));
 
-		j = 0;
-
-		_vertices.push_back(getVertex(offset + _cosD,0));
-		_vertices.push_back(getVertex(offset + 1 + _cosD,0));
-		
-		while (j < hexAmtPerLine * 2) // generates vertices
+		if (y > 0)
 		{
-			size_t size = _vertices.size();
-			//													   _
-			//going from 3 to  2 vertices in a line (generating  /| |\ )
-			if (j % 2)
+			float PtsPerLine = length + 2;
+			unsigned cur = floorf(y * PtsPerLine - floorf(y / 2)), prev = floorf((y - 1) * PtsPerLine - floorf((y - 1) / 2));
+			unsigned linePos = y % 2 ? cur : prev, prevLinePos = y % 2 ? prev : cur;
+			
+
+
+			//writes first Triangle
+			_indices.push_back(linePos);
+			_indices.push_back(prevLinePos);
+			_indices.push_back(prevLinePos + 1);
+
+			//writes the rest of the Strip
+			for (unsigned i = 0; i < PtsPerLine - 2; i++)
 			{
-				//getting the three previous Vertices
-				vec3
-					left = _vertices[size - 3].getPos();
-				vec3
-					middle = _vertices[size - 2].getPos();
-				vec3
-					right = _vertices[size - 1].getPos();
+				_indices.push_back(linePos + i);
+				_indices.push_back(prevLinePos + (i + 1));
+				_indices.push_back(linePos + (i + 1));
 
-				float off = left.z + _sinD;
-				_vertices.push_back(getVertex(left.x + _cosD, off)); //left, size
-				_vertices.push_back(getVertex(right.x - _cosD, off));//right, size + 1
-
-				_indices.push_back(size - 3 - (j * 2) - hexAmtPerLine);
-				_indices.push_back(size - 3);
-				_indices.push_back(size); //triangle for the "implied" space between two strips
-
-				_indices.push_back(size - 3);
-				_indices.push_back(size - 2);
-				_indices.push_back(size); //first triangle
-
-				_indices.push_back(size);
-				_indices.push_back(size - 2);
-				_indices.push_back(size + 1); //second triangle
-
-				_indices.push_back(size + 1);
-				_indices.push_back(size - 2);
-				_indices.push_back(size - 1); //third triangle
+				_indices.push_back(linePos + (i + 1));
+				_indices.push_back(prevLinePos + (i + 1));
+				_indices.push_back(prevLinePos + (i + 2));
 			}
-			//going from 2 to  3 vertives in a line (generating  \|_|/ )
-			else
-			{
-				//getting the two previous Vertices
-				vec3
-					left = _vertices[size - 2].getPos(); // use points of previous line
-				vec3
-					right = _vertices[size - 1].getPos();
-				float off = left.z + _sinD;
-
-				// use points of previous line
-				_vertices.push_back(getVertex(left.x - _cosD, off)); //left, size
-				_vertices.push_back(getVertex(right.x - _cosD, off)); //middle, size + 1
-				_vertices.push_back(getVertex(right.x + _cosD, off));//right, size  + 2
-
-				_indices.push_back(size - 3 - (j * 2) - hexAmtPerLine);
-				_indices.push_back(size - 2);
-				_indices.push_back(size); //triangle for the "implied" space between two strips
-				
-				_indices.push_back(size - 2);
-				_indices.push_back(size + 1);
-				_indices.push_back(size); //first triangle
-
-				_indices.push_back(size - 1);
-				_indices.push_back(size + 1);
-				_indices.push_back(size - 2); //second triangle
-
-				_indices.push_back(size + 2);
-				_indices.push_back(size + 1);
-				_indices.push_back(size - 1); //third triangle
-			}
-			j += 1;
 		}
-		offset += 1 + 2 * _cosD;
-
-		i += 1;
+		y+=1;
+		if (toggle)
+			toggle = false;
+		else
+			toggle = true;
 	}
+	
+	
 	Mesh::init();
 	initialized = true;
 }
 
 void Terrain::Draw()
 {
-	if ( generator.isFinished() && !heightApplied)
+	if (_generator.isFinished())
 	{
-		for (unsigned int i = 0; i < _vertices.size(); i++) //remove lag gap
+		if (!heightRequested)
 		{
-			vec3& t = _vertices[i].getPos();
-			t.y = getHeight(t.x, t.z);
-			_vertices[i].setTexCoord(vec2(static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX)));
+			heightRequest = _generator.getCalcYForPlane(_vertices);
+			async([this] {
+				for (Vertex& v : _vertices)
+					v.setTexCoord(vec2(
+					((float)rand() / (RAND_MAX)),
+					((float)rand() / (RAND_MAX))
+					));
+			});
+			this_thread::sleep_for(milliseconds(10));
+			heightRequested = true;
 		}
-		updateVertices( 0, _vertices.size());
-		heightApplied = true;
+		else if (updatePos < _vertices.size() && normalRequest.valid() && normalRequest.wait_for(seconds(0)) == future_status::ready)
+		{
+			updateVertices(updatePos, updatePos + 6);
+			updatePos++;
+		}
+		if (!genNormals && heightRequest.wait_for(seconds(0)) == future_status::ready) //normals require height data
+		{
+			normalRequest = async([this] {
+				vector<Mesh::unnormalizedVertex> _unVec = vector<Mesh::unnormalizedVertex>(_vertices.size());
+				for (unsigned i = 0; i < _unVec.size(); i++) //copy data
+					_unVec[i] = _vertices[i];
+
+				for (unsigned i = 0; i < floorf(_indices.size() / 3); i++)
+				{
+					unsigned ind = i * 3;
+					vec3	a = _vertices[_indices[ind]].getPos() - _vertices[_indices[ind + 1]].getPos(),
+							b = _vertices[_indices[ind]].getPos() - _vertices[_indices[ind + 2]].getPos();
+					vec3 c = cross(a, b);
+					_unVec[_indices[ind]]._nor.push_back(c);
+					_unVec[_indices[ind + 1]]._nor.push_back(c);
+					_unVec[_indices[ind + 2]]._nor.push_back(c);
+				}
+
+				for (unsigned i = 0; i < _unVec.size(); i++) //normalize the normals
+				{
+					vector<vec3> normals;
+					for (vec3 n :_unVec[i]._nor)
+					{
+						if (!(find(normals.begin(), normals.end(), n) != normals.end()))
+							normals.push_back(n);
+					}
+					vec3 nor = vec3(0, 0, 0);
+					for (vec3 n : normals)
+					{
+						nor += n;
+					}
+					_vertices[i].setNormal(normalize(nor));
+				}
+				genNormals = true;
+			});
+		}
 	}
 	Mesh::Draw();
 }
@@ -135,5 +159,5 @@ Mesh::Vertex Terrain::getVertex(float x, float z)
 
 float Terrain::getHeight(float x, float z)
 {
-	return generator.get(x, z) * 2;// noise(x / 100, sinf(x / 100) * cos(z / 100), z / 100);
+	return 0;
 }

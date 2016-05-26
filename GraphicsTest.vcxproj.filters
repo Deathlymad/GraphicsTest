@@ -111,11 +111,14 @@
     <ClCompile Include="Terrain.cpp">
       <Filter>TestGame</Filter>
     </ClCompile>
-    <ClCompile Include="LSystem.cpp">
-      <Filter>Quelldateien</Filter>
+    <ClCompile Include="World.cpp">
+      <Filter>TestGame</Filter>
     </ClCompile>
     <ClCompile Include="NoiseGraph.cpp">
-      <Filter>Quelldateien</Filter>
+      <Filter>TestGame</Filter>
+    </ClCompile>
+    <ClCompile Include="LSystem.cpp">
+      <Filter>TestGame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,11 +200,14 @@
     <ClInclude Include="Terrain.h">
       <Filter>TestGame</Filter>
     </ClInclude>
-    <ClInclude Include="LSystem.h">
-      <Filter>Headerdateien</Filter>
+    <ClInclude Include="World.h">
+      <Filter>TestGame</Filter>
     </ClInclude>
     <ClInclude Include="NoiseGraph.h">
-      <Filter>Headerdateien</Filter>
+      <Filter>TestGame</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem.h">
+      <Filter>TestGame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
