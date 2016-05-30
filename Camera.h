@@ -26,6 +26,8 @@ public:
 	void setFoV(float);
 	void setAspect(float);
 
+	vec3 getPos() { return _pos; }
+
 	void registerKeyBinds(KeyMap*);
 	void onMouseMove(double x, double y); //move, cameras need to be static too
 

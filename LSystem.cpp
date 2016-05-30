@@ -44,6 +44,15 @@ string LSystem::getResult()
 		return "";
 }
 
+LSystem & LSystem::operator=(LSystem & other)
+{
+	_maxDepth = other._maxDepth;
+	_sentence = other._sentence;
+	_rules = other._rules;
+	alphabet = other.alphabet;
+	return *this;
+}
+
 LSystem::~LSystem()
 {
 }

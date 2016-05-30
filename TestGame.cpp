@@ -12,8 +12,7 @@ TestGame::TestGame() : Game(),
 	m(0, 2, 32),
 	obj("assets/mesh/untitled.obj", "assets/textures/Test_tex2.bmp"),
 	trans(0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f)),
-	_testField( *new NoiseGraph(2)),
-	_fieldRenderer(_testField)
+	_testField( &getScene().getCam(), 50, 50)
 {
 	//Rendering Registry
 	getEngine()->getGraphicEngine()->registerGraphicObject(&Light);
@@ -22,7 +21,7 @@ TestGame::TestGame() : Game(),
 
 	//scene Registry
 	//trans.add(&obj);
-	trans.add(&_fieldRenderer);
+	trans.add(&_testField);
 
 	m.add(&trans);
 

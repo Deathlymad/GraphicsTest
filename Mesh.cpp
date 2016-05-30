@@ -15,7 +15,7 @@
 #include "Mesh.h"
 #include <fstream>
 
-Mesh::Mesh() : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao( 3, 2, 3)
+Mesh::Mesh() : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao( 3, 2, 3), _loadReq(nullptr)
 {
 }
 

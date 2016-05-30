@@ -90,6 +90,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <DisableSpecificWarnings>4099;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -163,7 +165,6 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
     <ClCompile Include="NoiseGraph.cpp" />
-    <ClCompile Include="OptionRegistry.cpp" />
     <ClCompile Include="RenderingEngine.cpp" />
     <ClCompile Include="RessourceHandler.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -194,7 +195,6 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="NoiseGraph.h" />
-    <ClInclude Include="OptionRegistry.h" />
     <ClInclude Include="RenderingEngine.h" />
     <ClInclude Include="RessourceHandler.h" />
     <ClInclude Include="Scene.h" />

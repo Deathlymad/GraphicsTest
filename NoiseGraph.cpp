@@ -25,6 +25,10 @@ NoiseGraph::NoiseGraph(unsigned dimension) : noiseGenSystem( LSystem('A' + rand(
 	noiseGenSystem.start();
 }
 
+NoiseGraph::NoiseGraph() : noiseGenSystem(LSystem(0, 0))
+{
+}
+
 NoiseGraph::~NoiseGraph()
 {
 
@@ -36,8 +40,9 @@ future<void> NoiseGraph::getCalcYForPlane(vector<Mesh::Vertex>& vec)
 	{
 		for (unsigned i = 0; i< vec.size(); i++)
 		{
-			vec3& pos = vec[i].getPos();
-			vec[i].setPos( vec3(pos.x, get(pos.x, pos.z), pos.z));
+			Mesh::Vertex& pos = vec[i];
+			vec3& posRef = pos.getPos();
+			pos.setPos( vec3(posRef.x, get(posRef.x, posRef.z), posRef.z));
 		}
 	});
 }

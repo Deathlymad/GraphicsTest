@@ -3,7 +3,7 @@
 #include "ModelRenderer.h"
 #include "Transformation.h"
 #include "Light.h"
-#include "Terrain.h"
+#include "World.h"
 
 class TestGame :
 	public Game
@@ -21,6 +21,5 @@ private:
 	Material m;
 	ModelRenderer obj;
 
-	Terrain _testField;
-	ModelRenderer _fieldRenderer;
+	World _testField;
 };

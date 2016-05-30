@@ -93,9 +93,6 @@
     <ClCompile Include="Util.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="OptionRegistry.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -184,9 +181,6 @@
     </ClInclude>
     <ClInclude Include="Util.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="OptionRegistry.h">
-      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Graphics</Filter>

@@ -45,6 +45,8 @@ public:
 
 	string getResult();
 
+	LSystem& operator=(LSystem& other);
+
 	~LSystem();
 private:
 	future<void> _result;

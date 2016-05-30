@@ -7,10 +7,16 @@ class Terrain :
 {
 public:
 	Terrain(NoiseGraph& generator, float xOff, float yOff, unsigned xSize, unsigned ySize);
-	Terrain(Terrain&);
+	Terrain(const Terrain&);
+	Terrain();
 
 	virtual void init();
 	virtual void Draw();
+
+	bool isTerrainAt(float x, float y) { return distToPoint(vec3(x, 0, y)) == 0; }
+	int distToPoint(vec3 p);
+
+	Terrain& operator= (Terrain& other);
 
 	~Terrain();
 private:

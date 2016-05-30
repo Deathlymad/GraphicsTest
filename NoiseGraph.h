@@ -14,6 +14,7 @@ class NoiseGraph //needs to be fully reminlemented
 {
 public:
 	NoiseGraph(unsigned dimension);
+	NoiseGraph();
 	~NoiseGraph();
 
 	bool isFinished() { return noiseGenSystem.isFinished(); }

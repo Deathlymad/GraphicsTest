@@ -13,11 +13,15 @@ public:
 	ModelRenderer(Mesh& _mesh);
 	ModelRenderer( string, string);
 
-	void load(RessourceHandler*);
-	void init(KeyMap*);
-	void render(Shader*, RenderingEngine::RenderState);
+	virtual void load(RessourceHandler*);
+	virtual void init(KeyMap*);
+	virtual void update() { EngineObject::update(); }
+	virtual void render(Shader*, RenderingEngine::RenderState);
 
 	~ModelRenderer();
+
+protected:
+	ModelRenderer();
 private:
 	Texture* tex;
 	Mesh* mesh;

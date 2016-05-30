@@ -11,28 +11,41 @@ ModelRenderer::ModelRenderer(string meshFile, string texFile) : EngineObject(), 
 {
 }
 
+ModelRenderer::ModelRenderer() : EngineObject(), mesh(nullptr), tex(nullptr)
+{
+}
+
+
 void ModelRenderer::load(RessourceHandler * loader)
 {
-	tex->load(loader);
-	mesh->load(loader);
+	if (tex)
+		tex->load(loader);
+	if (mesh)
+		mesh->load(loader);
 }
 
 void ModelRenderer::init(KeyMap* kr)
 {
+	if (tex)
 	tex->glDownload();
+	if (mesh)
 	mesh->init();
 }
 
 void ModelRenderer::render(Shader* s, RenderingEngine::RenderState)
 {
 	s->bind();
-	tex->bind();
-	mesh->Draw();
+	if (tex)
+		tex->bind();
+	if (mesh)
+		mesh->Draw();
 }
 
 
 ModelRenderer::~ModelRenderer()
 {
+	if(mesh)
 	mesh->~Mesh();
+	if (tex)
 	tex->~Texture();
 }

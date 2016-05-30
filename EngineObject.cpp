@@ -9,25 +9,29 @@ EngineObject::EngineObject() : children()
 void EngineObject::init( KeyMap* k)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
-		children[i]->init( k);
+		if (children[i])
+			children[i]->init( k);
 }
 
 void EngineObject::load(RessourceHandler * loader)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
-		children[i]->load(loader);
+		if (children[i])
+			children[i]->load(loader);
 }
 
 void EngineObject::update()
 {
 	for (unsigned int i = 0; i < children.size(); i++)
-		children[i]->update();
+		if (children[i])
+			children[i]->update();
 }
 
 void EngineObject::render(Shader* s, RenderingEngine::RenderState firstPass)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
-		children[i]->render(s, firstPass);
+		if (children[i])
+			children[i]->render(s, firstPass);
 }
 
 
