@@ -14,12 +14,16 @@ public:
 	virtual void Draw();
 
 	bool isTerrainAt(float x, float y) { return distToPoint(vec3(x, 0, y)) == 0; }
-	int distToPoint(vec3 p);
+	float distToPoint(vec3 p);
 
 	Terrain& operator= (Terrain& other);
+	bool operator== (vec2 pos);
 
 	~Terrain();
 private:
+	float _distTo(vec3 p, float x, float z);
+
+
 	bool initialized;
 
 	unsigned length;

@@ -10,6 +10,7 @@ class World : public EngineObject
 public:
 	World(Camera*, unsigned x, unsigned z);
 
+	virtual void load(RessourceHandler* loader);
 	virtual void init(KeyMap* map);
 
 	virtual void update();
@@ -18,7 +19,7 @@ public:
 	~World();
 private:
 	unsigned getMemPosForTerrain(int x, int z, bool invX, bool invZ);
-	void TerrainForPos(int x, int z);
+	void TerrainForPos(vec2 pos, float xOff, float zOff);
 	void setPos(vec2 pos);
 
 	vec2 toWorldPos(vec3 pos) { return vec2(pos.x, pos.z); }
@@ -29,5 +30,6 @@ private:
 	vector<Terrain> allocator;
 	Camera* player;
 
+	Texture ground;
 	bool initialized;
 };

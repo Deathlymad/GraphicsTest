@@ -1,4 +1,5 @@
 #include "Terrain.h"
+#include <algorithm>
 
 NSP_GLM
 
@@ -33,6 +34,8 @@ Terrain::Terrain() : Mesh(),
 oldOff(0),
 length(0),
 depth(0),
+_xOff(0),
+_yOff(0),
 initialized(false),
 _generator(NoiseGraph()),
 heightRequested(false),
@@ -104,11 +107,13 @@ void Terrain::Draw()
 {
 	if (length == 0 && depth == 0)
 		return;
+	
 	if (_generator.isFinished())
 	{
-		if (!heightRequest.valid())
+		if (!heightRequest.valid()  || !heightRequested)
 		{
 			heightRequest = _generator.getCalcYForPlane(_vertices);
+			
 			async([this] {
 				for (unsigned i = 0; i < _vertices.size(); i++)
 					_vertices[i].setTexCoord(vec2(
@@ -117,11 +122,12 @@ void Terrain::Draw()
 					));
 			});
 			this_thread::sleep_for(milliseconds(10));
+			heightRequested = true;
 		}
 		else if (updatePos < _vertices.size() && normalRequest.valid() && normalRequest.wait_for(seconds(0)) == future_status::ready)
 		{
 			updateVertices(updatePos, updatePos + 6);
-			updatePos++;
+			updatePos+=6;
 		}
 		if (!genNormals && heightRequest.wait_for(seconds(0)) == future_status::ready) //normals require height data
 		{
@@ -164,12 +170,20 @@ void Terrain::Draw()
 	Mesh::Draw();
 }
 
-int Terrain::distToPoint(vec3 p)
+float Terrain::distToPoint(vec3 p)
 {
-	if ( _xOff <= p.x && p.x <= _xOff + length &&
-		_yOff <= p.z && p.z <= _yOff + depth)
+	if (length == 0 || depth == 0)
+		return 1000000;
+	if ( _xOff <= p.x && p.x <= (_xOff + length) &&
+		_yOff <= p.z && p.z <= (_yOff + depth))
 		return 0;
-	return 1;
+	float a = _distTo(p, _xOff, _yOff)
+		, b = _distTo(p, _xOff + length, _yOff)
+		, c = _distTo(p, _xOff, _yOff + depth)
+		, d = _distTo(p, _xOff + length, _yOff + depth);
+	float t1 = (a > b) ? b : a
+		, t2 = (c > d) ? d : c;
+	return (t1 > t2) ? t2 : t1;
 }
 
 Terrain & Terrain::operator=(Terrain & other)
@@ -179,6 +193,8 @@ Terrain & Terrain::operator=(Terrain & other)
 	oldOff = other.oldOff;
 	length = other.length;
 	depth = other.depth;
+	_xOff = other._xOff;
+	_yOff = other._yOff;
 	initialized = other.initialized;
 	_generator = other._generator;
 	heightRequested = other.heightRequested;
@@ -188,8 +204,22 @@ Terrain & Terrain::operator=(Terrain & other)
 	return *this;
 }
 
+bool Terrain::operator==(vec2 pos)
+{
+	if (length == 0 || depth == 0)
+		return false;
+	return _xOff == pos.x && _yOff == pos.y;
+}
+
 Terrain::~Terrain()
 {
+}
+
+float Terrain::_distTo(vec3 p, float x, float z)
+{
+	float _x = powf(p.x - x, 2);
+	float _z = powf(p.z - z, 2);
+	return sqrtf( _x + _z);
 }
 
 Mesh::Vertex Terrain::getVertex(float x, float z)

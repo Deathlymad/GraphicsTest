@@ -8,7 +8,7 @@ vec3 Camera::YAxis = vec3(0.0f, 1.0f, 0.0f);
 
 Camera::Camera() : InputHandler(), EngineObject(), ViewProjMat("ViewProj", 16), EyePos("EyePos", 3)
 {
-	_pos = vec3(0, 0, -5);
+	_pos = vec3(0, 0, 0);
 	forward = vec3(0, 0, -1);
 	up = vec3(0, 1, 0);
 	FoV = 45.0f;
