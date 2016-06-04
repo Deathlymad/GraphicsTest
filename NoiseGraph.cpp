@@ -18,7 +18,7 @@ LSystem::Rule NoiseGraph::rules[] = {
 	LSystem::Rule('K', "EJK"),
 	LSystem::Rule('L', "ELA")
 };
-NoiseGraph::NoiseGraph(unsigned dimension) : noiseGenSystem( LSystem('A' + rand() % 11, 1))
+NoiseGraph::NoiseGraph(unsigned dimension) : noiseGenSystem( LSystem('A' + rand() % 11, 2))
 {
 	for (LSystem::Rule rule : rules)
 		noiseGenSystem.addRule(rule);

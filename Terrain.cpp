@@ -9,9 +9,11 @@ length(xSize),
 depth(ySize),
 _xOff(xOff),
 _yOff(yOff),
-initialized(false), 
-_generator(generator), 
-heightRequested(false), 
+_init(false),
+MeshInit(false),
+_generator(generator),
+heightRequested(false),
+genPos(0),
 updatePos(0), 
 genNormals(false)
 {}
@@ -22,9 +24,11 @@ length(other.length),
 depth(other.depth),
 _xOff(other._xOff),
 _yOff(other._yOff),
-initialized(other.initialized), 
+_init(other._init),
+MeshInit(other.MeshInit),
 _generator(other._generator), 
 heightRequested(other.heightRequested), 
+genPos(other.genPos),
 updatePos(other.updatePos), 
 genNormals(other.genNormals)
 {
@@ -36,9 +40,11 @@ length(0),
 depth(0),
 _xOff(0),
 _yOff(0),
-initialized(false),
+_init(false),
+MeshInit(false),
 _generator(NoiseGraph()),
 heightRequested(false),
+genPos(0),
 updatePos(0),
 genNormals(false)
 {
@@ -46,7 +52,7 @@ genNormals(false)
 
 void Terrain::init()
 {
-	if (initialized)
+	if (_init)
 		return;
 
 	float _sinD = 1;// sinf(1.0472f);
@@ -97,39 +103,21 @@ void Terrain::init()
 		else
 			toggle = true;
 	}
-	
-	
-	Mesh::init();
-	initialized = true;
+	_init = true;
 }
 
-void Terrain::Draw()
+void Terrain::update()
 {
-	if (length == 0 && depth == 0)
+	if (length == 0 || depth == 0 || !_init)
 		return;
 	
 	if (_generator.isFinished())
 	{
-		if (!heightRequest.valid()  || !heightRequested)
+		if (!heightRequest.valid())
 		{
 			heightRequest = _generator.getCalcYForPlane(_vertices);
-			
-			async([this] {
-				for (unsigned i = 0; i < _vertices.size(); i++)
-					_vertices[i].setTexCoord(vec2(
-					((float)rand() / (RAND_MAX)),
-					((float)rand() / (RAND_MAX))
-					));
-			});
-			this_thread::sleep_for(milliseconds(10));
-			heightRequested = true;
 		}
-		else if (updatePos < _vertices.size() && normalRequest.valid() && normalRequest.wait_for(seconds(0)) == future_status::ready)
-		{
-			updateVertices(updatePos, updatePos + 6);
-			updatePos+=6;
-		}
-		if (!genNormals && heightRequest.wait_for(seconds(0)) == future_status::ready) //normals require height data
+		if (!normalRequest.valid() && heightRequest.wait_for(seconds(0)) == future_status::ready) //normals require height data
 		{
 			normalRequest = async([this] {
 				vector<Mesh::unnormalizedVertex> _unVec = vector<Mesh::unnormalizedVertex>(_vertices.size());
@@ -162,12 +150,46 @@ void Terrain::Draw()
 						nor += n;
 					}
 					_vertices[i].setNormal(normalize(nor));
+					_vertices[i].setTexCoord(vec2(
+						((float)rand() / (RAND_MAX)),
+						((float)rand() / (RAND_MAX))
+					));
+					genPos = i;
 				}
 				genNormals = true;
 			});
 		}
 	}
-	Mesh::Draw();
+}
+
+void Terrain::Draw()
+{
+	if (length == 0 || depth == 0 || !MeshInit)
+		return;
+	if (_vertices.size() != updatePos + 1)
+	{
+		unsigned updateDif = genPos - updatePos;
+		unsigned maxPos = _vertices.size();
+		if (genPos == maxPos && maxPos - updatePos <= 10)
+		{
+			updateVertices(updatePos, maxPos);
+			updatePos = maxPos;
+		}
+		else if (updateDif > 0)
+		{
+			if (updateDif <= 10)
+			{
+				updateVertices(updatePos, genPos);
+				updatePos = genPos;
+			}
+			else
+			{
+				updateVertices(updatePos, updatePos + 10);
+				updatePos += 10;
+			}
+		}
+	} else
+		Mesh::Draw();
 }
 
 float Terrain::distToPoint(vec3 p)
@@ -195,20 +217,14 @@ Terrain & Terrain::operator=(Terrain & other)
 	depth = other.depth;
 	_xOff = other._xOff;
 	_yOff = other._yOff;
-	initialized = other.initialized;
+	_init = other._init;
+	MeshInit = other.MeshInit;
 	_generator = other._generator;
 	heightRequested = other.heightRequested;
 	updatePos = other.updatePos;
 	genNormals = other.genNormals;
 
 	return *this;
-}
-
-bool Terrain::operator==(vec2 pos)
-{
-	if (length == 0 || depth == 0)
-		return false;
-	return _xOff == pos.x && _yOff == pos.y;
 }
 
 Terrain::~Terrain()

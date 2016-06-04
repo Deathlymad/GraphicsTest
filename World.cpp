@@ -17,23 +17,27 @@ void World::init(KeyMap* map)
 {
 	if (initialized)
 		return;
-	setPos(vec2(0, 0));
 	initialized = true;
 	ground.glDownload();
 }
 
 void World::update()
 {
+	setPos(toWorldPos(player->getPos()));
+	for (Terrain& terr : allocator)
+		terr.update();
 }
 
 void World::render(Shader* s, RenderingEngine::RenderState state)
 {
-	setPos(toWorldPos(player->getPos())); //make asynchronous (init OGL at later Point in )
 	s->bind();
 	ground.bind();
 	for (unsigned i = 0; i < 16; i++)
 	{
-		allocator[i].Draw();
+		if (allocator[i].isMeshInitialized() && allocator[i].isInitialized())
+			allocator[i].Draw();
+		else
+			allocator[i].initMesh();
 	}
 }
 
@@ -55,7 +59,7 @@ unsigned World::getMemPosForTerrain(int x, int z, bool invX, bool invZ)
 	return (bitX | (bitZ << 2)) % 16;
 }
 
-void World::TerrainForPos(vec2 p, float xO, float zO)
+void World::TerrainForPos(vec2 p, int xO, int zO)
 {
 	int   modX = p.x - int(p.x) % 50
 		, modZ = p.y - int(p.y) % 50;
@@ -63,10 +67,9 @@ void World::TerrainForPos(vec2 p, float xO, float zO)
 		, zOff = (zO - 2) * chunkZ;
 	unsigned pos = getMemPosForTerrain(abs(modX + xOff) / chunkX, abs(modZ + zOff) / chunkZ, modX + xOff < 0, modZ + zOff < 0);
 
-	if (!(allocator[pos] == vec2(modX + xOff, modZ + zOff))) //checks if cache is correct
+	if (!(allocator[pos].isTerrainAt(modX + xOff, modZ + zOff))) //checks if cache is correct
 	{
-		allocator.erase(allocator.begin() + pos);//removes object
-		allocator.insert( allocator.begin() + pos, Terrain(generator, modX + xOff, modZ + zOff, chunkX, chunkZ));//inserts new object
+		allocator[pos] = Terrain(generator, modX + xOff, modZ + zOff, chunkX, chunkZ);//inserts new object
 		allocator[pos].init(); //initializes the new Object
 	}
 }

@@ -246,6 +246,8 @@ void Mesh::deleteBuffer(GLuint * buf)
 
 void Mesh::Draw()
 {
+	if (!_vao.valid() || !_vbo.valid() || !_ibo.valid())
+		return;
 	_vao.bindVertexArray();
 	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get()));
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
@@ -305,6 +307,7 @@ void Mesh::VertexArrayObject::disableVAO()
 
 Mesh::VertexArrayObject::~VertexArrayObject()
 {
+	delete _vao.get();
 }
 
 void Mesh::VertexArrayObject::enableVec()

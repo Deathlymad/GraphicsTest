@@ -10,21 +10,29 @@ public:
 	Terrain(const Terrain&);
 	Terrain();
 
+	void initMesh() {
+		if (MeshInit || !_init)
+			return;
+		Mesh::init();
+		MeshInit = true;
+	}
 	virtual void init();
+	virtual void update();
 	virtual void Draw();
+
+	bool isInitialized() { return _init; }
+	bool isMeshInitialized() { return MeshInit; }
 
 	bool isTerrainAt(float x, float y) { return distToPoint(vec3(x, 0, y)) == 0; }
 	float distToPoint(vec3 p);
 
 	Terrain& operator= (Terrain& other);
-	bool operator== (vec2 pos);
 
 	~Terrain();
 private:
 	float _distTo(vec3 p, float x, float z);
 
-
-	bool initialized;
+	bool _init, MeshInit;
 
 	unsigned length;
 	unsigned depth;
@@ -34,7 +42,7 @@ private:
 	future<void> heightRequest;
 	future<void> normalRequest;
 	bool heightRequested, genNormals; //merge to integral value
-	unsigned updatePos;
+	unsigned genPos, updatePos;
 
 
 	Vertex getVertex(float x, float z);

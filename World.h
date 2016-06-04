@@ -19,7 +19,7 @@ public:
 	~World();
 private:
 	unsigned getMemPosForTerrain(int x, int z, bool invX, bool invZ);
-	void TerrainForPos(vec2 pos, float xOff, float zOff);
+	void TerrainForPos(vec2 pos, int xOff, int zOff);
 	void setPos(vec2 pos);
 
 	vec2 toWorldPos(vec3 pos) { return vec2(pos.x, pos.z); }

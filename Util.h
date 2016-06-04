@@ -57,6 +57,10 @@
 					return nullptr;
 			}
 
+			bool valid(){
+				return ptr != nullptr;
+			}
+
 			Ptr<T>& operator=(const Ptr<T> &other)
 			{
 				//takes over ownership
