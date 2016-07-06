@@ -4,6 +4,7 @@
 #include <functional>
 
 #include "Clock.h"
+#include "ThreadManager.h"
 #include "Util.h"
 
 #include "Log.h"
@@ -44,59 +45,54 @@ class RessourceHandler
 		vector<string> _buffer;
 	};
 public:
-	RessourceHandler();
+	typedef shared_future<void*> Ressource;
 
-	template<class T>
-	shared_future<T*>* getRessource(string& file, RessourceLoader* loader)
-	{
-		shared_future<T*>* fut = (shared_future<T*>*)_registry.find(file);
-		if (fut == nullptr)
-		{
-			promise<T*>* t = new promise<T*>();
-			_loadCounter++;
-			loader->_state = RessourceLoader::State::PROCESSING;
-			LOG << string("Started Loading ") + file + " \n";
-			_loaderServer.addThreadClient(new ThreadClient( [this, file, loader, t] (){
-				LOG << string("Started Custom Loader ") + file + " \n";
-				lock_guard<mutex>(*loader->_ex);
-				loader->load(ifstream(file));
-				t->set_value(reinterpret_cast<T*>(loader->get()));
-				_loadCounter--;
-				loader->_state = RessourceLoader::State::DONE;
-			}));
-			_registry.push(file, new shared_future<void*>(*reinterpret_cast<shared_future<void*>*>(&t->get_future().share())));
-		}
-		return ((shared_future<T*>*)_registry.find(file));
-	}
-	shared_future<vector<string>*>* getRessource(string& file);
+	RessourceHandler(ThreadManager*);
+
+	Ressource getRessource(string& file, RessourceLoader* loader);
+	
+	Ressource getRessource(string& file);
 
 private:
 	class RessourceRegistry {
 	public:
 		struct Entry
 		{
-			Entry(string s)
-			{
-				_name = s;
-				_obj = new shared_future<void*>();
-			}
-			Entry(string s, shared_future<void*>* obj) : _obj(obj)
+			Entry(string s) : _obj(future<void*>())
 			{
 				_name = s;
 			}
+			Entry(string name, promise<void*>* fut) : _obj(future<void*>())
+			{
+				_name = name;
+				_obj = fut->get_future();
+			}
+			Entry(const Entry& other) : _obj(future<void*>())
+			{
+				_name = other._name;
+				_obj = other._obj;
+			}
+
+			Entry& operator=(const Entry& other)
+			{
+				_name = other._name;
+				_obj = other._obj;
+				return *this;
+			}
+
 			string _name;
-			shared_future<void*>* _obj;
+			Ressource _obj;
 		};
-		shared_future<void*>* find(string&);
+		Ressource find(string&);
 
 		void push(Entry);
-		void push( string, shared_future<void*>*);
+		void push( string, promise<void*>*);
 
 		int loading()
 		{
 			unsigned counter = 0;
 			for (Entry& e : _registry)
-				if (!e._obj->_Is_ready())
+				if ( (e._obj.wait_for(seconds(0)) != _Future_status::ready))
 					counter++;
 			return counter;
 		}
@@ -107,7 +103,7 @@ private:
 		vector<Entry> _registry;
 	} _registry;
 
+	ThreadManager* _taskManager;
 	unsigned int _loadCounter;
-	ThreadServer _loaderServer;
 	static vector<string> loaderList;
 };

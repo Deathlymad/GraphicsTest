@@ -8,12 +8,12 @@
 class World : public EngineObject
 {
 public:
-	World(Camera*, unsigned x, unsigned z);
+	World(ThreadManager*, Camera*, unsigned x, unsigned z);
 
 	virtual void load(RessourceHandler* loader);
 	virtual void init(KeyMap* map);
 
-	virtual void update();
+	virtual void update(ThreadManager*);
 	virtual void render(Shader*, RenderingEngine::RenderState);
 
 	~World();
@@ -27,7 +27,7 @@ private:
 	NoiseGraph generator;
 	unsigned chunkX, chunkZ;
 
-	vector<Terrain> allocator;
+	vector<Terrain*> allocator;
 	Camera* player;
 
 	Texture ground;

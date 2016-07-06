@@ -10,9 +10,9 @@ depth(ySize),
 _xOff(xOff),
 _yOff(yOff),
 _init(false),
+_running(false),
 MeshInit(false),
 _generator(generator),
-heightRequested(false),
 genPos(0),
 updatePos(0), 
 genNormals(false)
@@ -25,9 +25,9 @@ depth(other.depth),
 _xOff(other._xOff),
 _yOff(other._yOff),
 _init(other._init),
+_running(other._running),
 MeshInit(other.MeshInit),
 _generator(other._generator), 
-heightRequested(other.heightRequested), 
 genPos(other.genPos),
 updatePos(other.updatePos), 
 genNormals(other.genNormals)
@@ -41,9 +41,9 @@ depth(0),
 _xOff(0),
 _yOff(0),
 _init(false),
+_running(false),
 MeshInit(false),
 _generator(NoiseGraph()),
-heightRequested(false),
 genPos(0),
 updatePos(0),
 genNormals(false)
@@ -52,17 +52,17 @@ genNormals(false)
 
 void Terrain::init()
 {
-	if (_init)
+	if (_init || _running)
 		return;
-
-	float _sinD = 1;// sinf(1.0472f);
+	_running = true;
+	float _sinD = 1.0f;
 
 	unsigned  x = 0, y = 0;
 	bool toggle = false;
 	while (y * _sinD <= depth)
 	{
-		x = 0.0f;
-		float offset = toggle ? 0 : 0.5;
+		x = 0;
+		float offset = toggle ? 0.0f : 0.5f;
 		if (offset != 0.0f)
 			_vertices.push_back(Vertex(vec3(_xOff, 0, y * _sinD + _yOff), vec2()));
 		while (x < length)
@@ -74,12 +74,11 @@ void Terrain::init()
 
 		if (y > 0)
 		{
-			float PtsPerLine = length + 2;
-			unsigned cur = unsigned(y * PtsPerLine - floorf(y / 2)), prev = floorf((y - 1) * PtsPerLine - floorf((y - 1) / 2));
+			float PtsPerLine = length + 2.0f;
+			unsigned	cur = unsigned(float(y) * PtsPerLine - floorf((float(y) / 2.0f))), 
+						prev = unsigned(floorf(float(y - 1) * PtsPerLine - floorf(float(y - 1) / 2.0f)));
 			unsigned linePos = y % 2 ? cur : prev, prevLinePos = y % 2 ? prev : cur;
 			
-
-
 			//writes first Triangle
 			_indices.push_back(linePos);
 			_indices.push_back(prevLinePos);
@@ -103,70 +102,72 @@ void Terrain::init()
 		else
 			toggle = true;
 	}
+	_running = false;
 	_init = true;
 }
 
-void Terrain::update()
+void Terrain::update(ThreadManager* mgr)
 {
 	if (length == 0 || depth == 0 || !_init)
 		return;
 	
-	if (_generator.isFinished())
+	if (_generator.isFinished() && _init && !genNormals && genPos == 0)
 	{
-		if (!heightRequest.valid())
-		{
-			heightRequest = _generator.getCalcYForPlane(_vertices);
-		}
-		if (!normalRequest.valid() && heightRequest.wait_for(seconds(0)) == future_status::ready) //normals require height data
-		{
-			normalRequest = async([this] {
-				vector<Mesh::unnormalizedVertex> _unVec = vector<Mesh::unnormalizedVertex>(_vertices.size());
-				for (unsigned i = 0; i < _unVec.size(); i++) //copy data
-					_unVec[i] = _vertices[i];
+		mgr->addTask([this] { //lost through copying
+			vector<Mesh::unnormalizedVertex> _unVec = vector<Mesh::unnormalizedVertex>(_vertices.size());
+			for (unsigned i = 0; i < _unVec.size(); i++) //copy data
+				_unVec[i] = _vertices[i];
 
-				for (unsigned i = 0; i < unsigned(_indices.size() / 3); i++)
+			for (unsigned i = 0; i < unsigned(_indices.size() / 3); i++)
+			{
+				unsigned ind = i * 3;
+				vec3	a = normalize(_vertices[_indices[ind]].getPos() - _vertices[_indices[ind + 1]].getPos()),
+						b = normalize(_vertices[_indices[ind]].getPos() - _vertices[_indices[ind + 2]].getPos());
+				vec3 c = cross(a, b);
+				if (c.y < 0)
+					c = vec3(1, 1, 1) - c;
+				_unVec[_indices[ind]]._nor.push_back(c);
+				_unVec[_indices[ind + 1]]._nor.push_back(c);
+				_unVec[_indices[ind + 2]]._nor.push_back(c);
+			}
+			for (unsigned i = 0; i < _unVec.size(); i++) //normalize the normals
+			{
+				vector<vec3> normals;
+				for (vec3 n :_unVec[i]._nor)
 				{
-					unsigned ind = i * 3;
-					vec3	a = normalize(_vertices[_indices[ind]].getPos() - _vertices[_indices[ind + 1]].getPos()),
-							b = normalize(_vertices[_indices[ind]].getPos() - _vertices[_indices[ind + 2]].getPos());
-					vec3 c = cross(a, b);
-					if (c.y < 0)
-						c = vec3(1, 1, 1) - c;
-					_unVec[_indices[ind]]._nor.push_back(c);
-					_unVec[_indices[ind + 1]]._nor.push_back(c);
-					_unVec[_indices[ind + 2]]._nor.push_back(c);
+					if (!(find(normals.begin(), normals.end(), n) != normals.end()))
+						normals.push_back(n);
 				}
-				for (unsigned i = 0; i < _unVec.size(); i++) //normalize the normals
+				vec3 nor = vec3(0, 0, 0);
+				for (vec3 n : normals)
 				{
-					vector<vec3> normals;
-					for (vec3 n :_unVec[i]._nor)
-					{
-						if (!(find(normals.begin(), normals.end(), n) != normals.end()))
-							normals.push_back(n);
-					}
-					vec3 nor = vec3(0, 0, 0);
-					for (vec3 n : normals)
-					{
-						nor += n;
-					}
-					_vertices[i].setNormal(normalize(nor));
-					_vertices[i].setTexCoord(vec2(
-						((float)rand() / (RAND_MAX)),
-						((float)rand() / (RAND_MAX))
-					));
-					genPos = i;
+					nor += n;
 				}
-				genNormals = true;
-			});
-		}
+				_vertices[i].setPos(
+					vec3(
+						_unVec[i]._v.getPos().x,
+						_generator.get(_unVec[i]._v.getPos().x, _unVec[i]._v.getPos().z),
+						_unVec[i]._v.getPos().z
+					)
+				);
+				_vertices[i].setNormal(normalize(nor));
+				_vertices[i].setTexCoord(vec2(
+					((float)rand() / (RAND_MAX)),
+					((float)rand() / (RAND_MAX))
+				));
+				genPos = i;
+			}
+			genNormals = true;
+			return 0;
+		});
 	}
 }
 
 void Terrain::Draw()
 {
-	if (length == 0 || depth == 0 || !MeshInit)
+	if (length == 0 || depth == 0 || !MeshInit || _vertices.empty())
 		return;
-	if (_vertices.size() != updatePos + 1)
+	if (_vertices.size() - 1 > updatePos)
 	{
 		unsigned updateDif = genPos - updatePos;
 		unsigned maxPos = _vertices.size();
@@ -188,8 +189,9 @@ void Terrain::Draw()
 				updatePos += 10;
 			}
 		}
-	} else
-		Mesh::Draw();
+	}
+
+	Mesh::Draw();
 }
 
 float Terrain::distToPoint(vec3 p)
@@ -206,25 +208,6 @@ float Terrain::distToPoint(vec3 p)
 	float t1 = (a > b) ? b : a
 		, t2 = (c > d) ? d : c;
 	return (t1 > t2) ? t2 : t1;
-}
-
-Terrain & Terrain::operator=(Terrain & other)
-{
-	Mesh::operator= (other);
-
-	oldOff = other.oldOff;
-	length = other.length;
-	depth = other.depth;
-	_xOff = other._xOff;
-	_yOff = other._yOff;
-	_init = other._init;
-	MeshInit = other.MeshInit;
-	_generator = other._generator;
-	heightRequested = other.heightRequested;
-	updatePos = other.updatePos;
-	genNormals = other.genNormals;
-
-	return *this;
 }
 
 Terrain::~Terrain()

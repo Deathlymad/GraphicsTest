@@ -19,7 +19,7 @@ public:
 
 	virtual void load(RessourceHandler* loader);
 	virtual void init( KeyMap* k); //check that initialization is only called once
-	virtual void update();
+	virtual void update(ThreadManager*);
 	virtual void render(Shader*, RenderingEngine::RenderState);
 
 	~EngineObject();

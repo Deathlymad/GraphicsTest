@@ -15,7 +15,7 @@
 #include "Mesh.h"
 #include <fstream>
 
-Mesh::Mesh() : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao( 3, 2, 3), _loadReq(nullptr)
+Mesh::Mesh() : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao( 3, 2, 3)
 {
 }
 
@@ -39,10 +39,12 @@ void Mesh::load(RessourceHandler * loader)
 {
 	if (_path != "")
 	{
-		_loadReq = loader->getRessource<Mesh>(_path, this);
+		_loadReq = loader->getRessource(_path, this);
 	}
 	else {
-		_loadReq = nullptr;
+		promise<void*>* prom = new promise<void*>();
+		prom->set_value(this);
+		_loadReq = prom->get_future().share();
 	}
 }
 
@@ -62,8 +64,8 @@ void Mesh::load(ifstream &f)
 
 void Mesh::init()
 {
-	if (_loadReq != nullptr && _loadReq->get() != this)
-		*this = *(_loadReq->get());
+	if (_loadReq.valid() && (Mesh*)_loadReq.get() != this)
+		*this = *((Mesh*)_loadReq.get());
 	_glDownload(_vertices, _indices);
 }
 

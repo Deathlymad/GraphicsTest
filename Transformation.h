@@ -27,7 +27,8 @@ public:
 	void scale(vec3);
 
 
-	void init(Shader*);
+	void init(KeyMap*);
+	void update(ThreadManager* mgr) { EngineObject::update(mgr); }
 	void render(Shader*, RenderingEngine::RenderState);
 
 

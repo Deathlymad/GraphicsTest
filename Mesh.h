@@ -84,8 +84,8 @@ public:
 		void setNormal( vec3 nor) { data[6] = nor.x; data[7] = nor.y; data[8] = nor.z; }
 		void setPos(vec3 pos) { data[0] = pos.x; data[1] = pos.y; data[2] = pos.z; }
 
-		vec3& getPos() { return *new vec3(data[0], data[1], data[2]); }
-		vec3& getNormal() { return *new vec3(data[6], data[7], data[8]); }
+		vec3 getPos() { return  vec3(data[0], data[1], data[2]); }
+		vec3 getNormal() { return vec3(data[6], data[7], data[8]); }
 
 		float* getData()
 		{
@@ -145,7 +145,7 @@ private:
 
 	string _path;
 	
-	shared_future<Mesh*>* _loadReq;
+	RessourceHandler::Ressource _loadReq;
 	
 	VertexArrayObject _vao;
 	CustomPtr<GLuint> _vbo;

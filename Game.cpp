@@ -47,9 +47,10 @@ void Game::load(RessourceHandler * loader)
 	_world.load(loader);
 }
 
-void Game::update()
+void Game::update(ThreadManager* mgr)
 {
-	_world.update();
+	_world.update( mgr);
+	KeyMaps[0]->updateKeyMap();
 }
 
 KeyMap & Game::addKeyMap()

@@ -20,11 +20,11 @@ void EngineObject::load(RessourceHandler * loader)
 			children[i]->load(loader);
 }
 
-void EngineObject::update()
+void EngineObject::update(ThreadManager* mgr)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
 		if (children[i])
-			children[i]->update();
+			children[i]->update(mgr);
 }
 
 void EngineObject::render(Shader* s, RenderingEngine::RenderState firstPass)

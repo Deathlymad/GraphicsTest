@@ -42,7 +42,8 @@ public:
 	KeyMap& operator=(KeyMap& other);
 
 	~KeyMap();
-
+	
+	void updateKeyMap() { updateKeyMap(this); }
 	static void updateKeyMap(KeyMap*);
 protected:
 	void onKeyPress(char button, char action, char mods);

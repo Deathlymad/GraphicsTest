@@ -20,7 +20,7 @@ class Camera :
 public:
 	Camera();
 
-	void update();
+	void update(ThreadManager*);
 	void render(Shader*, RenderingEngine::RenderState);
 
 	void setFoV(float);

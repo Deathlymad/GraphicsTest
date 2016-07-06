@@ -7,11 +7,10 @@ Gamepad-/Joystick-/MouseHandler implementation
 make UI background modifiable
 fix UI Background
 completely disable threads if there is no workload, globalize work pool
-Dynamic Shader reloading
+Dynamic Ressource reloading
 
 Long Term:
 Physics
-create World
 create Player
 
 Very Long Term:

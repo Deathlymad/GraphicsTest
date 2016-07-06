@@ -173,6 +173,7 @@
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TestGame.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="ThreadManager.cpp" />
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="UniformRegistry.cpp" />
     <ClCompile Include="Util.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TestGame.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="Transformation.h" />
     <ClInclude Include="UniformRegistry.h" />
     <ClInclude Include="Util.h" />

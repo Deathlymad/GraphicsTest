@@ -19,7 +19,9 @@ public:
 	void addObject(EngineObject&);
 
 	virtual void load(RessourceHandler*);
-	virtual void update();
+	virtual void update(ThreadManager*);
+
+	void load() { _engine.load(); }
 
 	KeyMap& addKeyMap();
 
@@ -31,7 +33,6 @@ private: //context
 protected:
 	Scene& getScene() { return _world; }
 	CoreEngine* getEngine() { return &_engine; }
-	void load() { _engine.load(); }
 private:
 	Scene _world;
 

@@ -84,9 +84,6 @@
     <ClCompile Include="KeyMap.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Transformation.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -115,6 +112,12 @@
       <Filter>TestGame</Filter>
     </ClCompile>
     <ClCompile Include="LSystem.cpp">
+      <Filter>TestGame</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
       <Filter>TestGame</Filter>
     </ClCompile>
   </ItemGroup>
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="LSystem.h">
       <Filter>TestGame</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadManager.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

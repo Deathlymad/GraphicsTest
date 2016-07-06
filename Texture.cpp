@@ -205,15 +205,23 @@ Texture::~Texture()
 
 void Texture::load(RessourceHandler * loader)
 {
-	_imgLink = loader->getRessource<Image>(_image.getPath(), &_image);
+	_imgLink = loader->getRessource(_image.getPath(), &_image);
 }
 
 void Texture::glDownload()
 {
 	//get image
-	if (_image.get() != _imgLink->get())
+	try {
+
+		if (_image.get() != _imgLink.get())
+		{
+			_image = *((Image*)_imgLink.get());
+		}
+
+	}
+	catch (const future_error& e)
 	{
-		_image = *(_imgLink->get());
+		LOG << e.what();
 	}
 
 	_sampler.update((float*)&_samplerID);

@@ -17,7 +17,7 @@ public:
 		MeshInit = true;
 	}
 	virtual void init();
-	virtual void update();
+	virtual void update(ThreadManager*);
 	virtual void Draw();
 
 	bool isInitialized() { return _init; }
@@ -25,23 +25,19 @@ public:
 
 	bool isTerrainAt(float x, float y) { return distToPoint(vec3(x, 0, y)) == 0; }
 	float distToPoint(vec3 p);
-
-	Terrain& operator= (Terrain& other);
-
+	
 	~Terrain();
 private:
 	float _distTo(vec3 p, float x, float z);
 
-	bool _init, MeshInit;
+	bool _init, _running, MeshInit;
 
 	unsigned length;
 	unsigned depth;
 	float _xOff, _yOff;
 
 	NoiseGraph& _generator;
-	future<void> heightRequest;
-	future<void> normalRequest;
-	bool heightRequested, genNormals; //merge to integral value
+	bool genNormals;
 	unsigned genPos, updatePos;
 
 

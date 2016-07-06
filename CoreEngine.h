@@ -2,12 +2,13 @@
 #include "RenderingEngine.h"
 #include "RessourceHandler.h"
 #include "Clock.h"
+#include "ThreadManager.h"
 
 class Screen;
 class Game;
 
 #pragma once
-class CoreEngine
+class CoreEngine : ThreadManager::CallableObject
 {
 public:
 	CoreEngine(Screen*, Game*);
@@ -15,15 +16,17 @@ public:
 	void load();
 	void start();
 
+	virtual int run();
+
+	ThreadManager* getThreadManager();
 	RenderingEngine* getGraphicEngine();
 
 	~CoreEngine();
 private:
-	void update();
 
 	RessourceHandler _ressourceLoader;
 	RenderingEngine GrEngine;
-	Clock UpdateThread;
+	ThreadManager _manager;
 
 	Game* _game;
 };

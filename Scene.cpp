@@ -17,10 +17,10 @@ void Scene::load(RessourceHandler * loader)
 	_root.load(loader);
 }
 
-void Scene::update()
+void Scene::update(ThreadManager* mgr)
 {
-	_view.update();
-	_root.update();
+	_view.update(mgr);
+	_root.update(mgr);
 }
 
 void Scene::render(Shader* s, RenderingEngine::RenderState firstPass)

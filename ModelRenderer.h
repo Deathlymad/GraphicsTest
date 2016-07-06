@@ -15,7 +15,7 @@ public:
 
 	virtual void load(RessourceHandler*);
 	virtual void init(KeyMap*);
-	virtual void update() { EngineObject::update(); }
+	virtual void update(ThreadManager* mgr) { EngineObject::update(mgr); }
 	virtual void render(Shader*, RenderingEngine::RenderState);
 
 	~ModelRenderer();

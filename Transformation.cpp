@@ -84,19 +84,19 @@ mat4 Transformation::getRotMat()
 	float y = (float)(_rotation.y * 3.141 / 180.0);
 	float z = (float)(_rotation.z * 3.141 / 180.0);
 
-	rz[0][0] = cosf(z);   rz[0][1] = -sinf(z);   rz[0][2] = 0;			    rz[0][3] = 0;
-	rz[1][0] = sinf(z);   rz[1][1] = cosf(z);   rz[1][2] = 0;			    rz[1][3] = 0;
+	rz[0][0] = cosf(z);			rz[0][1] = -sinf(z);		rz[0][2] = 0;			    rz[0][3] = 0;
+	rz[1][0] = sinf(z);			rz[1][1] = cosf(z);			rz[1][2] = 0;			    rz[1][3] = 0;
 	rz[2][0] = 0;			    rz[2][1] = 0;				 rz[2][2] = 1;			    rz[2][3] = 0;
 	rz[3][0] = 0;				rz[3][1] = 0;				 rz[3][2] = 0;			    rz[3][3] = 1;
 
 	rx[0][0] = 1;				rx[0][1] = 0;				 rx[0][2] = 0;			    rx[0][3] = 0;
-	rx[1][0] = 0;				rx[1][1] = cosf(x);    rx[1][2] = -sinf(x); rx[1][3] = 0;
-	rx[2][0] = 0;				rx[2][1] = sinf(x);    rx[2][2] = cosf(x);  rx[2][3] = 0;
+	rx[1][0] = 0;				rx[1][1] = cosf(x);			rx[1][2] = -sinf(x);		rx[1][3] = 0;
+	rx[2][0] = 0;				rx[2][1] = sinf(x);			rx[2][2] = cosf(x);			 rx[2][3] = 0;
 	rx[3][0] = 0;				rx[3][1] = 0;			 	 rx[3][2] = 0;			    rx[3][3] = 1;
 
-	ry[0][0] = cosf(y);   ry[0][1] = 0;			    ry[0][2] = -sinf(y);  ry[0][3] = 0;
+	ry[0][0] = cosf(y);			ry[0][1] = 0;			    ry[0][2] = -sinf(y);		ry[0][3] = 0;
 	ry[1][0] = 0;			    ry[1][1] = 1;			    ry[1][2] = 0;			    ry[1][3] = 0;
-	ry[2][0] = sinf(y);   ry[2][1] = 0;			    ry[2][2] = cosf(y);   ry[2][3] = 0;
+	ry[2][0] = sinf(y);			ry[2][1] = 0;			    ry[2][2] = cosf(y);			ry[2][3] = 0;
 	ry[3][0] = 0;			    ry[3][1] = 0;			    ry[3][2] = 0;			    ry[3][3] = 1;
 
 	return rz*ry*rx;
@@ -113,6 +113,11 @@ mat4 Transformation::getMatrix()
 	mat4 rot   = getRotMat();
 	mat4 scale = getScaleMat();
 	return trans*rot*scale;
+}
+
+void Transformation::init(KeyMap* s)
+{
+	EngineObject::init(s);
 }
 
 void Transformation::render(Shader* s, RenderingEngine::RenderState firstPass)

@@ -4,24 +4,48 @@
 
 vector<string> RessourceHandler::loaderList = vector<string>();
 
-RessourceHandler::RessourceHandler() : _loadCounter(0), _loaderServer(4)
+RessourceHandler::RessourceHandler(ThreadManager* manager) : _loadCounter(0), _taskManager(manager)
 {
 }
 
-shared_future<vector<string>*>* RessourceHandler::getRessource(string& file)
+RessourceHandler::Ressource RessourceHandler::getRessource(string & file, RessourceLoader * loader)
+{
+	Ressource fut = _registry.find(file);
+	if (!fut.valid())
+	{
+		_loadCounter++;
+		loader->_state = RessourceLoader::State::PROCESSING;
+			promise<void*>* p = new promise<void*>(); //mem Leak?
+			_registry.push(file, p);
+		LOG << string("Started Loading ") + file + " \n";
+		_taskManager->addTask([this, file, loader, p]() {
+			LOG << string("Started Custom Loader ") + file + " \n";
+			lock_guard<mutex>(*loader->_ex);
+			loader->load(ifstream(file));
+
+			p->set_value((void**)loader->get()); //invalid O.o
+			_loadCounter--;
+			loader->_state = RessourceLoader::State::DONE;
+			return 0;
+		});
+	}
+	return _registry.find(file);
+}
+
+RessourceHandler::Ressource RessourceHandler::getRessource(string& file)
 {
 	STDTextLoader _loader;
-	return getRessource<vector<string>>(file, &_loader);
+	return (Ressource)getRessource(file, &_loader);
 }
 
-shared_future<void*>* RessourceHandler::RessourceRegistry::find(string& name)
+RessourceHandler::Ressource RessourceHandler::RessourceRegistry::find(string& name)
 {
 	unsigned int pos = find(name, 0, _registry.size());
 	if (pos >= _registry.size())
-		return nullptr;
+		return Ressource();
 	if (_registry[pos]._name == name)
 		return _registry[pos]._obj;
-	return nullptr;
+	return Ressource();
 }
 
 size_t RessourceHandler::RessourceRegistry::find(string& name, int min, int max)
@@ -54,15 +78,17 @@ void RessourceHandler::RessourceRegistry::push(Entry e)
 	_registry.insert(_registry.begin() + find(e._name, 0, _registry.size()), e);
 }
 
-void RessourceHandler::RessourceRegistry::push( string name, shared_future<void*>* data)
+void RessourceHandler::RessourceRegistry::push( string name, promise<void*>* fut)
 {
-	push(Entry(name, data));
+	return push(Entry(name, fut));
 }
 
 RessourceHandler::RessourceRegistry::~RessourceRegistry()
 {
 	for (Entry& e : _registry)
-		e._obj->~shared_future();
+	{
+		e._obj.~shared_future();
+	}
 }
 
 void RessourceHandler::STDTextLoader::load(ifstream &f)

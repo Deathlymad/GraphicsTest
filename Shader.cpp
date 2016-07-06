@@ -43,7 +43,7 @@ float* Shader::getUniformMemPos(string name)
 void Shader::load(RessourceHandler * loader)
 {
 	for (ShaderCode& code : Code)
-		reqArr.push_back(loader->getRessource<ShaderCode>(code.getPath(), (RessourceLoader*)&code));
+		reqArr.push_back(loader->getRessource(code.getPath(), (RessourceLoader*)&code));
 }
 
 void Shader::build()
@@ -52,7 +52,7 @@ void Shader::build()
 	{
 		for (size_t i = 0; i < Code.size(); i++)
 		{
-			Code[i] = *reqArr[i]->get();
+			Code[i] = *((ShaderCode*)reqArr[i].get());
 			Code[i].makeShader();
 			vector<Uniform>& t = Code[i].getUniforms();
 			for (Uniform& temp : t)

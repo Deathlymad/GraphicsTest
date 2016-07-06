@@ -17,15 +17,15 @@ Camera::Camera() : InputHandler(), EngineObject(), ViewProjMat("ViewProj", 16), 
 	projection = perspective( FoV, Aspect, 0.1f, 100.0f);
 }
 
-void Camera::update()
+void Camera::update(ThreadManager* mgr)
 {
-	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
 }
 
 void Camera::render(Shader *, RenderingEngine::RenderState firstPass)
 {
 	if (firstPass == RenderingEngine::RenderState::AMBIENT_PASS)
 	{
+		View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
 		ViewProjMat.update(&View[0][0]);
 		EyePos.update(&_pos[0]);
 	}

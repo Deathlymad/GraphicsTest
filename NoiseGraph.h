@@ -13,13 +13,13 @@ NSP_STD
 class NoiseGraph //needs to be fully reminlemented 
 {
 public:
-	NoiseGraph(unsigned dimension);
+	NoiseGraph(ThreadManager*, unsigned dimension);
 	NoiseGraph();
 	~NoiseGraph();
 
 	bool isFinished() { return noiseGenSystem.isFinished(); }
 
-	future<void> getCalcYForPlane(vector<Mesh::Vertex>&);
+	void getCalcYForPlane( vector<Mesh::Vertex>&);
 	float get(float x, float y); //implement Operator
 private:
 	static LSystem::Rule rules[];

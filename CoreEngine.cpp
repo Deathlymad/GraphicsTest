@@ -2,7 +2,7 @@
 #include "RenderingEngine.h"
 #include "Game.h"
 
-CoreEngine::CoreEngine(Screen* _screen, Game* g) : _game(g), GrEngine( this, _screen), UpdateThread([this] {}, [this] { update(); }, 30)
+CoreEngine::CoreEngine(Screen* _screen, Game* g) : _game(g), GrEngine( this, _screen), _ressourceLoader(&_manager)
 {
 }
 
@@ -15,7 +15,12 @@ void CoreEngine::load()
 void CoreEngine::start()
 {
 	GrEngine.init();
-	UpdateThread.run();
+	_manager.registerCallable(this);
+}
+
+ThreadManager * CoreEngine::getThreadManager()
+{
+	return &_manager;
 }
 
 RenderingEngine* CoreEngine::getGraphicEngine()
@@ -25,10 +30,10 @@ RenderingEngine* CoreEngine::getGraphicEngine()
 
 CoreEngine::~CoreEngine()
 {
-	UpdateThread.shutdown();
 }
 
-void CoreEngine::update()
+int CoreEngine::run()
 {
-	_game->update();
+	_game->update(&_manager);
+	return 0;
 }

@@ -12,7 +12,7 @@ TestGame::TestGame() : Game(),
 	m(0, 2, 32),
 	obj("assets/mesh/untitled.obj", "assets/textures/Test_tex2.bmp"),
 	trans(0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f)),
-	_testField( &getScene().getCam(), 50, 50)
+	_testField( getEngine()->getThreadManager(), &getScene().getCam(), 50, 50)
 {
 	//Rendering Registry
 	getEngine()->getGraphicEngine()->registerGraphicObject(&Light);
@@ -23,6 +23,9 @@ TestGame::TestGame() : Game(),
 	//trans.add(&obj);
 	trans.add(&_testField);
 
+	getScene().addObj(&trans);
+
+	/*
 	m.add(&trans);
 
 	Light.add(&m);
@@ -32,13 +35,11 @@ TestGame::TestGame() : Game(),
 	getScene().addObj(&Light);
 	getScene().addObj(&Light1);
 	getScene().addObj(&Light2);
-	/*
+
 	getScene().setRootUI(UI(this));
 	getScene().addObj(new UIButton(getScene().getMenu(), vec2(-0.2f, -0.2f), vec2(0.2f, 0.2f), -1, [this] {getScene().toggleMenu(); }));
 	getScene().addObj(new UIPart(getScene().getMenu(), vec2(1.0f, -1.0f), vec2(1.0f, 1.0f))); //add Background
 	*/
-
-	load();
 }
 
 TestGame::~TestGame()

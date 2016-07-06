@@ -4,11 +4,13 @@
 
 #include "Def.h"
 
+#include"ThreadManager.h"
+
 NSP_STD
 NSP_CHR
 
 #pragma once
-class LSystem
+class LSystem : public ThreadManager::CallableObject
 {
 public:
 	class Rule
@@ -37,9 +39,8 @@ public:
 	LSystem(string axiom, unsigned maxDepth);
 	LSystem(LSystem& other);
 
-	void start();
-
-	bool isFinished() { return _result.wait_for(seconds(0)) == std::future_status::ready; }
+	int run();
+	bool isFinished() { return _done; }
 
 	void addRule(Rule&);
 
@@ -49,7 +50,7 @@ public:
 
 	~LSystem();
 private:
-	future<void> _result;
+	bool _done;
 
 	string applyRules(string&, unsigned);
 	void generate();

@@ -157,7 +157,7 @@ private:
 
 	vector<ShaderCode> Code; //contains Shader variable
 	vector<Uniform> Uniforms;
-	vector<shared_future<ShaderCode*>*> reqArr;
+	vector<RessourceHandler::Ressource> reqArr;
 
 	//functions
 	string checkProgram();

@@ -86,7 +86,7 @@ private:
 	static GLuint _lastTexID;
 	UniformRegistry _sampler;
 	Image _image;
-	shared_future<Image*>* _imgLink;
+	RessourceHandler::Ressource _imgLink;
 };
 #pragma once
 class LayeredTexture : public Texture

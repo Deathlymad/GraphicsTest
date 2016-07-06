@@ -121,59 +121,23 @@
 			function<void(T*)> destruction;
 		};
 
-		class ThreadClient
-		{
-			friend class ThreadServer;
-			friend class LoopedThreadServer;
-		public:
-			ThreadClient(function<void()> f) : _func(f), _connected(false), _executing(false)
-			{}
+		//Provided by L Peter Deutsch under the zlib license
+		NSP_MD5_BEG
+			/* Define the state of the MD5 Algorithm. */
+			typedef struct md5_state_s {
+				unsigned int count[2];	/* message length in bits, lsw first */
+				unsigned int abcd[4];		/* digest buffer */
+				unsigned char buf[64];		/* accumulate block */
+			} md5_state_t;
+		
+			/* Initialize the algorithm. */
+			void md5_init(md5_state_t *pms);
 
-			void disconnect() { _connected = false; }
+			/* Append a string to the message. */
+			void md5_append(md5_state_t *pms, const unsigned char *data, int nbytes);
 
-			~ThreadClient()
-			{
-				_func = [] {}; //generates a clear function in order to prevent errors;
-			}
-		private:
-			bool _connected;
-			bool _executing;
-			function<void()> _func;
-		};
-		class ThreadServer
-		{
-		public:
-			ThreadServer(unsigned int threadCount);
-
-			bool hasTasks();
-
-			void addThreadClient(ThreadClient* client);
-
-			unsigned int getThreadCount();
-
-			~ThreadServer();
-		protected:
-			ThreadServer(unsigned int threadCount, function<void()> func);
-
-			virtual void run();
-
-
-			condition_variable _cond;
-			mutex _condMut;
-			int _update;
-
-			mutex _listGuard;
-			vector<ThreadClient*> _taskList;
-			vector<future<void>> _taskResults;
-			unsigned int _maxElement;
-			bool _running;
-		};
-		class LoopedThreadServer : public ThreadServer
-		{
-		public:
-			LoopedThreadServer(unsigned int threadCount);
-		protected:
-			void _run();
+			/* Finish the message and return the digest. */
+			void md5_finish(md5_state_t *pms, unsigned char digest[16]);
 		};
 
 		NSP_IO_BEG

@@ -18,7 +18,7 @@ public:
 	
 	void load(RessourceHandler*);
 	void init(KeyMap*);
-	void update();
+	void update(ThreadManager*);
 	void render(Shader*, RenderingEngine::RenderState);
 
 	Camera& getCam() { return _view; }
