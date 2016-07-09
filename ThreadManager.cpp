@@ -60,9 +60,13 @@ void ThreadManager::Threads::run() //terminating for some reason
 		lastTick = chrono::system_clock::now();
 
 		function<int()> task = _distributor->getTask();
-		err = task();
+		_distributor->notify();
+		task();
 
-		this_thread::sleep_for(milliseconds(20 - _distributor->getTasks()) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
+		int duration = 20 - _distributor->getTasks();
+
+		if (duration > 0)
+			this_thread::sleep_for(milliseconds(duration) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
 	}
 }
 
@@ -76,19 +80,26 @@ ThreadManager::Threads::~Threads()
 
 ThreadManager::TaskDistributor::TaskDistributor() : _registry(), _tasks()
 {
-	std::lock_guard<std::mutex> lk(_lock);
 }
 
 void ThreadManager::TaskDistributor::registerCallable(CallableObject * callable)
 {
-	std::lock_guard<std::mutex> lk(_lock);
+	std::unique_lock<std::mutex> lk(_lock);
 	_registry.push_back(callable);
+	notify();
 }
 
 void ThreadManager::TaskDistributor::addTask(function<int()> task)
 {
-	std::lock_guard<std::mutex> lk(_lock);
+	std::unique_lock<std::mutex> lk(_lock);
 	_tasks.push(task);
+	notify();
+}
+
+void ThreadManager::TaskDistributor::notify()
+{
+	_notified = true;
+	_notifier.notify_one();
 }
 
 ThreadManager::TaskDistributor::~TaskDistributor()
@@ -102,7 +113,13 @@ ThreadManager::TaskDistributor::~TaskDistributor()
 
 function<int()> ThreadManager::TaskDistributor::getTask()
 {
-	std::lock_guard<std::mutex> lk(_lock);
+	std::unique_lock<std::mutex> lk(_lock);
+
+	while (!_notified)
+	{
+		_notifier.wait(lk);
+	}
+
 	if (_tasks.empty())
 	{
 		for (CallableObject* obj : _registry)
@@ -112,9 +129,11 @@ function<int()> ThreadManager::TaskDistributor::getTask()
 	{
 		function<int()> task = _tasks.front();
 		_tasks.pop();
+		_notified = false;
 		return task;
 	}
-	
+
+	_notified = false;
 	return
 		[] {return 0; };
 }

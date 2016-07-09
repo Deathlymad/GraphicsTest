@@ -48,6 +48,8 @@ private:
 		void registerCallable(CallableObject*);
 		void addTask(function<int()>);
 
+		void notify();
+
 		size_t getTasks() { return _tasks.size(); }
 
 		~TaskDistributor();
@@ -55,6 +57,8 @@ private:
 		function<int()> getTask();
 
 		mutex _lock;
+		bool _notified;
+		condition_variable _notifier;
 		UpdateRegistry _registry;
 		queue<function<int()>> _tasks;
 	};

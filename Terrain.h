@@ -11,17 +11,18 @@ public:
 	Terrain();
 
 	void initMesh() {
-		if (MeshInit || !_init)
+		if (isMeshInitialized() || !isInitialized())
 			return;
 		Mesh::init();
-		MeshInit = true;
+		_initState = _initState | 4;
 	}
 	virtual void init();
 	virtual void update(ThreadManager*);
 	virtual void Draw();
 
-	bool isInitialized() { return _init; }
-	bool isMeshInitialized() { return MeshInit; }
+	bool isInitialized() { return (_initState & 1) != 0; }
+	bool isGenRunning() { return (_initState & 2) != 0; }
+	bool isMeshInitialized() { return (_initState & 4) != 0; }
 
 	bool isTerrainAt(float x, float y) { return distToPoint(vec3(x, 0, y)) == 0; }
 	float distToPoint(vec3 p);
@@ -30,7 +31,7 @@ public:
 private:
 	float _distTo(vec3 p, float x, float z);
 
-	bool _init, _running, MeshInit;
+	int _initState;
 
 	unsigned length;
 	unsigned depth;

@@ -9,9 +9,7 @@ length(xSize),
 depth(ySize),
 _xOff(xOff),
 _yOff(yOff),
-_init(false),
-_running(false),
-MeshInit(false),
+_initState(0),
 _generator(generator),
 genPos(0),
 updatePos(0), 
@@ -24,9 +22,7 @@ length(other.length),
 depth(other.depth),
 _xOff(other._xOff),
 _yOff(other._yOff),
-_init(other._init),
-_running(other._running),
-MeshInit(other.MeshInit),
+_initState(other._initState),
 _generator(other._generator), 
 genPos(other.genPos),
 updatePos(other.updatePos), 
@@ -40,9 +36,7 @@ length(0),
 depth(0),
 _xOff(0),
 _yOff(0),
-_init(false),
-_running(false),
-MeshInit(false),
+_initState(0),
 _generator(NoiseGraph()),
 genPos(0),
 updatePos(0),
@@ -52,9 +46,9 @@ genNormals(false)
 
 void Terrain::init()
 {
-	if (_init || _running)
+	if (isInitialized() || isGenRunning())
 		return;
-	_running = true;
+	_initState = _initState | 2;
 	float _sinD = 1.0f;
 
 	unsigned  x = 0, y = 0;
@@ -102,18 +96,19 @@ void Terrain::init()
 		else
 			toggle = true;
 	}
-	_running = false;
-	_init = true;
+	_initState = _initState & ( 8 | 4);
+	_initState = _initState | 1;
 }
 
 void Terrain::update(ThreadManager* mgr)
 {
-	if (length == 0 || depth == 0 || !_init)
+	if (length == 0 || depth == 0 || !isInitialized())
 		return;
 	
-	if (_generator.isFinished() && _init && !genNormals && genPos == 0)
+	if (_generator.isFinished() && isInitialized() && !genNormals && genPos == 0 && (_initState & 8) == 0)
 	{
-		mgr->addTask([this] { //lost through copying
+		mgr->addTask(
+			[this] { //lost through copying
 			vector<Mesh::unnormalizedVertex> _unVec = vector<Mesh::unnormalizedVertex>(_vertices.size());
 			for (unsigned i = 0; i < _unVec.size(); i++) //copy data
 				_unVec[i] = _vertices[i];
@@ -160,12 +155,13 @@ void Terrain::update(ThreadManager* mgr)
 			genNormals = true;
 			return 0;
 		});
+		_initState = _initState | 8;
 	}
 }
 
 void Terrain::Draw()
 {
-	if (length == 0 || depth == 0 || !MeshInit || _vertices.empty())
+	if (length == 0 || depth == 0 || !isMeshInitialized() || _vertices.empty())
 		return;
 	if (_vertices.size() - 1 > updatePos)
 	{
