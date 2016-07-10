@@ -27,6 +27,8 @@ public:
 	bool isTerrainAt(float x, float y) { return distToPoint(vec3(x, 0, y)) == 0; }
 	float distToPoint(vec3 p);
 	
+	Terrain& operator=(const Terrain& other);
+
 	~Terrain();
 private:
 	float _distTo(vec3 p, float x, float z);
@@ -45,7 +47,6 @@ private:
 	Vertex getVertex(float x, float z);
 	float getHeight(float x, float z);
 
-	vec3 oldOff;
 
 };
 

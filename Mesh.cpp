@@ -215,6 +215,8 @@ vector<Mesh::Vertex> Mesh::getNormalVertices(vector<unnormalizedVertex> vn)
 void Mesh::_glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 {
 	_VerticesCount = i.size();
+	_vertices = v;
+	_indices = i;
 	initGL(!glIsBuffer(*(_vbo.get())) << 1 | !glIsBuffer(*(_ibo.get())));
 
 	if (v.size() == 0)
@@ -261,8 +263,23 @@ void Mesh::Draw()
 	_vao.disableVAO();
 }
 
+Mesh & Mesh::operator=(const Mesh & other)
+{
+	_path = other._path;
+	_vertices = other._vertices;
+	_indices = other._indices;
+	_glDownload(_vertices, _indices);
+	
+	return *this;
+}
+
 Mesh::~Mesh(void)
 {
+	_VerticesCount = 0;
+	_path = "";
+	_vertices.~vector();
+	_indices.~vector();
+	_vao.~VertexArrayObject();
 }
 
 void Mesh::VertexArrayObject::createVertexArray()
@@ -309,7 +326,7 @@ void Mesh::VertexArrayObject::disableVAO()
 
 Mesh::VertexArrayObject::~VertexArrayObject()
 {
-	delete _vao.get();
+	_vao.~Ptr();
 }
 
 void Mesh::VertexArrayObject::enableVec()

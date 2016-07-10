@@ -79,26 +79,26 @@ float NoiseGraph::noise(float x, float y) //paralellizee
 			res += sinf(x);
 			break;
 		case 'F':
-			res *= sinf(y);
+			res += sinf(y);
 			break;
 		case 'G':
 			res += sinf(res);
 			break;
 		case 'H':
-			res *= sinf(-res);
+			res += sinf(-res);
 			break;
 
 		case 'I':
 			res += sinf(x) * cosf(y);
 			break;
 		case 'J':
-			res *= sinf(y) * cosf(y);
+			res += sinf(y) * cosf(y);
 			break;
 		case 'K':
-			res *= sinf(x) * cosf(x);
+			res += sinf(x) * cosf(x);
 			break;
 		case 'L':
-			res *= sinf(y) * cosf(x);
+			res += sinf(y) * cosf(x);
 			break;
 		default:
 			break;

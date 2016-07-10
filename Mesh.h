@@ -129,6 +129,8 @@ public:
 
 	virtual void Draw();
 
+	Mesh& operator = (const Mesh& other);
+
 	~Mesh(void);
 protected:
 	vector<Vertex> getNormalVertices(vector<unnormalizedVertex>);

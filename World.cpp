@@ -32,19 +32,23 @@ void World::render(Shader* s, RenderingEngine::RenderState state)
 {
 	s->bind();
 	ground.bind();
-	for (unsigned i = 0; i < 16; i++)
+	for (Terrain* terr : allocator)
 	{
-		if (!allocator[i])
+		if (!terr)
 			continue;
-		if (allocator[i]->isMeshInitialized() && allocator[i]->isInitialized())
-			allocator[i]->Draw();
-		else
-			allocator[i]->initMesh();
+		if (terr->isMeshInitialized() && terr->isInitialized())
+			terr->Draw();
+		else if (terr->isInitialized())
+			terr->initMesh();
 	}
 }
 
 World::~World()
 {
+	for (Terrain* terr : allocator)
+	{
+		delete terr;
+	}
 }
 
 unsigned World::getMemPosForTerrain(int x, int z, bool invX, bool invZ)
@@ -69,12 +73,13 @@ void World::TerrainForPos(vec2 p, int xO, int zO)
 		, zOff = (zO - 2) * chunkZ;
 	unsigned pos = getMemPosForTerrain(abs(modX + xOff) / chunkX, abs(modZ + zOff) / chunkZ, modX + xOff < 0, modZ + zOff < 0);
 
+
+
 	if (!allocator[pos] || !(allocator[pos]->isTerrainAt(float(modX + xOff), float(modZ + zOff)))) //checks if cache is correct
 	{
-		if (allocator[pos])
-			allocator[pos]->~Terrain();
-		allocator[pos] = new Terrain(generator, float(modX + xOff), float(modZ + zOff), chunkX, chunkZ);//inserts new object
-		allocator[pos]->init(); //initializes the new Object
+		allocator[pos] = move(new Terrain(generator, float(modX + xOff), float(modZ + zOff), chunkX, chunkZ));
+		if (!allocator[pos]->isInitialized())
+			allocator[pos]->init();
 	}
 }
 

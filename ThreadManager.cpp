@@ -52,7 +52,7 @@ void ThreadManager::Threads::start()
 		_threads[i].swap(thread([this] {run(); }));
 }
 
-void ThreadManager::Threads::run() //terminating for some reason
+void ThreadManager::Threads::run()
 {
 	int err = 0;
 	while (err == 0 && _running)
@@ -65,7 +65,7 @@ void ThreadManager::Threads::run() //terminating for some reason
 
 		int duration = 20 - _distributor->getTasks();
 
-		if (duration > 0)
+		if (duration > 0) //prevents conversion from signed to unsigned
 			this_thread::sleep_for(milliseconds(duration) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
 	}
 }

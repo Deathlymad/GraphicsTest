@@ -4,7 +4,6 @@
 NSP_GLM
 
 Terrain::Terrain(NoiseGraph& generator, float xOff, float yOff, unsigned xSize, unsigned ySize) : Mesh(),
-oldOff(0, 0, 0),
 length(xSize),
 depth(ySize),
 _xOff(xOff),
@@ -17,7 +16,6 @@ genNormals(false)
 {}
 
 Terrain::Terrain(const Terrain &other) : Mesh(other), 
-oldOff(other.oldOff), 
 length(other.length),
 depth(other.depth),
 _xOff(other._xOff),
@@ -31,7 +29,6 @@ genNormals(other.genNormals)
 }
 
 Terrain::Terrain() : Mesh(),
-oldOff(0),
 length(0),
 depth(0),
 _xOff(0),
@@ -53,18 +50,22 @@ void Terrain::init()
 
 	unsigned  x = 0, y = 0;
 	bool toggle = false;
+	vector<Mesh::Vertex> _vec;
+	vector<unsigned int> _ind;
 	while (y * _sinD <= depth)
 	{
 		x = 0;
 		float offset = toggle ? 0.0f : 0.5f;
 		if (offset != 0.0f)
-			_vertices.push_back(Vertex(vec3(_xOff, 0, y * _sinD + _yOff), vec2()));
+			_vec.push_back(Vertex(vec3(_xOff, 0, y * _sinD + _yOff), vec2()));
 		while (x < length)
 		{
-			_vertices.push_back(Vertex(vec3(offset + x + _xOff, 0, y * _sinD + _yOff), vec2()));
+			if (_initState == 0)
+				break;
+			_vec.push_back(Vertex(vec3(offset + x + _xOff, 0, y * _sinD + _yOff), vec2()));
 			x+=1;
 		}
-		_vertices.push_back(Vertex(vec3(ceil(x) + _xOff, 0, y * _sinD + _yOff), vec2()));
+		_vec.push_back(Vertex(vec3(ceil(x) + _xOff, 0, y * _sinD + _yOff), vec2()));
 
 		if (y > 0)
 		{
@@ -74,20 +75,20 @@ void Terrain::init()
 			unsigned linePos = y % 2 ? cur : prev, prevLinePos = y % 2 ? prev : cur;
 			
 			//writes first Triangle
-			_indices.push_back(linePos);
-			_indices.push_back(prevLinePos);
-			_indices.push_back(prevLinePos + 1);
+			_ind.push_back(linePos);
+			_ind.push_back(prevLinePos);
+			_ind.push_back(prevLinePos + 1);
 
 			//writes the rest of the Strip
 			for (unsigned i = 0; i < PtsPerLine - 2; i++)
 			{
-				_indices.push_back(linePos + i);
-				_indices.push_back(prevLinePos + (i + 1));
-				_indices.push_back(linePos + (i + 1));
+				_ind.push_back(linePos + i);
+				_ind.push_back(prevLinePos + (i + 1));
+				_ind.push_back(linePos + (i + 1));
 
-				_indices.push_back(linePos + (i + 1));
-				_indices.push_back(prevLinePos + (i + 1));
-				_indices.push_back(prevLinePos + (i + 2));
+				_ind.push_back(linePos + (i + 1));
+				_ind.push_back(prevLinePos + (i + 1));
+				_ind.push_back(prevLinePos + (i + 2));
 			}
 		}
 		y+=1;
@@ -95,7 +96,12 @@ void Terrain::init()
 			toggle = false;
 		else
 			toggle = true;
+
+	if (_initState == 0)
+		break;
 	}
+	_vertices = move(_vec);
+	_indices = move(_ind);
 	_initState = _initState & ( 8 | 4);
 	_initState = _initState | 1;
 }
@@ -108,7 +114,8 @@ void Terrain::update(ThreadManager* mgr)
 	if (_generator.isFinished() && isInitialized() && !genNormals && genPos == 0 && (_initState & 8) == 0)
 	{
 		mgr->addTask(
-			[this] { //lost through copying
+			[this] {
+
 			vector<Mesh::unnormalizedVertex> _unVec = vector<Mesh::unnormalizedVertex>(_vertices.size());
 			for (unsigned i = 0; i < _unVec.size(); i++) //copy data
 				_unVec[i] = _vertices[i];
@@ -124,14 +131,20 @@ void Terrain::update(ThreadManager* mgr)
 				_unVec[_indices[ind]]._nor.push_back(c);
 				_unVec[_indices[ind + 1]]._nor.push_back(c);
 				_unVec[_indices[ind + 2]]._nor.push_back(c);
+
+				if (_initState == 0)
+					break;
 			}
 			for (unsigned i = 0; i < _unVec.size(); i++) //normalize the normals
 			{
 				vector<vec3> normals;
 				for (vec3 n :_unVec[i]._nor)
 				{
-					if (!(find(normals.begin(), normals.end(), n) != normals.end()))
+					if (!(find(normals.begin(), normals.end(), n) != normals.end())) //evry point is just registered once
 						normals.push_back(n);
+
+					if (_initState == 0)
+						break;
 				}
 				vec3 nor = vec3(0, 0, 0);
 				for (vec3 n : normals)
@@ -145,12 +158,15 @@ void Terrain::update(ThreadManager* mgr)
 						_unVec[i]._v.getPos().z
 					)
 				);
-				_vertices[i].setNormal(normalize(nor));
 				_vertices[i].setTexCoord(vec2(
 					((float)rand() / (RAND_MAX)),
 					((float)rand() / (RAND_MAX))
 				));
+				_vertices[i].setNormal(normalize(nor));
 				genPos = i;
+
+				if (_initState == 0)
+					break;
 			}
 			genNormals = true;
 			return 0;
@@ -186,7 +202,6 @@ void Terrain::Draw()
 			}
 		}
 	}
-
 	Mesh::Draw();
 }
 
@@ -206,8 +221,26 @@ float Terrain::distToPoint(vec3 p)
 	return (t1 > t2) ? t2 : t1;
 }
 
+Terrain & Terrain::operator=(const Terrain & other)
+{
+	Mesh::operator=(other);
+	_initState = other._initState & (4 | 2 | 1);
+	_xOff = other._xOff;
+	_yOff = other._yOff;
+	genPos = 0;
+	updatePos = 0;
+	genNormals = false;
+
+	return *this;
+}
+
 Terrain::~Terrain()
 {
+	length = 0;
+	depth = 0;
+	genPos = updatePos = _vertices.size();
+	_initState = 0;
+	Mesh::~Mesh();
 }
 
 float Terrain::_distTo(vec3 p, float x, float z)
