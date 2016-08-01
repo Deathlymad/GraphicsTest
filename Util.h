@@ -121,25 +121,7 @@
 			function<void(T*)> destruction;
 		};
 
-		//Provided by L Peter Deutsch under the zlib license
-		NSP_MD5_BEG
-			/* Define the state of the MD5 Algorithm. */
-			typedef struct md5_state_s {
-				unsigned int count[2];	/* message length in bits, lsw first */
-				unsigned int abcd[4];		/* digest buffer */
-				unsigned char buf[64];		/* accumulate block */
-			} md5_state_t;
 		
-			/* Initialize the algorithm. */
-			void md5_init(md5_state_t *pms);
-
-			/* Append a string to the message. */
-			void md5_append(md5_state_t *pms, const unsigned char *data, int nbytes);
-
-			/* Finish the message and return the digest. */
-			void md5_finish(md5_state_t *pms, unsigned char digest[16]);
-		};
-
 		NSP_IO_BEG
 			//iofunctions v0.1 by Linus Helfmann
 			//Sonderzeichen (ä,ö,ü,ß) funktionieren nur wenn Datei in ANSI und OEM 850 kodiert

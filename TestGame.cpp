@@ -11,7 +11,7 @@ TestGame::TestGame() : Game(),
 	Light2(vec3(0.0f, 0.0f, 0.9f), 1.0f, 1, 2, 4, vec3(0.0f, 1.2f, 0.0f), vec3(0.0f, -1.0f, 0.0f), 0.3f),
 	m(0, 2, 32),
 	obj("assets/mesh/untitled.obj", "assets/textures/Test_tex2.bmp"),
-	trans(0, vec3(), vec3(), vec3(1.0f, 1.0f, 1.0f)),
+	trans(0, vec3(), vec3(), vec3(20.0f, 2.0f, 20.0f)),
 	_testField( getEngine()->getThreadManager(), &getScene().getCam(), 50, 50)
 {
 	//Rendering Registry

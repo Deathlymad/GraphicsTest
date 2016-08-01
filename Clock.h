@@ -11,7 +11,7 @@ NSP_STD
 using namespace chrono;
 
 #pragma once
-class Clock
+class Clock //deprecated, can be removed once dynamic tick timing is added to thread manager
 {
 public:
 	Clock(function<void()>, function<void()>, unsigned int);

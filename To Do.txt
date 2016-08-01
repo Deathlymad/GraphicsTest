@@ -1,13 +1,14 @@
 Short Term:
-	Options UI
+
+completely disable threads if there is no workload, globalize work pool
+Dynamic Ressource reloading
+fast noise / checksum generation
 recreate UI using View Plane
 move Text from UI class
 read PNG
+Options UI
 Gamepad-/Joystick-/MouseHandler implementation
 make UI background modifiable
-fix UI Background
-completely disable threads if there is no workload, globalize work pool
-Dynamic Ressource reloading
 
 Long Term:
 Physics
@@ -15,10 +16,10 @@ create Player
 
 Very Long Term:
 add comments
-autonomous Threadusage and memory optimization
+memory optimization
 OpenCL
 Use Vulkan
 
 UI stuffs:
 rendering a virtual mouse
-make the UI able to Drag & Drop window independent
+make the UI able to Drag & Drop window context independent (vulkan?)

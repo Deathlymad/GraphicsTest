@@ -181,24 +181,25 @@ void Terrain::Draw()
 		return;
 	if (_vertices.size() - 1 > updatePos)
 	{
+		unsigned updateSteps = 100; //make auto or add option
 		unsigned updateDif = genPos - updatePos;
 		unsigned maxPos = _vertices.size();
-		if (genPos == maxPos && maxPos - updatePos <= 10)
+		if (genPos == maxPos && maxPos - updatePos <= updateSteps)
 		{
 			updateVertices(updatePos, maxPos);
 			updatePos = maxPos;
 		}
 		else if (updateDif > 0)
 		{
-			if (updateDif <= 10)
+			if (updateDif <= updateSteps)
 			{
 				updateVertices(updatePos, genPos);
 				updatePos = genPos;
 			}
 			else
 			{
-				updateVertices(updatePos, updatePos + 10);
-				updatePos += 10;
+				updateVertices(updatePos, updatePos + updateSteps);
+				updatePos += updateSteps;
 			}
 		}
 	}

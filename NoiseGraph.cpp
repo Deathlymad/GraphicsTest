@@ -56,7 +56,7 @@ float NoiseGraph::getNoise(float x, float y, unsigned depth)
 	return noise( x, y) + (getNoise(x * 2, y * 2, depth + 1) / powf(2.0f, (float)depth));
 }
 
-float NoiseGraph::noise(float x, float y) //paralellizee
+float NoiseGraph::noise(float x, float y)
 {
 	float res = 1;
 	string str = noiseGenSystem.getResult();
@@ -65,6 +65,7 @@ float NoiseGraph::noise(float x, float y) //paralellizee
 		{
 		case 'A':
 			res += cosf(x);
+			break;
 		case 'B':
 			res += cosf(y);
 			break;
