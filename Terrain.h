@@ -34,6 +34,8 @@ private:
 	void _gen(float xOff, float zOff, float x, float z, float xMid, float zMid);
 	void _save();
 	bool _load();
+
+	void getVecPos(vec3& pos, unsigned& x, unsigned& z);
 	
 	unsigned _length;
 	unsigned _depth;

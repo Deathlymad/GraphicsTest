@@ -22,8 +22,8 @@ _xOff(other._xOff),
 _zOff(other._zOff),
 _updateState(0)
 {
-	_heightmap = (float**)malloc(sizeof(float) * _length);
-	memcpy(_heightmap, other._heightmap, sizeof(float) * _length);
+	_heightmap = (float**)malloc(sizeof(float*) * (_length + 1));
+	memcpy(&_heightmap[0], &(other._heightmap[0]), (_length + 1) * sizeof(float*));
 }
 
 Terrain::Terrain() : Mesh(),
@@ -93,7 +93,7 @@ void Terrain::update(ThreadManager* mgr)
 	{
 		if (!_load())
 		{
-			_gen( 0, 0, (float)_length - 1.0f, (float)_depth - 1.0f, 0.0f, 0.0f);
+			_gen( 0, 0, (float)_length, (float)_depth, 0.0f, 0.0f);
 			_save();
 		}
 		_updateState |= 2;
@@ -124,21 +124,15 @@ void Terrain::update(ThreadManager* mgr)
 		{
 			vector<vec3> normals;
 			for (vec3 n :_unVec[i]._nor)
-			{
 				if (!(find(normals.begin(), normals.end(), n) != normals.end())) //every point is just registered once
 					normals.push_back(n);
-			}
 			vec3 nor = vec3(0, 0, 0);
 			for (vec3 n : normals)
-			{
 				nor += n;
-			}
 			
 			vec3 pos = _vertices[i].getPos();
-			unsigned modIt = i % _length;
-			unsigned divIt = (i - modIt) / _length;
-			unsigned x = i - modIt - ( (divIt > 0 ? (divIt - 1) : 0) * _length),
-					 z = divIt;
+			unsigned x, z;
+			getVecPos(pos, x, z);
 			pos.y = _heightmap[x][z];
 			
 			_vertices[i].setPos(pos);
@@ -245,15 +239,19 @@ void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float z
 
 
 		_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ)] = height;
-		if (!((int)floorf(x) % 2))
+		
+		if (!((int)floorf(x) % 2) && !((int)floorf(z) % 2))
 		{
 			_heightmap[(int)floor(xOff + halfX) - 1][(int)floor(zOff + halfZ)] = height;
+			_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ - 1)] = height;
+			_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff + halfZ - 1)] = height;
 
-			_gen(xOff, zOff, x, halfZ - 1, xOff + halfX, zOff + halfZ);
-			_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + halfZ);
 			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff, x, halfZ - 1, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff, halfX - 1, z, xOff + halfX, zOff + halfZ);
 			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
 		}
+		
 		else if (!((int)floorf(z) % 2))
 		{
 			_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ - 1)] = height;
@@ -263,15 +261,13 @@ void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float z
 			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
 			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
 		}
-		else if (!((int)floorf(x) % 2) && !((int)floorf(z) % 2))
+		else if (!((int)floorf(x) % 2))
 		{
 			_heightmap[(int)floor(xOff + halfX) - 1][(int)floor(zOff + halfZ)] = height;
-			_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ - 1)] = height;
-			_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff + halfZ - 1)] = height;
 
-			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
 			_gen(xOff, zOff, x, halfZ - 1, xOff + halfX, zOff + halfZ);
-			_gen(xOff, zOff, halfX - 1, z, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
 			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
 		}
 		else
@@ -392,4 +388,14 @@ bool Terrain::_load()
 
 
 	return false;
+}
+
+void Terrain::getVecPos(vec3 & pos, unsigned & x, unsigned & z)
+{
+	int X = (int)floorf(pos.x);
+	int Z = (int)floorf(pos.z);
+	int originX = X - (X % _length);
+	int originZ = Z - (Z % _depth);
+	x = X - originX;
+	z = Z - originZ;
 }
