@@ -5,7 +5,13 @@
 vector<UniformRegistry*> UniformRegistry::registryList;
 
 
-UniformRegistry::UniformRegistry(string name, unsigned int size) : _name(name), _size(size)
+UniformRegistry::UniformRegistry(const char* name, unsigned int size) : _name(name), _size(size)
+{
+	_pos = registryList.size();
+	registryList.push_back(this);
+}
+
+UniformRegistry::UniformRegistry(string& name, unsigned int size) : _name(name), _size(size)
 {
 	_pos = registryList.size();
 	registryList.push_back(this);

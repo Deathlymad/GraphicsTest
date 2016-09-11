@@ -20,9 +20,8 @@ Image::Image() : _data(nullptr), _colorTable(nullptr)
 	_bitMasks[1] = -1;
 	_bitMasks[2] = -1;
 }
-Image::Image(string fileName) : _data(nullptr), _colorTable(nullptr)
+Image::Image(string& fileName) : _data(nullptr), _colorTable(nullptr), path(fileName)
 {
-	path = fileName;
 	_bitMasks[0] = -1;
 	_bitMasks[1] = -1;
 	_bitMasks[2] = -1;
@@ -170,11 +169,11 @@ Image::ImageType Image::getFileImageType(ifstream& file)
 	return BMP;
 }
 
-Texture::Texture(string path, unsigned int samplerID) : _image(Image(path)), _samplerID(samplerID), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
+Texture::Texture(string& path, unsigned int samplerID) : _image(Image(path)), _samplerID(samplerID), _ID(function<void(GLuint*)>([this](GLuint* tex) {deleteTexture(tex); }), new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
 {
 }
 
-Texture::Texture() : _image(Image()), _samplerID(0), _ID([this](GLuint* tex) {deleteTexture(tex); }, new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
+Texture::Texture() : _image(Image()), _samplerID(0), _ID(function<void(GLuint*)>([this](GLuint* tex) {deleteTexture(tex); }), new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
 {
 }
 
@@ -252,11 +251,11 @@ void Texture::bind()
 	}
 }
 
-LayeredTexture::LayeredTexture(string file)
+LayeredTexture::LayeredTexture(string& file)
 {
 	_samplerList.push_back(Texture(file));
 }
-LayeredTexture::LayeredTexture(vector<string> files)
+LayeredTexture::LayeredTexture(vector<string>& files)
 {
 	for (unsigned int i = 0; i < files.size(); i++)
 		_samplerList.push_back(Texture(files[i], i));
@@ -285,7 +284,7 @@ void LayeredTexture::bind()
 		_samplerList[i].bind();
 }
 
-TextureAtlas::TextureAtlas(string file, unsigned int xCount, unsigned int yCount) : LayeredTexture(file), 
+TextureAtlas::TextureAtlas(string& file, unsigned int xCount, unsigned int yCount) : LayeredTexture(file), 
 	_xUni("_tex" + std::to_string(_samplerID) + "_xR", 1), _yUni("_tex" + std::to_string(_samplerID) + "_yR", 1)
 {
 	_countX = xCount;
@@ -294,7 +293,7 @@ TextureAtlas::TextureAtlas(string file, unsigned int xCount, unsigned int yCount
 	_xRatio = 1.0 / _countX;
 	_yRatio = 1.0 / _countY;
 }
-TextureAtlas::TextureAtlas(vector<string> files, unsigned int xCount, unsigned int yCount) : LayeredTexture(files),
+TextureAtlas::TextureAtlas(vector<string>& files, unsigned int xCount, unsigned int yCount) : LayeredTexture(files),
 	_xUni("_tex" + std::to_string(_samplerID) + "_xR", 1), _yUni("_tex" + std::to_string(_samplerID) + "_yR", 1)
 {
 	_countX = xCount;

@@ -1,262 +1,395 @@
 #include "Terrain.h"
+#include "World.h"
 #include <algorithm>
 
 NSP_GLM
 
-Terrain::Terrain(NoiseGraph& generator, float xOff, float yOff, unsigned xSize, unsigned ySize) : Mesh(),
-length(xSize),
-depth(ySize),
+Terrain::Terrain(float maxDif, float xOff, float zOff, unsigned xSize, unsigned zSize, float** heightmap) : Mesh(),
+_length(xSize),
+_depth(zSize),
 _xOff(xOff),
-_yOff(yOff),
-_initState(0),
-_generator(generator),
-genPos(0),
-updatePos(0), 
-genNormals(false)
-{}
+_zOff(zOff),
+_updateState(0)
+{
+	_heightmap = (float**)malloc(sizeof(float*) * (xSize + 1));
+	memcpy(&_heightmap[0], &heightmap[0], (xSize + 1) * sizeof(float*));
+}
 
 Terrain::Terrain(const Terrain &other) : Mesh(other), 
-length(other.length),
-depth(other.depth),
+_length(other._length),
+_depth(other._depth),
 _xOff(other._xOff),
-_yOff(other._yOff),
-_initState(other._initState),
-_generator(other._generator), 
-genPos(other.genPos),
-updatePos(other.updatePos), 
-genNormals(other.genNormals)
+_zOff(other._zOff),
+_updateState(0)
 {
+	_heightmap = (float**)malloc(sizeof(float) * _length);
+	memcpy(_heightmap, other._heightmap, sizeof(float) * _length);
 }
 
 Terrain::Terrain() : Mesh(),
-length(0),
-depth(0),
+_length(0),
+_depth(0),
 _xOff(0),
-_yOff(0),
-_initState(0),
-_generator(NoiseGraph()),
-genPos(0),
-updatePos(0),
-genNormals(false)
+_zOff(0),
+_updateState(0)
 {
 }
 
 void Terrain::init()
 {
-	if (isInitialized() || isGenRunning())
+	safeguard.lock();
+	if (_updateState & 1)
 		return;
-	_initState = _initState | 2;
-	float _sinD = 1.0f;
+	_updateState |= 1;
+	safeguard.unlock();
 
-	unsigned  x = 0, y = 0;
-	bool toggle = false;
-	vector<Mesh::Vertex> _vec;
-	vector<unsigned int> _ind;
-	while (y * _sinD <= depth)
+	unsigned  x, y = 0;
+	unsigned StripLength = _length + 1;
+	vector<Mesh::Vertex> _vec( (_depth + 1) * (StripLength));
+	vector<unsigned int> _ind((_length) * (_depth) * 6);
+	unsigned indPos = 0;
+	while (y <= _depth)
 	{
 		x = 0;
-		float offset = toggle ? 0.0f : 0.5f;
-		if (offset != 0.0f)
-			_vec.push_back(Vertex(vec3(_xOff, 0, y * _sinD + _yOff), vec2()));
-		while (x < length)
+		while (x <= _length)
 		{
-			if (_initState == 0)
-				break;
-			_vec.push_back(Vertex(vec3(offset + x + _xOff, 0, y * _sinD + _yOff), vec2()));
-			x+=1;
+			_vec[(y)*(StripLength)+x] = Vertex(vec3(x + _xOff, 0, y + _zOff), vec2(), vec3());
+			x += 1;
 		}
-		_vec.push_back(Vertex(vec3(ceil(x) + _xOff, 0, y * _sinD + _yOff), vec2()));
 
 		if (y > 0)
 		{
-			float PtsPerLine = length + 2.0f;
-			unsigned	cur = unsigned(float(y) * PtsPerLine - floorf((float(y) / 2.0f))), 
-						prev = unsigned(floorf(float(y - 1) * PtsPerLine - floorf(float(y - 1) / 2.0f)));
-			unsigned linePos = y % 2 ? cur : prev, prevLinePos = y % 2 ? prev : cur;
-			
-			//writes first Triangle
-			_ind.push_back(linePos);
-			_ind.push_back(prevLinePos);
-			_ind.push_back(prevLinePos + 1);
+			unsigned
+				thisStart = y * (StripLength),
+				prevStart = (y - 1) * (StripLength);
 
-			//writes the rest of the Strip
-			for (unsigned i = 0; i < PtsPerLine - 2; i++)
+			//writes the Strip
+			x = 1;
+			while (x <= _length)
 			{
-				_ind.push_back(linePos + i);
-				_ind.push_back(prevLinePos + (i + 1));
-				_ind.push_back(linePos + (i + 1));
+				_ind[indPos] = prevStart + x - 1;
+				_ind[indPos + 1] = prevStart + x;
+				_ind[indPos + 2] = thisStart + x - 1;
 
-				_ind.push_back(linePos + (i + 1));
-				_ind.push_back(prevLinePos + (i + 1));
-				_ind.push_back(prevLinePos + (i + 2));
+				_ind[indPos + 3] = thisStart + x - 1;
+				_ind[indPos + 4] = prevStart + x;
+				_ind[indPos + 5] = thisStart + x;
+				indPos += 6;
+				x += 1;
 			}
 		}
-		y+=1;
-		if (toggle)
-			toggle = false;
-		else
-			toggle = true;
-
-	if (_initState == 0)
-		break;
+		y += 1;
 	}
+
 	_vertices = move(_vec);
 	_indices = move(_ind);
-	_initState = _initState & ( 8 | 4);
-	_initState = _initState | 1;
+	_updatePos = -1;
+	Mesh::init();
 }
 
 void Terrain::update(ThreadManager* mgr)
 {
-	if (length == 0 || depth == 0 || !isInitialized())
-		return;
-	
-	if (_generator.isFinished() && isInitialized() && !genNormals && genPos == 0 && (_initState & 8) == 0)
+	if ( (_updateState & 1) && !(_updateState & 2)) //generate Map Data
 	{
-		mgr->addTask(
-			[this] {
+		if (!_load())
+		{
+			_gen( 0, 0, (float)_length - 1.0f, (float)_depth - 1.0f, 0.0f, 0.0f);
+			_save();
+		}
+		_updateState |= 2;
+	}
+	else if (!(_updateState & 4)) //generate Normal Data
+	{
+		_unVec = vector<Mesh::unnormalizedVertex>(_vertices.size()); //move to init phase
+		copy(_vertices.begin(), _vertices.end(), _unVec.begin());
+		for (unsigned i = 0; i < unsigned(_indices.size() / 3); i++) //generating Normal Data
+		{
+			unsigned ind = i * 3;
+			vec3	a = normalize(_vertices[_indices[ind]].getPos() - _vertices[_indices[ind + 1]].getPos()),
+					b = normalize(_vertices[_indices[ind]].getPos() - _vertices[_indices[ind + 2]].getPos());
+			vec3 c = cross(a, b);
+			if (c.y < 0)
+				c = vec3(1, 1, 1) - c;
+			_unVec[_indices[ind]]._nor.push_back(c);
+			_unVec[_indices[ind + 1]]._nor.push_back(c);
+			_unVec[_indices[ind + 2]]._nor.push_back(c);
 
-			vector<Mesh::unnormalizedVertex> _unVec = vector<Mesh::unnormalizedVertex>(_vertices.size());
-			for (unsigned i = 0; i < _unVec.size(); i++) //copy data
-				_unVec[i] = _vertices[i];
-
-			for (unsigned i = 0; i < unsigned(_indices.size() / 3); i++)
+		}
+		_updateState |= 4;
+	}
+	else if ( (_updateState & 4) && !(_updateState & 8)) //update Data
+	{
+		vec3 StartPos = _vertices[0].getPos();
+		for (unsigned i = 0; i < _unVec.size(); i++) //normalize the normals
+		{
+			vector<vec3> normals;
+			for (vec3 n :_unVec[i]._nor)
 			{
-				unsigned ind = i * 3;
-				vec3	a = normalize(_vertices[_indices[ind]].getPos() - _vertices[_indices[ind + 1]].getPos()),
-						b = normalize(_vertices[_indices[ind]].getPos() - _vertices[_indices[ind + 2]].getPos());
-				vec3 c = cross(a, b);
-				if (c.y < 0)
-					c = vec3(1, 1, 1) - c;
-				_unVec[_indices[ind]]._nor.push_back(c);
-				_unVec[_indices[ind + 1]]._nor.push_back(c);
-				_unVec[_indices[ind + 2]]._nor.push_back(c);
-
-				if (_initState == 0)
-					break;
+				if (!(find(normals.begin(), normals.end(), n) != normals.end())) //every point is just registered once
+					normals.push_back(n);
 			}
-			for (unsigned i = 0; i < _unVec.size(); i++) //normalize the normals
+			vec3 nor = vec3(0, 0, 0);
+			for (vec3 n : normals)
 			{
-				vector<vec3> normals;
-				for (vec3 n :_unVec[i]._nor)
-				{
-					if (!(find(normals.begin(), normals.end(), n) != normals.end())) //evry point is just registered once
-						normals.push_back(n);
-
-					if (_initState == 0)
-						break;
-				}
-				vec3 nor = vec3(0, 0, 0);
-				for (vec3 n : normals)
-				{
-					nor += n;
-				}
-				_vertices[i].setPos(
-					vec3(
-						_unVec[i]._v.getPos().x,
-						_generator.get(_unVec[i]._v.getPos().x, _unVec[i]._v.getPos().z),
-						_unVec[i]._v.getPos().z
-					)
-				);
-				_vertices[i].setTexCoord(vec2(
-					((float)rand() / (RAND_MAX)),
-					((float)rand() / (RAND_MAX))
-				));
-				_vertices[i].setNormal(normalize(nor));
-				genPos = i;
-
-				if (_initState == 0)
-					break;
+				nor += n;
 			}
-			genNormals = true;
-			return 0;
-		});
-		_initState = _initState | 8;
+			
+			vec3 pos = _vertices[i].getPos();
+			unsigned modIt = i % _length;
+			unsigned divIt = (i - modIt) / _length;
+			unsigned x = i - modIt - ( (divIt > 0 ? (divIt - 1) : 0) * _length),
+					 z = divIt;
+			pos.y = _heightmap[x][z];
+			
+			_vertices[i].setPos(pos);
+			_vertices[i].setTexCoord(vec2(
+				((float)rand() / (RAND_MAX)),
+				((float)rand() / (RAND_MAX))
+			));
+			_vertices[i].setNormal(normalize(nor));
+			
+		}
+		_updateState |= 8;
 	}
 }
 
 void Terrain::Draw()
 {
-	if (length == 0 || depth == 0 || !isMeshInitialized() || _vertices.empty())
-		return;
-	if (_vertices.size() - 1 > updatePos)
+	if (_updatePos == -1 && _updateState & 8)
 	{
-		unsigned updateSteps = 100; //make auto or add option
-		unsigned updateDif = genPos - updatePos;
-		unsigned maxPos = _vertices.size();
-		if (genPos == maxPos && maxPos - updatePos <= updateSteps)
+		_updatePos = 0;
+	}
+	if (_updatePos != -1 && _updatePos != _vertices.size())
+	{
+		if (_vertices.size() > _updatePos + 100)
 		{
-			updateVertices(updatePos, maxPos);
-			updatePos = maxPos;
+			updateVertices(_updatePos, _updatePos + 100);
+			_updatePos += 100;
 		}
-		else if (updateDif > 0)
-		{
-			if (updateDif <= updateSteps)
-			{
-				updateVertices(updatePos, genPos);
-				updatePos = genPos;
-			}
-			else
-			{
-				updateVertices(updatePos, updatePos + updateSteps);
-				updatePos += updateSteps;
-			}
+		else {
+			updateVertices(_updatePos, _vertices.size() - 1);
+			_updatePos = _vertices.size();
 		}
 	}
 	Mesh::Draw();
 }
 
-float Terrain::distToPoint(vec3 p)
+void Terrain::setPos(float xOff, float zOff, float ** heightmap)
 {
-	if (length == 0 || depth == 0)
-		return 1000000;
-	if ( _xOff <= p.x && p.x <= (_xOff + length) &&
-		_yOff <= p.z && p.z <= (_yOff + depth))
-		return 0;
-	float a = _distTo(p, _xOff, _yOff)
-		, b = _distTo(p, _xOff + length, _yOff)
-		, c = _distTo(p, _xOff, _yOff + depth)
-		, d = _distTo(p, _xOff + length, _yOff + depth);
-	float t1 = (a > b) ? b : a
-		, t2 = (c > d) ? d : c;
-	return (t1 > t2) ? t2 : t1;
+	if (xOff != _xOff || zOff != _zOff)
+	{
+		_heightmap = heightmap;
+		_xOff = xOff;
+		_zOff = zOff;
+		_updateState = heightmap[0][0] != 0xDEAD;
+	}
+}
+
+bool Terrain::isPos(float xOff, float zOff)
+{
+	return xOff == _xOff && zOff == _zOff;
 }
 
 Terrain & Terrain::operator=(const Terrain & other)
 {
 	Mesh::operator=(other);
-	_initState = other._initState & (4 | 2 | 1);
+	_length = other._length;
+	_depth = other._depth;
 	_xOff = other._xOff;
-	_yOff = other._yOff;
-	genPos = 0;
-	updatePos = 0;
-	genNormals = false;
+	_zOff = other._zOff;
+
+	_heightmap = (float**)malloc(sizeof(float) * _length);
+	memcpy(&_heightmap[0],&(other._heightmap[0]), sizeof(float*) * _length);
 
 	return *this;
 }
 
 Terrain::~Terrain()
 {
-	length = 0;
-	depth = 0;
-	genPos = updatePos = _vertices.size();
-	_initState = 0;
+	_length = 0;
+	_depth = 0;
+	delete[] _heightmap;
 	Mesh::~Mesh();
 }
 
-float Terrain::_distTo(vec3 p, float x, float z)
+float Terrain::getRandomMult(float x, float z)
 {
-	float _x = powf(p.x - x, 2);
-	float _z = powf(p.z - z, 2);
-	return sqrtf( _x + _z);
+	float max = sqrtf(x*z);
+	return (rand() % (int)floorf(max)) - floorf(max / 2);
 }
 
-Mesh::Vertex Terrain::getVertex(float x, float z)
+void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float zMid)
 {
-	return Vertex(vec3(x, getHeight(x, z), z), vec2(0, 0));
+	if (!xMid && !zMid) //ensuing generation
+	{
+		_heightmap[(int)floorf(xOff)][(int)floorf(zOff)] = getRandomMult(x, z);
+		_heightmap[(int)floorf(xOff + x)][(int)floorf(zOff)] = getRandomMult(x, z);
+		_heightmap[(int)floorf(xOff)][(int)floorf(zOff + z)] = getRandomMult(x, z);
+		_heightmap[(int)floorf(xOff + x)][(int)floorf(zOff + z)] = getRandomMult(x, z);
+	}
+
+	if (x / 2 < 1 || z / 2 < 1)
+		return;
+
+	float halfX = ceil(x / 2);
+	float halfZ = ceil(z / 2);
+
+
+	if (x == z) //diamond step
+	{
+		float neightborSum = sqrt(_heightmap[(int)floor(xOff)][(int)floor(zOff)] *
+								_heightmap[(int)floor(xOff + x)][(int)floor(zOff)] *
+								_heightmap[(int)floor(xOff)][(int)floor(zOff + z)] *
+								_heightmap[(int)floor(xOff + x)][(int)floor(zOff + z)]);
+		float height = sqrt(neightborSum * getRandomMult(halfX, halfZ));
+
+
+		_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ)] = height;
+		if (!((int)floorf(x) % 2))
+		{
+			_heightmap[(int)floor(xOff + halfX) - 1][(int)floor(zOff + halfZ)] = height;
+
+			_gen(xOff, zOff, x, halfZ - 1, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
+			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
+		}
+		else if (!((int)floorf(z) % 2))
+		{
+			_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ - 1)] = height;
+
+			_gen(xOff, zOff, x, halfZ, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff, halfX - 1, z, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
+			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
+		}
+		else if (!((int)floorf(x) % 2) && !((int)floorf(z) % 2))
+		{
+			_heightmap[(int)floor(xOff + halfX) - 1][(int)floor(zOff + halfZ)] = height;
+			_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ - 1)] = height;
+			_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff + halfZ - 1)] = height;
+
+			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff, x, halfZ - 1, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff, halfX - 1, z, xOff + halfX, zOff + halfZ);
+			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
+		}
+		else
+		{
+			_gen( xOff, zOff, x, halfZ, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + halfZ);
+			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
+			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
+		}
+
+	} //square algorithms
+	else if (int(x) % int(z) < 2)
+	{
+		if (x > z)
+		{
+			if (zMid == zOff)
+			{
+				float neightborSum = sqrt(_heightmap[(int)floor(xMid)][(int)floor(zOff)] *
+					_heightmap[(int)floor(xOff + x)][(int)floor(zOff + z)] *
+					_heightmap[(int)floor(xOff)][(int)floor(zOff + z)]);
+				float height = sqrt(neightborSum * getRandomMult(halfX, zOff + z));
+
+
+				_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + z)] = height;
+				if (!(int(x) % 2))
+				{
+					_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff + z)] = height;
+					_gen(xOff, zOff, halfX - 1, z, xOff + halfX, zOff + z);
+					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
+				}
+				else
+				{
+					_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + z);
+					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
+				}
+			}
+			else
+			{
+				float neightborSum = sqrt(_heightmap[(int)floor(xMid)][(int)floor(zOff + z)] *
+					_heightmap[(int)floor(xOff + x)][(int)floor(zOff)] *
+					_heightmap[(int)floor(xOff)][(int)floor(zOff)]);
+				float height = sqrt(neightborSum * getRandomMult(halfX, zOff));
+
+
+				_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff)] = height;
+				if (!(int(x) % 2))
+				{
+					_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff)] = height;
+					_gen(xOff, zOff, halfX - 1, z, xOff + halfX - 1, zOff + z);
+					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
+				}
+				else
+				{
+					_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + z);
+					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
+				}
+			}
+
+		}
+		else
+		{
+			if (xMid == xOff)
+			{
+				float neightborSum = sqrt(_heightmap[(int)floor(xMid)][(int)floor(zOff + halfZ)] *
+					_heightmap[(int)floor(xOff + x)][(int)floor(zOff + z)] *
+					_heightmap[(int)floor(xOff + x)][(int)floor(zOff)]);
+				float height = sqrt(neightborSum * getRandomMult(xOff + x, zOff + halfZ));
+
+				_heightmap[(int)floor(xOff + x)][(int)floor(zOff + halfZ)] = height;
+				if (!(int(x) % 2))
+				{
+					_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff + z)] = height;
+					_gen(xOff, zOff, halfX - 1, z, xOff + halfX - 1, zOff + z);
+					_gen(xOff + halfX - 1, zOff, halfX, z, xOff + halfX, zOff + z);
+				}
+				else
+				{
+					_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + z);
+					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
+				}
+			}
+			else
+			{
+				float neightborSum = sqrt(_heightmap[(int)floor(xMid)][(int)floor(zOff + halfZ)] *
+					_heightmap[(int)floor(xOff)][(int)floor(zOff + z)] *
+					_heightmap[(int)floor(xOff)][(int)floor(zOff)]);
+				float height = sqrt(neightborSum * getRandomMult(xOff, zOff + halfZ));
+
+				_heightmap[(int)floor(xOff)][(int)floor(zOff + halfZ)] = height;
+				if (!(int(x) % 2))
+				{
+					_heightmap[(int)floor(xOff)][(int)floor(zOff + halfZ - 1)] = height;
+					_gen(xOff, zOff, halfX - 1, z, xOff + halfX - 1, zOff + z);
+					_gen(xOff + halfX - 1, zOff, halfX, z, xOff + halfX, zOff + z);
+				}
+				else
+				{
+					_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + z);
+					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
+				}
+			}
+		}
+	}
 }
 
-float Terrain::getHeight(float x, float z)
+void Terrain::_save()
 {
-	return 0;
+	if (_heightmap[0][0] != 0xDEAD) //invalid data
+		return;
+
+}
+
+bool Terrain::_load()
+{
+	if (_heightmap[0][0] != 0xDEAD) //already loaded
+		return false;
+
+
+
+	return false;
 }

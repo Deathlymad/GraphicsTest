@@ -4,13 +4,14 @@
 #include <GLFW\glfw3.h>
 
 
-UIPart::UIPart(UI * parent, vec2 center, float range, function<void()> e) : _tex(new Texture("assets/textures/Test_tex2.bmp")),
+UIPart::UIPart(UI * parent, vec2 center, float range, function<void()>& e) : _tex(new Texture("assets/textures/Test_tex2.bmp")),
 _mesh(vector<Mesh::Vertex>({
 	Mesh::Vertex(vec3(_pos[0].x, _pos[0].y, 0), vec2(0.0f, 0.0f)),
 	Mesh::Vertex(vec3(_pos[1].x, _pos[0].y, 0), vec2(1.0f, 0.0f)),
 	Mesh::Vertex(vec3(_pos[0].x, _pos[1].y, 0), vec2(0.0f, 1.0f)),
 	Mesh::Vertex(vec3(_pos[1].x, _pos[1].y, 0), vec2(1.0f, 1.0f))
-}), Mesh::VertexArrayObject::genBitset(3, 2))
+}), Mesh::VertexArrayObject::genBitset(3, 2)),
+_event(e)
 {
 	_parent = parent;
 
@@ -20,23 +21,20 @@ _mesh(vector<Mesh::Vertex>({
 	_pos[1] = center;
 	_pos[1].x -= range;
 	_pos[1].y -= range;
-
-	_event = e;
 }
 
-UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()> e) : _tex(new Texture("assets/textures/Test_tex2.bmp")),
+UIPart::UIPart(UI * parent, vec2 pos1, vec2 pos2, function<void()>& e) : _tex(new Texture("assets/textures/Test_tex2.bmp")),
 _mesh(vector<Mesh::Vertex>({
 	Mesh::Vertex(vec3(pos1.x, pos1.y, 0), vec2(0.0f, 0.0f)),
 	Mesh::Vertex(vec3(pos2.x, pos1.y, 0), vec2(1.0f, 0.0f)),
 	Mesh::Vertex(vec3(pos1.x, pos2.y, 0), vec2(0.0f, 1.0f)),
 	Mesh::Vertex(vec3(pos2.x, pos2.y, 0), vec2(1.0f, 1.0f))
-}), Mesh::VertexArrayObject::genBitset(3, 2))
+}), Mesh::VertexArrayObject::genBitset(3, 2)),
+_event(e)
 {
 	_parent = parent;
 	_pos[0] = pos1;
 	_pos[1] = pos2;
-	
-	_event = e;
 }
 
 void UIPart::load(RessourceHandler * loader)
@@ -106,7 +104,7 @@ void UIButton::onMouseButton(char button, char action, char mods)
 Shader* UIText::textRenderer = nullptr;
 TextureAtlas* UIText::glyphMap = new TextureAtlas("assets/textures/Text_tex1.bmp", 32, 7);
 
-UIText::UIText(UI * parent, vec2 pos1, vec2 pos2, function<void()> _event) : UIPart(parent, pos1, pos2, _event)
+UIText::UIText(UI * parent, vec2 pos1, vec2 pos2, function<void()>& _event) : UIPart(parent, pos1, pos2, _event)
 {
 	if (!textRenderer)
 		textRenderer = new Shader(string("assets/shaders/UIRender_text_vs.glsl"), string("assets/shaders/UIRender_fs.glsl"));

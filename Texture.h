@@ -27,7 +27,7 @@ public:
 	};
 
 	Image();
-	Image(string);
+	Image(string&);
 
 	string getPath() { return path; }
 	void load(ifstream& f);
@@ -68,7 +68,7 @@ private:
 class Texture
 {
 public:
-	Texture(string, unsigned int samplerID = 0);
+	Texture(string&, unsigned int samplerID = 0);
 	~Texture();
 
 	virtual void load(RessourceHandler*);
@@ -92,8 +92,8 @@ private:
 class LayeredTexture : public Texture
 {
 public:
-	LayeredTexture(string);
-	LayeredTexture(vector<string>);
+	LayeredTexture(string&);
+	LayeredTexture(vector<string>&);
 	~LayeredTexture();
 
 	virtual void load(RessourceHandler*);
@@ -106,8 +106,8 @@ private:
 class TextureAtlas : public LayeredTexture
 {
 public:
-	TextureAtlas(string, unsigned int xCount, unsigned int yCount);
-	TextureAtlas(vector<string>, unsigned int xCount, unsigned int yCount);
+	TextureAtlas(string&, unsigned int xCount, unsigned int yCount);
+	TextureAtlas(vector<string>&, unsigned int xCount, unsigned int yCount);
 
 	~TextureAtlas();
 private:

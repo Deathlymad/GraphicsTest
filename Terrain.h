@@ -1,52 +1,49 @@
 #pragma once
+#include <random>
+
 #include "Mesh.h"
 #include "Camera.h"
 #include "NoiseGraph.h"
+#include "ThreadManager.h"
+
 class Terrain :
 	public Mesh
 {
 public:
-	Terrain(NoiseGraph& generator, float xOff, float yOff, unsigned xSize, unsigned ySize);
+	Terrain(float maxDif, float xOff, float zOff, unsigned xSize, unsigned zSize, float** heightmap);
 	Terrain(const Terrain&);
 	Terrain();
 
-	void initMesh() {
-		if (isMeshInitialized() || !isInitialized())
-			return;
-		Mesh::init();
-		_initState = _initState | 4;
-	}
 	virtual void init();
 	virtual void update(ThreadManager*);
 	virtual void Draw();
 
-	bool isInitialized() { return (_initState & 1) != 0; }
-	bool isGenRunning() { return (_initState & 2) != 0; }
-	bool isMeshInitialized() { return (_initState & 4) != 0; }
+	void onUpdateMap()
+	{
+		_updateState = 1;
+	}
 
-	bool isTerrainAt(float x, float y) { return distToPoint(vec3(x, 0, y)) == 0; }
-	float distToPoint(vec3 p);
-	
+	void setPos(float xOff, float zOff, float** heightmap);
+	bool isPos(float xOff, float zOff);
+
 	Terrain& operator=(const Terrain& other);
 
 	~Terrain();
 private:
-	float _distTo(vec3 p, float x, float z);
+	float getRandomMult(float x, float z);
+	void _gen(float xOff, float zOff, float x, float z, float xMid, float zMid);
+	void _save();
+	bool _load();
+	
+	unsigned _length;
+	unsigned _depth;
+	float _xOff, _zOff;
+	vector<Mesh::unnormalizedVertex> _unVec;
+	
+	float** _heightmap;
 
-	int _initState;
-
-	unsigned length;
-	unsigned depth;
-	float _xOff, _yOff;
-
-	NoiseGraph& _generator;
-	bool genNormals;
-	unsigned genPos, updatePos;
-
-
-	Vertex getVertex(float x, float z);
-	float getHeight(float x, float z);
-
-
+	mutex safeguard;
+	int _updateState;
+	unsigned _updatePos;
 };
 

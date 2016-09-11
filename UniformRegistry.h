@@ -10,7 +10,8 @@ NSP_STD
 class UniformRegistry
 {
 public:
-	UniformRegistry(string name, unsigned int size);
+	UniformRegistry(const char* str, unsigned int size);
+	UniformRegistry(string& name, unsigned int size);
 
 	void addMemPos(float * data);
 

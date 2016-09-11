@@ -72,9 +72,8 @@ void DirectionalLight::render(Shader * s, RenderingEngine::RenderState firstPass
 		EngineObject::render(s, firstPass);
 }
 
-PointLight::PointLight( vec3 c, float i,Attenuation a, vec3 p, string& name) : BaseLight( c, i, name + ".base"), pos( name + ".pos", 3), range( name + ".range", 3), atten(a)
+PointLight::PointLight( vec3 c, float i,Attenuation& a, vec3 p, string& name) : BaseLight( c, i, name + ".base"), pos( name + ".pos", 3), range( name + ".range", 3), atten(a), _pos(p)
 {
-	_pos = p;
 	calcRange();
 	if (shader)
 		shader->~Shader();

@@ -17,7 +17,7 @@ public:
 	{
 	public:
 		Rule(char trigger, char result) : _trigger(trigger), _result() { _result.push_back(result); }
-		Rule( char trigger, string result) : _trigger(trigger), _result(result) {}
+		Rule( char trigger, string& result) : _trigger(trigger), _result(result) {}
 
 		char getTrigger()
 		{
@@ -34,9 +34,9 @@ public:
 	};
 
 	LSystem(char axiom);
-	LSystem(string axiom);
+	LSystem(string& axiom);
 	LSystem(char axiom, unsigned maxDepth);
-	LSystem(string axiom, unsigned maxDepth);
+	LSystem(string& axiom, unsigned maxDepth);
 	LSystem(LSystem& other);
 
 	int run();

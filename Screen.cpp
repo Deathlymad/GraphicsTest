@@ -138,7 +138,7 @@ void Screen::setupGraphicFunctions()
 	initializedGLEW = true;
 }
 
-Screen::Screen(string title)
+Screen::Screen(string& title)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
@@ -149,7 +149,7 @@ Screen::Screen(string title)
 	setupGraphicFunctions();
 }
 
-Screen::Screen(int width, int height, string title)
+Screen::Screen(int width, int height, string& title)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
@@ -161,7 +161,7 @@ Screen::Screen(int width, int height, string title)
 	setupGraphicFunctions();
 }
 
-Screen::Screen(string title, char flags)
+Screen::Screen(string& title, char flags)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
@@ -172,7 +172,7 @@ Screen::Screen(string title, char flags)
 	setupGraphicFunctions();
 }
 
-Screen::Screen(int width, int height, string title, char flags)
+Screen::Screen(int width, int height, string& title, char flags)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
@@ -186,7 +186,7 @@ Screen::Screen(int width, int height, string title, char flags)
 
 bool Screen::isScreenClosed()
 {
-	return glfwWindowShouldClose(_winHandle) > 0;
+	return glfwWindowShouldClose(_winHandle) > 0; //will only work if mouse is not hidden
 }
 
 void Screen::updateScreen()

@@ -11,10 +11,10 @@ Camera::Camera() : InputHandler(), EngineObject(), ViewProjMat("ViewProj", 16), 
 	_pos = vec3(0, 0, 0);
 	forward = vec3(0, 0, -1);
 	up = vec3(0, 1, 0);
-	FoV = 45.0f;
+	FoV = 90.0f;
 	Aspect = 1.333f;
 	View = mat4();
-	projection = perspective( FoV, Aspect, 0.1f, 100.0f);
+	projection = perspective( FoV, Aspect, 0.1f, 100000.0f);
 }
 
 void Camera::update(ThreadManager* mgr)

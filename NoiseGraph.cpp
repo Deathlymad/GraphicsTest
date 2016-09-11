@@ -3,20 +3,20 @@
 
 #include <stack>
 LSystem::Rule NoiseGraph::rules[] = {
-	LSystem::Rule('A', "DGF"),
-	LSystem::Rule('B', "BLC"),
-	LSystem::Rule('C', "KDA"),
-	LSystem::Rule('D', "CJG"),
+	LSystem::Rule('A', string("DGF")),
+	LSystem::Rule('B', string("BLC")),
+	LSystem::Rule('C', string("KDA")),
+	LSystem::Rule('D', string("CJG")),
 
-	LSystem::Rule('E', "HAC"),
-	LSystem::Rule('F', "LDB"),
-	LSystem::Rule('G', "GHJ"),
-	LSystem::Rule('H', "FGH"),
+	LSystem::Rule('E', string("HAC")),
+	LSystem::Rule('F', string("LDB")),
+	LSystem::Rule('G', string("GHJ")),
+	LSystem::Rule('H', string("FGH")),
 
-	LSystem::Rule('I', "ALC"),
-	LSystem::Rule('J', "FEC"),
-	LSystem::Rule('K', "EJK"),
-	LSystem::Rule('L', "ELA")
+	LSystem::Rule('I', string("ALC")),
+	LSystem::Rule('J', string("FEC")),
+	LSystem::Rule('K', string("EJK")),
+	LSystem::Rule('L', string("ELA"))
 };
 NoiseGraph::NoiseGraph( ThreadManager* manager, unsigned dimension) : noiseGenSystem( LSystem('A' + rand() % 11, 2))
 {

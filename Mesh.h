@@ -57,6 +57,12 @@ public:
 	class Vertex
 	{
 	public:
+		Vertex()
+		{
+			data[0] = 0; data[1] = 0; data[2] = 0;
+			data[3] = 0; data[4] = 0; data[5] = 0;
+			data[6] = 0; data[7] = 0; data[8] = 0;
+		}
 		Vertex(vec2 pos, vec2 tex, vec3 nor = vec3(0,0,0))
 		{
 			data[0] = pos.x; data[1] = pos.y; data[2] =     0;
@@ -87,6 +93,16 @@ public:
 		vec3 getPos() { return  vec3(data[0], data[1], data[2]); }
 		vec3 getNormal() { return vec3(data[6], data[7], data[8]); }
 
+		bool operator== (const Vertex& other)
+		{
+			return equal(begin(data), end(data), begin(other.data), end(other.data));
+		}
+
+		bool operator!= (const Vertex& other)
+		{
+			return !equal(begin(data), end(data), begin(other.data), end(other.data));
+		}
+
 		float* getData()
 		{
 			vec3 nor = normalize(vec3(data[6], data[7], data[8]));
@@ -102,10 +118,8 @@ public:
 		unnormalizedVertex() : _v( vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0))
 		{
 		}
-		unnormalizedVertex(Vertex v, vector<vec3> nor) : _v(v)
-		{
-			_nor = nor;
-		}
+		unnormalizedVertex(Vertex& v, vector<vec3>& nor) : _v(v), _nor(nor)
+		{}
 
 		void operator=(Vertex& v)
 		{
@@ -117,7 +131,7 @@ public:
 		vector<vec3> _nor;
 	};
 
-	Mesh ( string);
+	Mesh ( string&);
 	Mesh ( vector<Vertex> &vec, unsigned char bitset); //Rectangle Constructor
 	Mesh ( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset);
 	Mesh ();

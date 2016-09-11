@@ -128,7 +128,7 @@ private:
 class PointLight : public BaseLight
 {
 public:
-	PointLight( vec3 c, float i,Attenuation a, vec3 p, string& name = string("Light"));
+	PointLight( vec3 c, float i,Attenuation& a, vec3 p, string& name = string("Light"));
 	PointLight(vec3 c, float i, float ex, float lin, float con, vec3 p, string& name = string("Light"));
 	
 	virtual void render(Shader*, RenderingEngine::RenderState);

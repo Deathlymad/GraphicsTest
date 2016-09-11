@@ -15,22 +15,20 @@
 #include "Mesh.h"
 #include <fstream>
 
-Mesh::Mesh() : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao( 3, 2, 3)
+Mesh::Mesh() : _vbo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _ibo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _vao( 3, 2, 3)
 {
 }
 
-Mesh::Mesh ( string file) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(3)
-{
-	_path = file;
-}
+Mesh::Mesh ( string& file) : _vbo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _ibo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _vao(3), _path(file)
+{}
 
-Mesh::Mesh( vector<Vertex>& vec, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
+Mesh::Mesh( vector<Vertex>& vec, unsigned char bitset) : _vbo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _ibo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _vao(bitset)
 {
 	vector<unsigned int> i = vector<unsigned int>({ 0,1,2,2,1,3 });//2D indices, might need additions later for other sizes
 	_glDownload( vec, i);
 }
 
-Mesh::Mesh( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset) : _vbo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _ibo([this](GLuint* buf) {deleteBuffer(buf); }, new GLuint), _vao(bitset)
+Mesh::Mesh( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset) : _vbo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _ibo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _vao(bitset)
 {
 	_glDownload( vec, i);
 }
@@ -42,9 +40,9 @@ void Mesh::load(RessourceHandler * loader)
 		_loadReq = loader->getRessource(_path, this);
 	}
 	else {
-		promise<void*>* prom = new promise<void*>();
-		prom->set_value(this);
-		_loadReq = prom->get_future().share();
+		promise<void*> prom = promise<void*>();
+		prom.set_value(this);
+		_loadReq = move(prom.get_future().share());
 	}
 }
 
@@ -215,8 +213,10 @@ vector<Mesh::Vertex> Mesh::getNormalVertices(vector<unnormalizedVertex> vn)
 void Mesh::_glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 {
 	_VerticesCount = i.size();
-	_vertices = v;
-	_indices = i;
+	if (!equal(v.begin(), v.end(), _vertices.begin(), _vertices.end()))
+		_vertices = v;
+	if (i != _indices)
+		_indices = i;
 	initGL(!glIsBuffer(*(_vbo.get())) << 1 | !glIsBuffer(*(_ibo.get())));
 
 	if (v.size() == 0)

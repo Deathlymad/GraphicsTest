@@ -2,7 +2,7 @@
 
 
 
-Clock::Clock( function<void()> init, function<void()> f, unsigned int tps) : init(init), func(f), running(false), tickRatio(1000.0f/(float)tps)
+Clock::Clock( function<void()>& init, function<void()>& f, unsigned int tps) : init(init), func(f), running(false), tickRatio(1000.0f/(float)tps)
 {
 }
 

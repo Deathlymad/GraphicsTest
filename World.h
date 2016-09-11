@@ -16,9 +16,10 @@ public:
 	virtual void update(ThreadManager*);
 	virtual void render(Shader*, RenderingEngine::RenderState);
 
+	static unsigned getMemPosForTerrain(int x, int z, bool invX, bool invZ);
+
 	~World();
 private:
-	unsigned getMemPosForTerrain(int x, int z, bool invX, bool invZ);
 	void TerrainForPos(vec2 pos, int xOff, int zOff);
 	void setPos(vec2 pos);
 
@@ -28,8 +29,11 @@ private:
 	unsigned chunkX, chunkZ;
 
 	vector<Terrain*> allocator;
+	float** _heightmap;
 	Camera* player;
 
-	Texture ground;
+	mutex safeguard;
+
+	Texture ground; //needs to become atlas
 	bool initialized;
 };

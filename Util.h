@@ -102,8 +102,8 @@
 		template <typename T>
 		class CustomPtr : public Ptr<T> {
 		public:
-			CustomPtr<T>(function<void(T*)> func) : Ptr<T>(), destruction(func) {}
-			CustomPtr<T>(function<void(T*)> func, T* data) : Ptr<T>(data), destruction(func) {}
+			CustomPtr<T>(function<void(T*)>& func) : Ptr<T>(), destruction(func) {}
+			CustomPtr<T>(function<void(T*)>& func, T* data) : Ptr<T>(data), destruction(func) {}
 
 			void setDestructor(function<void(T*)> des) { destruction = des; }
 		protected:

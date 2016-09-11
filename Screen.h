@@ -18,10 +18,10 @@ public:
 	static GLFWmonitor* getMonitor(unsigned short monitorID);
 
 
-	Screen(string title);
-	Screen(int width, int height, string title);
-	Screen(string title, char flags);
-	Screen(int width, int height, string title, char flags);
+	Screen(string& title);
+	Screen(int width, int height, string& title);
+	Screen(string& title, char flags);
+	Screen(int width, int height, string& title, char flags);
 
 	bool isScreenClosed();
 

@@ -11,7 +11,7 @@ class ModelRenderer : public EngineObject
 {
 public:
 	ModelRenderer(Mesh& _mesh);
-	ModelRenderer( string, string);
+	ModelRenderer( string&, string&);
 
 	virtual void load(RessourceHandler*);
 	virtual void init(KeyMap*);

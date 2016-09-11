@@ -14,7 +14,7 @@ using namespace chrono;
 class Clock //deprecated, can be removed once dynamic tick timing is added to thread manager
 {
 public:
-	Clock(function<void()>, function<void()>, unsigned int);
+	Clock(function<void()>&, function<void()>&, unsigned int);
 
 	unsigned int getLastTPS() { return lastTicks; }
 

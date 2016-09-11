@@ -23,7 +23,7 @@ RessourceHandler::Ressource RessourceHandler::getRessource(string & file, Ressou
 			lock_guard<mutex>(*loader->_ex);
 			loader->load(ifstream(file));
 
-			p->set_value((void**)loader->get()); //invalid O.o
+			p->set_value((void**)loader->get());
 			_loadCounter--;
 			loader->_state = RessourceLoader::State::DONE;
 			return 0;
@@ -44,7 +44,10 @@ RessourceHandler::Ressource RessourceHandler::RessourceRegistry::find(string& na
 	if (pos >= _registry.size())
 		return Ressource();
 	if (_registry[pos]._name == name)
+	{
+		_registry[pos].updateChecksum();
 		return _registry[pos]._obj;
+	}
 	return Ressource();
 }
 

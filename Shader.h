@@ -39,8 +39,8 @@ public: //Public structures
 	public:
 
 		Uniform() : _name("emptyUniform"), _data(nullptr), _size(0), pos(-1), enabled(false) {}
-		Uniform(string name, unsigned int size) : _name(name), _data(new float[size]), _size(size), pos(-1), enabled(false) {}
-		Uniform(string name, float*& data, unsigned size) : _name(name), _data(new float[size]), _size(0), pos(-1), enabled(false)
+		Uniform(string& name, unsigned int size) : _name(name), _data(new float[size]), _size(size), pos(-1), enabled(false) {}
+		Uniform(string& name, float*& data, unsigned size) : _name(name), _data(new float[size]), _size(0), pos(-1), enabled(false)
 		{
 			data = _data.get();
 			_size = size;
@@ -97,10 +97,10 @@ public: //Public structures
 					glDeleteShader(*s);
 		}
 
-		ShaderCode() : _owner(nullptr), _type(TESSELATION_EVALUATION), _path(""), _pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
-		ShaderCode(Shader* owner, ShaderType type, string& path) : _owner(owner), _type(type), _path(path), _pos([this](GLuint* s) {clearShader(s); }, new GLuint())
+		ShaderCode() : _owner(nullptr), _type(TESSELATION_EVALUATION), _path(""), _pos(function<void(GLuint*)>([this](GLuint* s) {clearShader(s); }), new GLuint()) {}
+		ShaderCode(Shader* owner, ShaderType type, string& path) : _owner(owner), _type(type), _path(path), _pos(function<void(GLuint*)>([this](GLuint* s) {clearShader(s); }), new GLuint())
 		{ _pos.setDestructor([this](GLuint* s) {clearShader(s); }); }
-		ShaderCode(Shader* owner, ShaderType type, char* path) : _owner(owner), _type(type), _path(path), _pos([this](GLuint* s) {clearShader(s); }, new GLuint()) {}
+		ShaderCode(Shader* owner, ShaderType type, char* path) : _owner(owner), _type(type), _path(path), _pos(function<void(GLuint*)>([this](GLuint* s) {clearShader(s); }), new GLuint()) {}
 		
 		void load(ifstream&);
 		void* get();

@@ -22,7 +22,7 @@ class RessourceLoader //Loader Interface
 	};
 	friend class RessourceHandler;
 public:
-	RessourceLoader() : _ex(new mutex()) { _state = PENDING; }
+	RessourceLoader() : _ex(new mutex()) , _state(PENDING){}
 
 	virtual void load(ifstream&) = 0;
 	virtual void* get() = 0;
@@ -58,19 +58,35 @@ private:
 	public:
 		struct Entry
 		{
-			Entry(string s) : _obj(future<void*>())
+			Entry(string& s) : _obj(future<void*>()), _name(s)
+			{}
+			Entry(string& name, promise<void*>* fut) : _obj(future<void*>()), _name(name)
 			{
-				_name = s;
-			}
-			Entry(string name, promise<void*>* fut) : _obj(future<void*>())
-			{
-				_name = name;
 				_obj = fut->get_future();
 			}
-			Entry(const Entry& other) : _obj(future<void*>())
+			Entry(const Entry& other) : _obj(future<void*>()), _name(other._name)
 			{
-				_name = other._name;
 				_obj = other._obj;
+			}
+
+			void updateChecksum()
+			{
+				int k;
+				unsigned int crc = -1;
+				char* data = (char*)_obj.get();
+				unsigned int len = sizeof(data);
+
+				while (len--) {
+					crc ^= *(data++);
+					for (k = 0; k < 8; k++)
+						crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
+				}
+				_checksum = crc;
+			}
+
+			bool isEqual(Entry* entry)
+			{
+				return _checksum == entry->_checksum;
 			}
 
 			Entry& operator=(const Entry& other)
@@ -80,6 +96,7 @@ private:
 				return *this;
 			}
 
+			unsigned int _checksum;
 			string _name;
 			Ressource _obj;
 		};

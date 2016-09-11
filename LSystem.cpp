@@ -8,7 +8,7 @@ LSystem::LSystem(char axiom) : _sentence(), _maxDepth(10), _done(false)
 {
 	_sentence.push_back(axiom);
 }
-LSystem::LSystem(std::string axiom) : _sentence(axiom), _maxDepth(10), _done(false)
+LSystem::LSystem(std::string& axiom) : _sentence(axiom), _maxDepth(10), _done(false)
 {
 
 }
@@ -16,7 +16,7 @@ LSystem::LSystem(char axiom, unsigned maxDepth) : _sentence(), _maxDepth(maxDept
 {
 	_sentence.push_back(axiom);
 }
-LSystem::LSystem(std::string axiom, unsigned maxDepth) : _sentence(axiom), _maxDepth(maxDepth), _done(false)
+LSystem::LSystem(std::string& axiom, unsigned maxDepth) : _sentence(axiom), _maxDepth(maxDepth), _done(false)
 {
 
 }

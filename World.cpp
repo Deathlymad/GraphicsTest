@@ -1,11 +1,11 @@
 #include "World.h"
 
-
-
 World::World(ThreadManager* manager, Camera* ref, unsigned x, unsigned z) : EngineObject(), player(ref), generator(NoiseGraph(manager, 2)),
-chunkX(x), chunkZ(z), allocator(16, nullptr), initialized(false), ground("assets/textures/Test_tex2.bmp")
+chunkX(x), chunkZ(z), allocator(16, nullptr), initialized(false), ground(string("assets/textures/Test_tex2.bmp"))
 {
-
+	_heightmap = (float**)malloc(sizeof(float) * 4 * chunkX);
+	for (unsigned i = 0; i < 4 * chunkX; i++)
+		_heightmap[i] = (float*)malloc(sizeof(float) * chunkZ * 4);
 }
 
 void World::load(RessourceHandler * loader)
@@ -23,6 +23,7 @@ void World::init(KeyMap* map)
 
 void World::update(ThreadManager* mgr)
 {
+	lock_guard<mutex> lock(safeguard);
 	setPos(toWorldPos(player->getPos()));
 	for (Terrain* terr : allocator)
 		terr->update(mgr);
@@ -34,12 +35,8 @@ void World::render(Shader* s, RenderingEngine::RenderState state)
 	ground.bind();
 	for (Terrain* terr : allocator)
 	{
-		if (!terr)
-			continue;
-		if (terr->isMeshInitialized() && terr->isInitialized())
+		if (terr)
 			terr->Draw();
-		else if (terr->isInitialized())
-			terr->initMesh();
 	}
 }
 
@@ -49,6 +46,9 @@ World::~World()
 	{
 		delete terr;
 	}
+	for (unsigned i = 0; i < 4 * chunkX; i++)
+		delete[] _heightmap[i];
+	delete[] _heightmap;
 }
 
 unsigned World::getMemPosForTerrain(int x, int z, bool invX, bool invZ)
@@ -67,19 +67,19 @@ unsigned World::getMemPosForTerrain(int x, int z, bool invX, bool invZ)
 
 void World::TerrainForPos(vec2 p, int xO, int zO)
 {
-	int   modX = int(p.x) - int(p.x) % 50
-		, modZ = int(p.y) - int(p.y) % 50;
-	int   xOff = (xO - 2) * chunkX
-		, zOff = (zO - 2) * chunkZ;
-	unsigned pos = getMemPosForTerrain(abs(modX + xOff) / chunkX, abs(modZ + zOff) / chunkZ, modX + xOff < 0, modZ + zOff < 0);
+	float xOff = floorf(xO - 2) * chunkX
+		, zOff = floorf(zO - 2) * chunkZ;
+	unsigned pos = getMemPosForTerrain((int)(abs(xOff) / chunkX), (int)(abs(zOff) / chunkZ), xOff < 0, zOff < 0);
 
-
-
-	if (!allocator[pos] || !(allocator[pos]->isTerrainAt(float(modX + xOff), float(modZ + zOff)))) //checks if cache is correct
+	if (!allocator[pos] || !(allocator[pos]->isPos(xOff, zOff))) //checks if cache is correct
 	{
-		allocator[pos] = move(new Terrain(generator, float(modX + xOff), float(modZ + zOff), chunkX, chunkZ));
-		if (!allocator[pos]->isInitialized())
-			allocator[pos]->init();
+		float** heightmap = (float**)malloc(sizeof(float*) * (chunkX + 1));
+		for (unsigned it = 0; it < (chunkX + 1); it++)
+			heightmap[it] = &_heightmap[((pos & 3) * chunkX) + it][(pos & 12) * chunkZ];
+		allocator[pos] = move(new Terrain(100.0f, xOff, zOff, chunkX, chunkZ, heightmap));
+
+		free(heightmap);
+		allocator[pos]->init();
 	}
 }
 

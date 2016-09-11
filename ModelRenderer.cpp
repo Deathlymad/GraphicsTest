@@ -3,11 +3,11 @@
 #include "RenderingEngine.h"
 
 
-ModelRenderer::ModelRenderer(Mesh & _mesh) : EngineObject(), mesh(&_mesh), tex( new Texture("assets/textures/Test_tex2.bmp"))
+ModelRenderer::ModelRenderer(Mesh & _mesh) : EngineObject(), mesh(&_mesh), tex( new Texture(string("assets/textures/Test_tex2.bmp")))
 {
 }
 
-ModelRenderer::ModelRenderer(string meshFile, string texFile) : EngineObject(), mesh( new Mesh(meshFile)), tex( new Texture(texFile))
+ModelRenderer::ModelRenderer(string& meshFile, string& texFile) : EngineObject(), mesh( new Mesh(meshFile)), tex( new Texture(texFile))
 {
 }
 

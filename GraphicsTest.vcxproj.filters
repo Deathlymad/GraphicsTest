@@ -250,6 +250,9 @@
     <Text Include="World\World, Space &amp; Time.txt">
       <Filter>Ressourcendateien\World</Filter>
     </Text>
+    <Text Include="World\Storylines.txt">
+      <Filter>Ressourcendateien\World</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\forward_ambient_fs.glsl">

@@ -3,11 +3,10 @@
 #include "RenderingEngine.h"
 
 
-Game::Game() : _screen(1366, 768, "Test", char(154)), _engine(&_screen, this), _world()
+Game::Game() : _screen(1366, 768, string("Test"), char(154)), _engine(&_screen, this), _world()
 {
 	_screen.handleWindow(InputHandler::registerCallbacks);
 	KeyMaps.push_back(new KeyMap(&_screen));
-
 	running = false;
 }
 
@@ -27,8 +26,11 @@ void Game::Run()
 		running = !_screen.isScreenClosed();
 		_engine.getGraphicEngine()->render(&_world);
 		for (KeyMap* k : KeyMaps) KeyMap::updateKeyMap(k); //pulls Key updates if button is pressed
-		this_thread::sleep_for(milliseconds(16) - duration_cast<chrono::milliseconds>(system_clock::now() - lastTick));
+		auto passedTime = duration_cast<chrono::milliseconds>(system_clock::now() - lastTick);
+		if (passedTime.count() < 16)
+		this_thread::sleep_for(milliseconds(16) - passedTime);
 		lastTick = system_clock::now();
+		LOG << "tpf: " + std::to_string(passedTime.count()) + "\n"; //tick almost twice as along as supposed
 	}
 }
 

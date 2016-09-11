@@ -7,12 +7,12 @@
 
 #include "Log.h"
 
-Shader::Shader() : Code(), program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader() : Code(), program(function<void(GLuint*)>([this](GLuint* p) {deleteProgram(p); }))
 {
 	Code.clear();
 }
 
-Shader::Shader(string& vertexPath, string& fragPath) : Code(), program([this](GLuint* p) {deleteProgram(p); })
+Shader::Shader(string& vertexPath, string& fragPath) : Code(), program(function<void(GLuint*)>([this](GLuint* p) {deleteProgram(p); }))
 {
 	Code.push_back(ShaderCode( this, VERTEX, vertexPath));
 	Code.push_back(ShaderCode( this, FRAGMENT, fragPath));
