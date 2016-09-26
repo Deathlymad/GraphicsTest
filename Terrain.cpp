@@ -244,7 +244,7 @@ void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float z
 
 		_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ)] = height;
 		
-		if (!((int)floorf(x) % 2) && !((int)floorf(z) % 2))
+		if ((int(x) % 2) && (int(z) % 2))
 		{
 			_heightmap[(int)floor(xOff + halfX) - 1][(int)floor(zOff + halfZ)] = height;
 			_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ - 1)] = height;
@@ -256,7 +256,7 @@ void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float z
 			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
 		}
 		
-		else if (!((int)floorf(z) % 2))
+		else if (int(z) % 2)
 		{
 			_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ - 1)] = height;
 
@@ -265,7 +265,7 @@ void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float z
 			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
 			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
 		}
-		else if (!((int)floorf(x) % 2))
+		else if (int(x) % 2)
 		{
 			_heightmap[(int)floor(xOff + halfX) - 1][(int)floor(zOff + halfZ)] = height;
 
@@ -296,7 +296,7 @@ void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float z
 
 
 				_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + z)] = height;
-				if (!(int(x) % 2))
+				if (int(x) % 2)
 				{
 					_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff + z)] = height;
 					_gen(xOff, zOff, halfX - 1, z, xOff + halfX, zOff + z);
@@ -317,7 +317,7 @@ void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float z
 
 
 				_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff)] = height;
-				if (!(int(x) % 2))
+				if (int(x) % 2)
 				{
 					_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff)] = height;
 					_gen(xOff, zOff, halfX - 1, z, xOff + halfX - 1, zOff + z);
@@ -341,7 +341,7 @@ void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float z
 				float height = sqrt(neightborSum * getRandomMult(xOff + x, zOff + halfZ));
 
 				_heightmap[(int)floor(xOff + x)][(int)floor(zOff + halfZ)] = height;
-				if (!(int(x) % 2))
+				if (int(x) % 2)
 				{
 					_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff + z)] = height;
 					_gen(xOff, zOff, halfX - 1, z, xOff + halfX - 1, zOff + z);
@@ -361,7 +361,7 @@ void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float z
 				float height = sqrt(neightborSum * getRandomMult(xOff, zOff + halfZ));
 
 				_heightmap[(int)floor(xOff)][(int)floor(zOff + halfZ)] = height;
-				if (!(int(x) % 2))
+				if (int(x) % 2)
 				{
 					_heightmap[(int)floor(xOff)][(int)floor(zOff + halfZ - 1)] = height;
 					_gen(xOff, zOff, halfX - 1, z, xOff + halfX - 1, zOff + z);
