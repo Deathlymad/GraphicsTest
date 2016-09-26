@@ -235,7 +235,7 @@ void Mesh::_glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 			temp.insert(temp.end(), &d[6], &d[6 + _vao.isNor()]);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get())); //contains Vertices
-	glBufferData(GL_ARRAY_BUFFER, temp.size() * 4, temp.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, temp.size() * sizeof(float), temp.data(), GL_DYNAMIC_DRAW);
 	temp.~vector();
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));

@@ -1,11 +1,11 @@
 #include "World.h"
 
-World::World(ThreadManager* manager, Camera* ref, unsigned x, unsigned z) : EngineObject(), player(ref), generator(NoiseGraph(manager, 2)),
+World::World(ThreadManager* manager, Camera* ref, unsigned x, unsigned z) : EngineObject(), player(ref),
 chunkX(x), chunkZ(z), allocator(16, nullptr), initialized(false), ground(string("assets/textures/Test_tex2.bmp"))
 {
-	_heightmap = (float**)malloc(sizeof(float) * 4 * chunkX);
-	for (unsigned i = 0; i < 4 * chunkX; i++)
-		_heightmap[i] = (float*)malloc(sizeof(float) * chunkZ * 4);
+	_heightmap = (float**)malloc(sizeof(float) * (( 4 * chunkX) + 1));
+	for (unsigned i = 0; i < ((4 * chunkX) + 1); i++)
+		_heightmap[i] = (float*)malloc(sizeof(float) * ((4 * chunkZ) + 1));
 }
 
 void World::load(RessourceHandler * loader)
@@ -36,7 +36,12 @@ void World::render(Shader* s, RenderingEngine::RenderState state)
 	for (Terrain* terr : allocator)
 	{
 		if (terr)
-			terr->Draw();
+		{
+			if (terr->isInit())
+				terr->Draw();
+			else
+				terr->init();
+		}
 	}
 }
 
@@ -74,12 +79,12 @@ void World::TerrainForPos(vec2 p, int xO, int zO)
 	if (!allocator[pos] || !(allocator[pos]->isPos(xOff, zOff))) //checks if cache is correct
 	{
 		float** heightmap = (float**)malloc(sizeof(float*) * (chunkX + 1));
-		for (unsigned it = 0; it < (chunkX + 1); it++)
+		unsigned it = 0;
+		for (; it <= chunkX; it++)
 			heightmap[it] = &_heightmap[((pos & 3) * chunkX) + it][(pos & 12) * chunkZ];
 		allocator[pos] = move(new Terrain(100.0f, xOff, zOff, chunkX, chunkZ, heightmap));
 
 		free(heightmap);
-		allocator[pos]->init();
 	}
 }
 

@@ -25,7 +25,6 @@ private:
 
 	vec2 toWorldPos(vec3 pos) { return vec2(pos.x, pos.z); }
 
-	NoiseGraph generator;
 	unsigned chunkX, chunkZ;
 
 	vector<Terrain*> allocator;

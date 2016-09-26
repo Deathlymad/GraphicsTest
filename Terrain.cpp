@@ -13,6 +13,7 @@ _updateState(0)
 {
 	_heightmap = (float**)malloc(sizeof(float*) * (xSize + 1));
 	memcpy(&_heightmap[0], &heightmap[0], (xSize + 1) * sizeof(float*));
+
 }
 
 Terrain::Terrain(const Terrain &other) : Mesh(other), 
@@ -40,8 +41,6 @@ void Terrain::init()
 	safeguard.lock();
 	if (_updateState & 1)
 		return;
-	_updateState |= 1;
-	safeguard.unlock();
 
 	unsigned  x, y = 0;
 	unsigned StripLength = _length + 1;
@@ -85,6 +84,9 @@ void Terrain::init()
 	_indices = move(_ind);
 	_updatePos = -1;
 	Mesh::init();
+
+	_updateState |= 1;
+	safeguard.unlock();
 }
 
 void Terrain::update(ThreadManager* mgr)
@@ -98,7 +100,7 @@ void Terrain::update(ThreadManager* mgr)
 		}
 		_updateState |= 2;
 	}
-	else if (!(_updateState & 4)) //generate Normal Data
+	else if ((_updateState & 2) && !(_updateState & 4)) //generate Normal Data
 	{
 		_unVec = vector<Mesh::unnormalizedVertex>(_vertices.size()); //move to init phase
 		copy(_vertices.begin(), _vertices.end(), _unVec.begin());
@@ -129,13 +131,13 @@ void Terrain::update(ThreadManager* mgr)
 			vec3 nor = vec3(0, 0, 0);
 			for (vec3 n : normals)
 				nor += n;
-			
+			/*
 			vec3 pos = _vertices[i].getPos();
 			unsigned x, z;
 			getVecPos(pos, x, z);
 			pos.y = _heightmap[x][z];
 			
-			_vertices[i].setPos(pos);
+			_vertices[i].setPos(pos);*/
 			_vertices[i].setTexCoord(vec2(
 				((float)rand() / (RAND_MAX)),
 				((float)rand() / (RAND_MAX))
@@ -149,6 +151,7 @@ void Terrain::update(ThreadManager* mgr)
 
 void Terrain::Draw()
 {
+	
 	if (_updatePos == -1 && _updateState & 8)
 	{
 		_updatePos = 0;
@@ -165,6 +168,7 @@ void Terrain::Draw()
 			_updatePos = _vertices.size();
 		}
 	}
+	
 	Mesh::Draw();
 }
 

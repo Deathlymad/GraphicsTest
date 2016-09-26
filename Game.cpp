@@ -28,9 +28,7 @@ void Game::Run()
 		for (KeyMap* k : KeyMaps) KeyMap::updateKeyMap(k); //pulls Key updates if button is pressed
 		auto passedTime = duration_cast<chrono::milliseconds>(system_clock::now() - lastTick);
 		if (passedTime.count() < 16)
-		this_thread::sleep_for(milliseconds(16) - passedTime);
-		lastTick = system_clock::now();
-		LOG << "tpf: " + std::to_string(passedTime.count()) + "\n"; //tick almost twice as along as supposed
+			this_thread::sleep_for(milliseconds(16) - passedTime);
 	}
 }
 

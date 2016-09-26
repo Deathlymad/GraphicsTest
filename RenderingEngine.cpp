@@ -70,9 +70,9 @@ void RenderingEngine::setup3DEngineState()
 {
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-	glFrontFace(GL_CCW); //defines the Front face having counterclockwise vertices for culling
+	glFrontFace(GL_CW); //defines the Front face having counterclockwise vertices for culling
 	glCullFace(GL_BACK); //Deletes the Backface
-	//glEnable(GL_CULL_FACE); //Enables Backfaceculling
+	glEnable(GL_CULL_FACE); //Enables Backfaceculling
 	glEnable(GL_DEPTH_CLAMP);
 	glDepthFunc(GL_LESS); //Tells OpenGL that Framebuffer values may be overwritten if the new Fragment is closer
 	glEnable(GL_DEPTH_TEST); //Enables Depth Test for Fragments

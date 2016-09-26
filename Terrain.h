@@ -23,6 +23,8 @@ public:
 		_updateState = 1;
 	}
 
+	bool isInit() { return _updateState & 1; }
+
 	void setPos(float xOff, float zOff, float** heightmap);
 	bool isPos(float xOff, float zOff);
 
