@@ -1,32 +1,5 @@
-// Example program
-#include <iostream>
-#include <string>
-#include <math.h>
-
-using namespace std;
-
-float** _heightmap;
-
-#define size 5
-
-void printMap()
+void _gen(int minX, int minZ, int maxX, int maxZ, int xMid, int zMid)
 {
-    for (int i = size - 1; i >= 0; i--)
-    {
-        for(int j = 0; j < size; j++)
-            cout << _heightmap[j][i] << " ";
-        cout << endl;
-    }
-}
-
-void _gen(int xOff, int zOff, int x, int z, int xMid, int zMid)
-{
-    
-    int minX = xOff;
-    int minZ = zOff;
-    int maxX = xOff + x - 1;
-    int maxZ = zOff + z - 1;
-    
 	if ((xMid + zMid) == 0) //ensuring generation
 	{
 		_heightmap[minX][minZ] = 1;
@@ -35,184 +8,136 @@ void _gen(int xOff, int zOff, int x, int z, int xMid, int zMid)
 		_heightmap[maxX][maxZ] = 1;
 	}
 
+    int x = maxX - minX;
+    int z = maxZ - minZ;
+
 	if (x <= 1 && z <= 1)
 	    return;
 
     
-	int halfX = ceil(x / 2);
-	int halfZ = ceil(z / 2);
+	int halfX = (x % 2 ? x+1 : x) / 2;
+	int halfZ = (z % 2 ? z+1 : z) / 2;
 
 
 	int ptX = minX + halfX;
-	int ptZ = zOff + halfZ;
-	   
+	int ptZ = minZ + halfZ;
 	
-    cout << "generating from " << minX << ":" << minZ << " to " << maxX << ":" << maxZ << endl;
-    cout << "half is " << ptX << ":" << ptZ << endl;
-        
 	if (x == z) //diamond step
 	{
 	    _heightmap[ptX][ptZ] = 1;
 		
-		if (!(x % 2))
+		if (x % 2)
 		{
 			_heightmap[ptX - 1][ptZ]     = 1;
 			_heightmap[ptX]    [ptZ - 1] = 1;
 			_heightmap[ptX - 1][ptZ - 1] = 1;
             
-            printMap();
-            
-            cout << "Diamond call #1 " << endl;
-			_gen(minX   , ptZ   , x         , halfZ     , ptX       , ptZ);
-            cout << "Diamond call #2 " << endl;
-			_gen(minX   , minZ  , x         , halfZ , ptX - 1   , ptZ - 1);
-            cout << "Diamond call #3 " << endl;
-			_gen(minX   , minZ  , halfX , z         , ptX - 1   , ptZ);
-            cout << "Diamond call #4 " << endl;
-			_gen(ptX    , minZ  , halfX     , z         , ptX       , ptZ - 1);
+			_gen(minX, ptZ , maxX, maxZ, ptX    , ptZ);
+			_gen(minX, minZ, maxX, ptZ - 1, ptX - 1, ptZ - 1);
+			_gen(minX, minZ, ptX - 1, maxZ, ptX - 1, ptZ);
+			_gen(ptX, minZ, maxX, maxZ, ptX    , ptZ - 1);
 		}
 		else
 		{
-            printMap();
-            
-            cout << "Diamond call #1 " << endl;
-			_gen(minX   , ptZ   , x     , halfZ + 1, ptX, ptZ);
-            cout << "Diamond call #2 " << endl;
-			_gen(minX   , minZ  , x     , halfZ , ptX, ptZ);
-            cout << "Diamond call #3 " << endl;
-			_gen(minX   , minZ  , halfX + 1, z     , ptX, ptZ);
-            cout << "Diamond call #4 " << endl;
-			_gen(ptX    , minZ  , halfX + 1, z     , ptX, ptZ);
+			_gen(minX, ptZ , maxX, maxZ, ptX, ptZ);
+			_gen(minX, minZ, maxX, ptZ , ptX, ptZ);
+			_gen(minX, minZ, ptX , maxZ, ptX, ptZ);
+			_gen(ptX, minZ, maxX, maxZ, ptX, ptZ);
 		}
 
 	} //square algorithms
 	else if (x > z)
 	{
-	    cout << "X major" << endl;
-	    
-	    if (zMid == zOff)
+	    if (zMid == minZ)
 	    {
     		_heightmap[ptX][maxZ] = 1;
-    		if (!(x % 2))
+    		if (x % 2)
     		{
-    		    cout << "X is even" << endl;
     			_heightmap[ptX - 1][maxZ] = 1;
     			
-                printMap();
-        
     			if ( (ptX != maxX) && (ptZ != maxZ))
     			{
-        			_gen(minX, minZ, halfX, z, ptX - 1, maxZ);
-        			_gen(ptX , minZ, halfX - 1, z, ptX, maxZ);
+        			_gen(minX, minZ, ptX - 1, maxZ, ptX - 1, maxZ);
+        			_gen(ptX , minZ, maxX, maxZ, ptX, maxZ);
     			}
     		}
     		else
     		{
-                printMap();
-        
     			if ( (ptX != maxX) && (ptZ != maxZ))
     			{
-        			_gen(minX, minZ, halfX + 1, z, ptX, maxZ);
-        			_gen(ptX , minZ, halfX + 1, z, ptX, maxZ);
+        			_gen(minX, minZ, ptX, maxZ, ptX, maxZ);
+        			_gen(ptX , minZ, maxX, maxZ, ptX, maxZ);
     			}
     		}
 	    }
 	    else
 	    {
 	        _heightmap[ptX][minZ] = 1;
-    		if (!(x % 2))
+    		if (x % 2)
     		{
-    		    cout << "X is even" << endl;
     			_heightmap[ptX - 1][minZ] = 1;
     			
-                printMap();
-        
     			if ( (ptX != maxX) && (ptZ != maxZ))
     			{
-        			_gen(minX, minZ, halfX, z, ptX - 1, minZ);
-        			_gen(ptX , minZ, halfX - 1, z, ptX, minZ);
+        			_gen(minX, minZ, ptX - 1, maxZ, ptX - 1, minZ);
+        			_gen(ptX , minZ, maxX, maxZ, ptX, minZ);
     			}
     		}
     		else
     		{
-                printMap();
-        
     			if ( (ptX != maxX) && (ptZ != maxZ))
     			{
-        			_gen(minX, minZ, halfX + 1, z, ptX, minZ);
-        			_gen(ptX , minZ, halfX + 1, z, ptX, minZ);
+        			_gen(minX, minZ, ptX, maxX, ptX, minZ);
+        			_gen(ptX , minZ, maxX, maxX, ptX, minZ);
     			}
     		}
 		}
 	}
 	else
 	{
-	    cout << "Z major" << endl;
-	    
-	    if (xMid == xOff)
+	    if (xMid == minX)
 	    {
 		    _heightmap[maxX][ptZ] = 1;
-			if (!(x % 2))
+			if (z % 2)
 			{
-    		    cout << "Z is even" << endl;
 				_heightmap[maxX][ptZ - 1] = 1;
 				
-                printMap();
-        
     			if ( (ptX != maxX) && (ptZ != maxZ))
     			{
-    				_gen(minX, minZ, halfX, z, maxX, ptZ - 1);
-    				_gen(ptX, minZ, halfX, z, maxX, ptZ);
+    				_gen(minX, minZ, maxX, ptZ - 1, maxX, ptZ - 1);
+    				_gen(minX, ptZ, maxX, maxZ, maxX, ptZ);
     			}   
 			}
 			else
 			{
-                printMap();
-        
     			if ( (ptX != maxX) && (ptZ != maxZ))
     			{
-    				_gen(minX, minZ, halfX, z, maxX, ptZ);
-    				_gen(ptX, minZ, halfX, z, maxX, ptZ);
+    				_gen(minX, minZ, maxX, ptZ, maxX, ptZ);
+    				_gen(minX, ptZ, maxX, maxZ, maxX, ptZ);
     			}
 			}
 	    }
 	    else
 	    {
 	        _heightmap[minX][ptZ] = 1;
-			if (!(x % 2))
+			if (z % 2)
 			{
-    		    cout << "Z is even" << endl;
 				_heightmap[minX][ptZ - 1] = 1;
 				
-                printMap();
-        
-    			if ( (ptX != maxX) && (ptZ != maxZ))
+    			if ( (ptX != minX) && (ptZ != minZ))
     			{
-    				_gen(minX, minZ, halfX, z, minX, ptZ - 1);
-    				_gen(ptX, minZ, halfX, z, minX, ptZ);
+    				_gen(minX, minZ, maxX, ptZ - 1, minX, ptZ - 1);
+    				_gen(minX, ptZ, maxX, maxZ, minX, ptZ);
     			}   
 			}
 			else
 			{
-                printMap();
-        
-    			if ( (ptX != maxX) && (ptZ != maxZ))
+    			if ( (ptX != minX) && (ptZ != minZ))
     			{
-    				_gen(minX, minZ, halfX, z, minX, ptZ);
-    				_gen(ptX, minZ, halfX, z, minX, ptZ);
+    				_gen(minX, minZ, maxX, ptZ, minX, ptZ);
+    				_gen(minX, ptZ, maxX, maxZ, minX, ptZ);
     			}
 			}
 	    }
 	}
-}
-
-int main()
-{
-    _heightmap = new float*[size];
-    for(int i = 0; i < size; ++i)
-        _heightmap[i] = new float[size];
-    
-    _gen(0, 0, size, size, 0, 0);
-    
-    //printMap();
 }
