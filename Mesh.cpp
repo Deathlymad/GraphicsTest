@@ -143,11 +143,11 @@ void Mesh::_load(vector<string> vec)
 	for (unsigned int i = 0; i<vec.size(); i++)
 	{
 		temp.clear();
+		io::strsep(temp, vec[i]); //vec[i] in teile zerlegen
 		if ((vec[i].find_first_of('o') != string::npos)) continue; //Object typname irrelevant
 		if ((vec[i].find_first_of('m') != string::npos)) continue; //Material Data may be used someday but not now
 		if ((vec[i].find_first_of('s') != string::npos)) continue; //some other data
 		if ((vec[i].find_first_of('#') != string::npos) || vec[i].size() < 3) continue; //Kommentarzeilen werden KOMPLETT ignoriert, auch wenn Kommentar am Ende steht! oder Leerzeilen oder Zeile hat weniger als 3 Zeichen => bestimmt sinnlos
-		io::strsep(temp, vec[i]); //vec[i] in teile zerlegen
 		if (temp[0].compare("v") == 0)
 		{
 			_tempVertices.push_back(unnormalizedVertex(Vertex(vec3(stof(temp[1]), stof(temp[2]), stof(temp[3])), vec2(-1.0, -1.0), vec3(0, 0, 0)), vector<vec3>())); //writes default Data
