@@ -27,9 +27,50 @@ Image::Image(string& fileName) : _data(nullptr), _colorTable(nullptr), path(file
 	_bitMasks[2] = -1;
 }
 
+Image::Image(const Image & other) :
+	path(other.path),
+	_structure(other._structure),
+	_type(other._type),
+	_depth(other._depth),
+	_compression(other._compression),
+	_width(other._width),
+	_height(other._height),
+	_tableSize(other._tableSize)
+{
+	char* d = new char[unsigned(sizeof(other._data) / sizeof(char))];
+	memcpy(d, other._data.get(), sizeof(d));
+	_data.reset(d);
+	d = new char[unsigned(sizeof(other._colorTable) / sizeof(char))];
+	memcpy(d, other._colorTable.get(), sizeof(d));
+	_colorTable.reset(d);
+}
+
+void Image::operator=(const Image & other)
+{
+	path = other.path;
+	char* d = new char[unsigned(sizeof(other._data) / sizeof(char))];
+	memcpy(d, other._data.get(), sizeof(d));
+	_data.reset(d);
+
+	_structure = other._structure;
+	_type = other._type;
+	_depth = other._depth;
+	_compression = other._compression;
+
+	memcpy(_bitMasks, other._bitMasks, sizeof(_bitMasks));
+	_width = other._width;
+	_height = other._height;
+
+	d = new char[unsigned(sizeof(other._colorTable) / sizeof(char))];
+	memcpy(d, other._colorTable.get(), sizeof(d));
+	_colorTable.reset(d);
+
+	_tableSize = other._tableSize;
+}
+
 char* Image::getData()
 {
-	return _data;
+	return _data.get();
 }
 
 void Image::load(ifstream& file)
@@ -74,7 +115,7 @@ void Image::load(ifstream& file)
 
 			file.read((char*)&_tableSize, 4);
 			if (_tableSize == 1 || _tableSize == 4 || _tableSize == 8)
-				_colorTable = new char[_tableSize];
+				_colorTable.reset(new char[_tableSize]);
 			else
 				_colorTable = nullptr;
 			
@@ -83,7 +124,7 @@ void Image::load(ifstream& file)
 					file.read(&_colorTable[i], 1);
 
 			unsigned int dataSize = (unsigned int)ceil((_width * _height * _depth) / 8);
-			_data = new char[dataSize];
+			_data.reset(new char[dataSize]);
 
 			_structure = PixelStructure(_depth / 8);
 
@@ -136,8 +177,7 @@ void Image::format()
 							*((int*)(&newData[(i * 8 + j) * 3])) = 0x00FFFFFF;
 					}
 				}
-				delete[_width * _height] _data;
-				_data = newData;
+				_data.reset(newData);
 			}
 			else if (_depth == 24)
 			{
@@ -169,11 +209,20 @@ Image::ImageType Image::getFileImageType(ifstream& file)
 	return BMP;
 }
 
-Texture::Texture(string& path, unsigned int samplerID) : _image(Image(path)), _samplerID(samplerID), _ID(function<void(GLuint*)>([this](GLuint* tex) {deleteTexture(tex); }), new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
+Texture::Texture(string& path, unsigned int samplerID) : _image(path), _samplerID(samplerID), _ID(new GLuint, deleteGLTexture()), _sampler("_tex" + std::to_string(_samplerID), 1)
 {
 }
 
-Texture::Texture() : _image(Image()), _samplerID(0), _ID(function<void(GLuint*)>([this](GLuint* tex) {deleteTexture(tex); }), new GLuint), _sampler("_tex" + std::to_string(_samplerID), 1)
+Texture::Texture(Texture & other) :
+	_samplerID(other._samplerID),
+	_sampler(other._sampler),
+	_image(other._image),
+	_imgLink(other._imgLink)
+{
+	_ID.reset(other._ID.release());
+}
+
+Texture::Texture() : _image(), _samplerID(0), _ID( new GLuint, deleteGLTexture()), _sampler("_tex" + std::to_string(_samplerID), 1)
 {
 }
 
@@ -191,13 +240,6 @@ GLenum Texture::getTextureType(Image::PixelStructure id)
 		return GL_RGB;
 	}
 }
-
-void Texture::deleteTexture(GLuint* tex)
-{
-	if (glIsTexture(*tex))
-		glDeleteTextures(1, tex);
-}
-
 Texture::~Texture()
 {
 }

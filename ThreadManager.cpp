@@ -78,7 +78,7 @@ ThreadManager::Threads::~Threads()
 }
 
 
-ThreadManager::TaskDistributor::TaskDistributor() : _registry(), _tasks()
+ThreadManager::TaskDistributor::TaskDistributor() : _registry(), _tasks(), _notifier(), _notified(false)
 {
 }
 

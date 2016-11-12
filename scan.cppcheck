@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1">
+    <includedir>
+        <dir name="C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include/"/>
+    </includedir>
+    <paths>
+        <dir name="C:/Users/Deathlymad/Source/Repos/GraphicsTest"/>
+    </paths>
+</project>

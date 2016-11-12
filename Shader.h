@@ -13,6 +13,7 @@
 	#endif
 #endif
 
+#include "Deletors.h"
 #include "Util.h"
 #include "RessourceHandler.h"
 
@@ -45,6 +46,31 @@ public: //Public structures
 			data = _data.get();
 			_size = size;
 		}
+		Uniform(const Uniform& other) : 
+			enabled(other.enabled),
+			_name(other._name),
+			_size(other._size),
+			pos(other.pos)
+		{
+			float* data = other._data.get();
+			float* alloc = new float[int(sizeof(data) / sizeof(float))];
+			memcpy(alloc, data, sizeof(data));
+			_data.reset(alloc);
+		}
+
+		void operator=(const Uniform& other)
+			
+		{
+			enabled = other.enabled;
+			_name = other._name;
+			_size = other._size;
+			pos = other.pos;
+
+			float* data = other._data.get();
+			float* alloc = new float[int(sizeof(data) / sizeof(float))];
+			memcpy(alloc, data, sizeof(data));
+			_data.reset(alloc);
+		}
 
 		void create(GLuint* prgm);
 		void copy(Uniform& other);
@@ -75,7 +101,7 @@ public: //Public structures
 	private:
 		bool enabled;
 		string _name;
-		Ptr<float> _data;
+		unique_ptr<float[]> _data;
 		unsigned _size;
 		GLuint pos;
 	};
@@ -83,31 +109,33 @@ public: //Public structures
 	class ShaderCode : public RessourceLoader
 	{
 		string _code;
-		CustomPtr<GLuint> _pos;
-		ShaderType _type; //should be made private
+		unique_ptr<GLuint, deleteGLShader> _pos;
+		ShaderType _type;
 		string _path;
 		Shader* _owner;
 		string _loadingErr;
 		vector<Uniform> uniforms;
 	public:
-		void clearShader(GLuint* s)
+		ShaderCode() : _owner(nullptr), _type(TESSELATION_EVALUATION), _path(""), _pos( new GLuint(), deleteGLShader()) {}
+		ShaderCode(Shader* owner, ShaderType type, string& path) : _owner(owner), _type(type), _path(path), _pos( new GLuint(), deleteGLShader()) {}
+		ShaderCode(Shader* owner, ShaderType type, char* path) : _owner(owner), _type(type), _path(path), _pos( new GLuint(), deleteGLShader()) {}
+		ShaderCode(const ShaderCode& other) : 
+			_code(other._code),
+			_type(other._type),
+			_path(other._path),
+			_owner(other._owner),
+			_loadingErr(other._loadingErr),
+			uniforms(other.uniforms), 
+			_pos(new GLuint(), deleteGLShader())
 		{
-			if (s)
-				if (glIsShader(*s))
-					glDeleteShader(*s);
 		}
 
-		ShaderCode() : _owner(nullptr), _type(TESSELATION_EVALUATION), _path(""), _pos(function<void(GLuint*)>([this](GLuint* s) {clearShader(s); }), new GLuint()) {}
-		ShaderCode(Shader* owner, ShaderType type, string& path) : _owner(owner), _type(type), _path(path), _pos(function<void(GLuint*)>([this](GLuint* s) {clearShader(s); }), new GLuint())
-		{ _pos.setDestructor([this](GLuint* s) {clearShader(s); }); }
-		ShaderCode(Shader* owner, ShaderType type, char* path) : _owner(owner), _type(type), _path(path), _pos(function<void(GLuint*)>([this](GLuint* s) {clearShader(s); }), new GLuint()) {}
-		
 		void load(ifstream&);
 		void* get();
 		
 		void makeShader();
 
-		GLuint& getPos() { return *_pos.get(); }
+		GLuint& getPos() { return *_pos; }
 		string& getPath() { return _path; }
 		vector<Uniform>& getUniforms() { return uniforms; }
 
@@ -148,12 +176,7 @@ private:
 
 	//variables
 	//OpenGL
-	CustomPtr<GLuint> program;
-	void deleteProgram(GLuint* prgm)
-	{
-		if (glIsProgram(*prgm))
-			glDeleteProgram(*prgm);
-	}
+	unique_ptr<GLuint, deleteGLProgram> program;
 
 	vector<ShaderCode> Code; //contains Shader variable
 	vector<Uniform> Uniforms;

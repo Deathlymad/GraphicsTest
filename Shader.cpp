@@ -7,12 +7,12 @@
 
 #include "Log.h"
 
-Shader::Shader() : Code(), program(function<void(GLuint*)>([this](GLuint* p) {deleteProgram(p); }))
+Shader::Shader() : Code(), program(new GLuint(), deleteGLProgram())
 {
 	Code.clear();
 }
 
-Shader::Shader(string& vertexPath, string& fragPath) : Code(), program(function<void(GLuint*)>([this](GLuint* p) {deleteProgram(p); }))
+Shader::Shader(string& vertexPath, string& fragPath) : Code(), program(new GLuint(), deleteGLProgram())
 {
 	Code.push_back(ShaderCode( this, VERTEX, vertexPath));
 	Code.push_back(ShaderCode( this, FRAGMENT, fragPath));
@@ -61,7 +61,7 @@ void Shader::build()
 	}
 
 	if (!program.get() || !glIsProgram(*(program.get())))
-		program.set( new GLuint( glCreateProgram())); //no Program existent creating
+		*program = glCreateProgram(); //no Program existent creating
 
 	int attached = 0;
 	glGetProgramiv(*(program.get()), GL_ATTACHED_SHADERS, &attached);
@@ -77,7 +77,7 @@ void Shader::build()
 		attached = 0; //resets counter
 	}
 
-	for (ShaderCode shader : Code)
+	for (ShaderCode& shader : Code)
 	{
 		//should check Shader values
 		glAttachShader(*(program.get()), shader.getPos());
@@ -156,7 +156,7 @@ bool Shader::operator==(Shader& other)
 bool Shader::operator==(ShaderCode& contained)
 {
 	
-	ShaderCode res = *find(Code.begin(), Code.end(), contained)._Ptr;
+	ShaderCode& res = *find(Code.begin(), Code.end(), contained)._Ptr;
 	return res == contained;
 	return true;
 }
@@ -164,7 +164,7 @@ bool Shader::operator==(ShaderCode& contained)
 bool Shader::operator==(vector<ShaderCode>& Shaders)
 {
 	bool res = true;
-	for (ShaderCode s : Shaders)
+	for (ShaderCode& s : Shaders)
 	{
 		res = res && (*this == s);
 	}
@@ -175,7 +175,7 @@ void Shader::ShaderCode::makeShader()
 {
 	if (!glIsShader(*(_pos.get())))
 	{
-		_pos.set( new GLuint(glCreateShader(getShaderType(_type)))); //no Shader existent; creating
+		*_pos = glCreateShader(getShaderType(_type)); //no Shader existent; creating
 	}
 	else
 	{
@@ -184,7 +184,7 @@ void Shader::ShaderCode::makeShader()
 		if (type != getShaderType(_type))
 		{
 			glDeleteShader(*(_pos.get())); //clear Shader if it is of the wrong Type (issues with Programs created from it?!)
-			_pos.set( new GLuint(glCreateShader(getShaderType(_type)))); //recreate Shader of right Type
+			*_pos = glCreateShader(getShaderType(_type)); //recreate Shader of right Type
 		}
 	}//if there is a Shader created with the right type then it is going to be rewritten but not recreated should reduce memory
 	
@@ -329,10 +329,7 @@ void Shader::ShaderCode::addUniform(string & name)
 	string varName = uniName.substr(nameSep1 + 1, uniName.size() - nameSep1 - 1);
 	unsigned int size = Uniform::getUniformSize(name);
 	if (size > 0)
-	{
-		Uniform u = Uniform( varName, size);
-		uniforms.push_back(u);
-	}
+		uniforms.push_back(Uniform(varName, size));
 	else
 	{
 		vector<string> variableNames = resolveStructVariable(uniName);
@@ -367,14 +364,6 @@ void Shader::Uniform::create( GLuint* prgm)
 		LOG << "couldn't Resolve Uniform: " << _name << "\n";
 }
 
-void Shader::Uniform::copy(Uniform & other)
-{
-	if (*this != other)
-		return;
-	_data = other._data;
-	_size = other._size;
-}
-
 void Shader::Uniform::write(GLuint* prgm)
 {
 	if(pos == -1)
@@ -385,16 +374,16 @@ void Shader::Uniform::write(GLuint* prgm)
 	switch (_size)
 	{
 	case 1:
-		glUniform1f(pos, *_data.get());
+		glUniform1f(pos, _data[0]);
 		break;
 	case 2:
-		glUniform2f(pos, *_data.get(0), *_data.get(1));
+		glUniform2f(pos, _data[0], _data[0]);
 		break;
 	case 3:
-		glUniform3f(pos, *_data.get(0), *_data.get(1), *_data.get(2));
+		glUniform3f(pos, _data[0], _data[1], _data[2]);
 		break;
 	case 4:
-		glUniform4f(pos, *_data.get(0), *_data.get(1), *_data.get(2), *_data.get(3));
+		glUniform4f(pos, _data[0], _data[1], _data[2], _data[3]);
 		break;
 	case 9:
 		glUniformMatrix3fv(pos, 1, false, _data.get());

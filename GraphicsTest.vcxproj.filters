@@ -108,12 +108,6 @@
     <ClCompile Include="World.cpp">
       <Filter>TestGame</Filter>
     </ClCompile>
-    <ClCompile Include="NoiseGraph.cpp">
-      <Filter>TestGame</Filter>
-    </ClCompile>
-    <ClCompile Include="LSystem.cpp">
-      <Filter>TestGame</Filter>
-    </ClCompile>
     <ClCompile Include="ThreadManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -200,14 +194,11 @@
     <ClInclude Include="World.h">
       <Filter>TestGame</Filter>
     </ClInclude>
-    <ClInclude Include="NoiseGraph.h">
-      <Filter>TestGame</Filter>
-    </ClInclude>
-    <ClInclude Include="LSystem.h">
-      <Filter>TestGame</Filter>
-    </ClInclude>
     <ClInclude Include="ThreadManager.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Deletors.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -252,6 +243,9 @@
     </Text>
     <Text Include="World\Storylines.txt">
       <Filter>Ressourcendateien\World</Filter>
+    </Text>
+    <Text Include="newGen.txt">
+      <Filter>Ressourcendateien</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>

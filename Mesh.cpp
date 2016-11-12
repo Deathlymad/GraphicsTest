@@ -15,22 +15,34 @@
 #include "Mesh.h"
 #include <fstream>
 
-Mesh::Mesh() : _vbo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _ibo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _vao( 3, 2, 3)
+Mesh::Mesh() : _vbo( new GLuint, deleteGLBuffer()), _ibo( new GLuint, deleteGLBuffer()), _vao( 3, 2, 3)
 {
 }
 
-Mesh::Mesh ( string& file) : _vbo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _ibo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _vao(3), _path(file)
+Mesh::Mesh ( string& file) : _vbo(new GLuint, deleteGLBuffer()), _ibo(new GLuint, deleteGLBuffer()), _vao(3), _path(file)
 {}
 
-Mesh::Mesh( vector<Vertex>& vec, unsigned char bitset) : _vbo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _ibo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _vao(bitset)
+Mesh::Mesh( vector<Vertex>& vec, unsigned char bitset) : _vbo(new GLuint, deleteGLBuffer()), _ibo(new GLuint, deleteGLBuffer()), _vao(bitset)
 {
 	vector<unsigned int> i = vector<unsigned int>({ 0,1,2,2,1,3 });//2D indices, might need additions later for other sizes
 	_glDownload( vec, i);
 }
 
-Mesh::Mesh( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset) : _vbo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _ibo(function<void(GLuint*)>([this](GLuint* buf) {deleteBuffer(buf); }), new GLuint), _vao(bitset)
+Mesh::Mesh( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset) : _vbo(new GLuint, deleteGLBuffer()), _ibo(new GLuint, deleteGLBuffer()), _vao(bitset)
 {
 	_glDownload( vec, i);
+}
+
+Mesh::Mesh(Mesh && other) : 
+	_vertices(other._vertices),
+	_indices(other._indices),
+	_path(other._path),
+	_loadReq(other._loadReq),
+	_VerticesCount(other._VerticesCount)
+{
+	_vao = move(other._vao);
+	 _vbo = move(other._vbo);
+	 _ibo = move(other._ibo);
 }
 
 void Mesh::load(RessourceHandler * loader)
@@ -108,11 +120,12 @@ void Mesh::updateVertices(unsigned int offset, unsigned int end, unsigned int in
 		for (unsigned int i = offset; i < _end; i++)
 		{
 			float* d = _vertices[i].getData();
-			if (_vao.isVec())
+			int blockSize = sizeof(d) / sizeof(float);
+			if (_vao.isVec() && (blockSize >= _vao.isVec()))
 				temp.insert(temp.end(), &d[0], &d[_vao.isVec()]);
-			if (_vao.isTex())
+			if (_vao.isTex() && (blockSize >= 3 + _vao.isTex()))
 				temp.insert(temp.end(), &d[3], &d[3 + _vao.isTex()]);
-			if (_vao.isNor())
+			if (_vao.isNor() && (blockSize >= 6 + _vao.isNor()))
 				temp.insert(temp.end(), &d[6], &d[6 + _vao.isNor()]);
 		}
 
@@ -227,11 +240,12 @@ void Mesh::_glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 	for (unsigned int i = 0; i < v.size(); i++)
 	{
 		float* d = v[i].getData();
-		if (_vao.isVec())
+		int blockSize = sizeof(d) / sizeof(float);
+		if (_vao.isVec() && (blockSize >= _vao.isVec()))
 			temp.insert(temp.end(), &d[0], &d[_vao.isVec()]);
-		if (_vao.isTex())
+		if (_vao.isTex() && (blockSize >= 3 + _vao.isTex()))
 			temp.insert(temp.end(), &d[3], &d[3 + _vao.isTex()]);
-		if (_vao.isNor())
+		if (_vao.isNor() && (blockSize >= 6 + _vao.isNor()))
 			temp.insert(temp.end(), &d[6], &d[6 + _vao.isNor()]);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get())); //contains Vertices
@@ -242,18 +256,12 @@ void Mesh::_glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned int), i.data(), GL_DYNAMIC_DRAW);
 }
 
-void Mesh::deleteBuffer(GLuint * buf)
-{
-	if (glIsBuffer(*buf))
-		glDeleteBuffers(1, buf);
-}
-
 void Mesh::Draw()
 {
-	if (!_vao.valid() || !_vbo.valid() || !_ibo.valid())
+	if (!_vao.valid() || _vbo == nullptr || _ibo == nullptr)
 		return;
 	_vao.bindVertexArray();
-	glBindBuffer(GL_ARRAY_BUFFER, *(_vbo.get()));
+	glBindBuffer(GL_ARRAY_BUFFER, *_vbo);
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
 
 	glDrawElements(GL_TRIANGLES, _VerticesCount, GL_UNSIGNED_INT, 0);
@@ -288,7 +296,7 @@ void Mesh::VertexArrayObject::createVertexArray()
 	if ( !_vao.get() || !glIsVertexArray(*(_vao.get())))
 	{
 		glGenVertexArrays(1, &temp);
-		_vao.set(new GLuint(temp));
+		*_vao = temp;
 		glBindVertexArray( *(_vao.get()));
 
 		if (isVec())
@@ -322,11 +330,6 @@ void Mesh::VertexArrayObject::disableVAO()
 		disableTex();
 	if (isNor())
 		disableNor();
-}
-
-Mesh::VertexArrayObject::~VertexArrayObject()
-{
-	_vao.~Ptr();
 }
 
 void Mesh::VertexArrayObject::enableVec()

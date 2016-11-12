@@ -11,11 +11,11 @@ NSP_UTIL_BEG
 
 		bool strsep(vector<string> &vec, string &s)
 		{
-			size_t begin = 0, end = 0;
+			size_t begin = 0;
 			vec.clear();
 			while (begin < s.length())
 			{
-				end = begin + (s.substr(begin)).find_first_of(' ');
+				size_t end = begin + (s.substr(begin)).find_first_of(' ');
 				if ((end >= begin) && (end != 0))
 				{
 					vec.push_back(s.substr(begin, end - begin));
@@ -68,11 +68,10 @@ NSP_UTIL_BEG
 		}
 		bool save(vector<unsigned char>&vec, string filename)
 		{
-			char * buffer;
 			ofstream Save(filename.c_str(), ios::binary | ios::trunc);
 			if (Save.good())
 			{
-				buffer = new char[vec.size()]; //char Pointer auf die Länge der Datei einstellen
+				char* buffer = new char[vec.size()]; //char Pointer auf die Länge der Datei einstellen
 											   //vec nach buffer kopieren
 				for (unsigned int i = 0; i < vec.size(); i++)
 				{

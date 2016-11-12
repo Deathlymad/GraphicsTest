@@ -16,29 +16,8 @@ public:
 		virtual int run() = 0;
 	};
 private:
-	class TaskDistributor;
-
-	class Threads {
-	public:
-		Threads();
-		Threads(ThreadManager::TaskDistributor* distributor);
-
-		void start();
-
-		~Threads();
-	private:
-		void run();
-
-		const static unsigned _concurrency;
-		bool _running;
-		std::vector<thread> _threads;
-		TaskDistributor* _distributor;
-
-		time_point<system_clock> lastTick;
-	};
-
-
 	typedef vector<CallableObject*> UpdateRegistry;
+	class Threads;
 
 	class TaskDistributor { //needs lock
 		friend class Threads;
@@ -61,6 +40,25 @@ private:
 		condition_variable _notifier;
 		UpdateRegistry _registry;
 		queue<function<int()>> _tasks;
+	};
+
+	class Threads {
+	public:
+		Threads();
+		explicit Threads(ThreadManager::TaskDistributor* distributor);
+
+		void start();
+
+		~Threads();
+	private:
+		void run();
+
+		const static unsigned _concurrency;
+		bool _running;
+		std::vector<thread> _threads;
+		TaskDistributor* _distributor;
+
+		time_point<system_clock> lastTick;
 	};
 
 public:

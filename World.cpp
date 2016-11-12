@@ -72,8 +72,8 @@ unsigned World::getMemPosForTerrain(int x, int z, bool invX, bool invZ)
 
 void World::TerrainForPos(vec2 p, int xO, int zO)
 {
-	float xOff = floorf(xO - 2) * chunkX
-		, zOff = floorf(zO - 2) * chunkZ;
+	int xOff = (xO - 2) * chunkX
+	  , zOff = (zO - 2) * chunkZ;
 	unsigned pos = getMemPosForTerrain((int)(abs(xOff) / chunkX), (int)(abs(zOff) / chunkZ), xOff < 0, zOff < 0);
 
 	if (!allocator[pos] || !(allocator[pos]->isPos(xOff, zOff))) //checks if cache is correct

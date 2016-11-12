@@ -4,7 +4,7 @@
 
 NSP_GLM
 
-Terrain::Terrain(float maxDif, float xOff, float zOff, unsigned xSize, unsigned zSize, float** heightmap) : Mesh(),
+Terrain::Terrain(float maxDif, int xOff, int zOff, unsigned xSize, unsigned zSize, float** heightmap) : Mesh(),
 _length(xSize),
 _depth(zSize),
 _xOff(xOff),
@@ -16,7 +16,7 @@ _updateState(0)
 
 }
 
-Terrain::Terrain(const Terrain &other) : Mesh(other), 
+Terrain::Terrain(Terrain &&other) : Mesh(move(other)),
 _length(other._length),
 _depth(other._depth),
 _xOff(other._xOff),
@@ -95,7 +95,7 @@ void Terrain::update(ThreadManager* mgr)
 	{
 		if (!_load())
 		{
-			_gen( 0, 0, (float)_length, (float)_depth, 0.0f, 0.0f);
+			_gen( 0, 0, _length, _depth, 0, 0);
 			_save();
 		}
 		_updateState |= 2;
@@ -172,7 +172,7 @@ void Terrain::Draw()
 	Mesh::Draw();
 }
 
-void Terrain::setPos(float xOff, float zOff, float ** heightmap)
+void Terrain::setPos(int xOff, int zOff, float ** heightmap)
 {
 	if (xOff != _xOff || zOff != _zOff)
 	{
@@ -183,7 +183,7 @@ void Terrain::setPos(float xOff, float zOff, float ** heightmap)
 	}
 }
 
-bool Terrain::isPos(float xOff, float zOff)
+bool Terrain::isPos(int xOff, int zOff)
 {
 	return xOff == _xOff && zOff == _zOff;
 }
@@ -216,161 +216,144 @@ float Terrain::getRandomMult(float x, float z)
 	return (rand() % (int)floorf(max)) - floorf(max / 2);
 }
 
-void Terrain::_gen(float xOff, float zOff, float x, float z, float xMid, float zMid)
+void Terrain::_gen(int minX, int minZ, int maxX, int maxZ, int xMid, int zMid)
 {
-	if (!xMid && !zMid) //ensuing generation
+	if ((xMid + zMid) == 0) //ensuring generation
 	{
-		_heightmap[(int)floorf(xOff)][(int)floorf(zOff)] = getRandomMult(x, z);
-		_heightmap[(int)floorf(xOff + x)][(int)floorf(zOff)] = getRandomMult(x, z);
-		_heightmap[(int)floorf(xOff)][(int)floorf(zOff + z)] = getRandomMult(x, z);
-		_heightmap[(int)floorf(xOff + x)][(int)floorf(zOff + z)] = getRandomMult(x, z);
+		_heightmap[minX][minZ] = 1;
+		_heightmap[maxX][minZ] = 1;
+		_heightmap[minX][maxZ] = 1;
+		_heightmap[maxX][maxZ] = 1;
 	}
 
-	if (x / 2 < 1 || z / 2 < 1)
+	int x = maxX - minX;
+	int z = maxZ - minZ;
+
+	if (x <= 1 && z <= 1)
 		return;
 
-	float halfX = ceil(x / 2);
-	float halfZ = ceil(z / 2);
 
+	int halfX = (x % 2 ? x + 1 : x) / 2;
+	int halfZ = (z % 2 ? z + 1 : z) / 2;
+
+
+	int ptX = minX + halfX;
+	int ptZ = minZ + halfZ;
 
 	if (x == z) //diamond step
 	{
-		float neightborSum = sqrt(_heightmap[(int)floor(xOff)][(int)floor(zOff)] *
-								_heightmap[(int)floor(xOff + x)][(int)floor(zOff)] *
-								_heightmap[(int)floor(xOff)][(int)floor(zOff + z)] *
-								_heightmap[(int)floor(xOff + x)][(int)floor(zOff + z)]);
-		float height = sqrt(neightborSum * getRandomMult(halfX, halfZ));
+		_heightmap[ptX][ptZ] = 1;
 
-
-		_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ)] = height;
-		
-		if ((int(x) % 2) && (int(z) % 2))
+		if (x % 2)
 		{
-			_heightmap[(int)floor(xOff + halfX) - 1][(int)floor(zOff + halfZ)] = height;
-			_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ - 1)] = height;
-			_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff + halfZ - 1)] = height;
+			_heightmap[ptX - 1][ptZ] = 1;
+			_heightmap[ptX][ptZ - 1] = 1;
+			_heightmap[ptX - 1][ptZ - 1] = 1;
 
-			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
-			_gen(xOff, zOff, x, halfZ - 1, xOff + halfX, zOff + halfZ);
-			_gen(xOff, zOff, halfX - 1, z, xOff + halfX, zOff + halfZ);
-			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
-		}
-		
-		else if (int(z) % 2)
-		{
-			_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + halfZ - 1)] = height;
-
-			_gen(xOff, zOff, x, halfZ, xOff + halfX, zOff + halfZ);
-			_gen(xOff, zOff, halfX - 1, z, xOff + halfX, zOff + halfZ);
-			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
-			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
-		}
-		else if (int(x) % 2)
-		{
-			_heightmap[(int)floor(xOff + halfX) - 1][(int)floor(zOff + halfZ)] = height;
-
-			_gen(xOff, zOff, x, halfZ - 1, xOff + halfX, zOff + halfZ);
-			_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + halfZ);
-			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
-			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
+			_gen(minX, ptZ, maxX, maxZ, ptX, ptZ);
+			_gen(minX, minZ, maxX, ptZ - 1, ptX - 1, ptZ - 1);
+			_gen(minX, minZ, ptX - 1, maxZ, ptX - 1, ptZ);
+			_gen(ptX, minZ, maxX, maxZ, ptX, ptZ - 1);
 		}
 		else
 		{
-			_gen( xOff, zOff, x, halfZ, xOff + halfX, zOff + halfZ);
-			_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + halfZ);
-			_gen(xOff, zOff + halfZ, x, halfZ, xOff + halfX, zOff + halfZ);
-			_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + halfZ);
+			_gen(minX, ptZ, maxX, maxZ, ptX, ptZ);
+			_gen(minX, minZ, maxX, ptZ, ptX, ptZ);
+			_gen(minX, minZ, ptX, maxZ, ptX, ptZ);
+			_gen(ptX, minZ, maxX, maxZ, ptX, ptZ);
 		}
 
 	} //square algorithms
-	else if (int(x) % int(z) < 2)
+	else if (x > z)
 	{
-		if (x > z)
+		if (zMid == minZ)
 		{
-			if (zMid == zOff)
+			_heightmap[ptX][maxZ] = 1;
+			if (x % 2)
 			{
-				float neightborSum = sqrt(_heightmap[(int)floor(xMid)][(int)floor(zOff)] *
-					_heightmap[(int)floor(xOff + x)][(int)floor(zOff + z)] *
-					_heightmap[(int)floor(xOff)][(int)floor(zOff + z)]);
-				float height = sqrt(neightborSum * getRandomMult(halfX, zOff + z));
+				_heightmap[ptX - 1][maxZ] = 1;
 
-
-				_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff + z)] = height;
-				if (int(x) % 2)
+				if ((ptX != maxX) && (ptZ != maxZ))
 				{
-					_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff + z)] = height;
-					_gen(xOff, zOff, halfX - 1, z, xOff + halfX, zOff + z);
-					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
-				}
-				else
-				{
-					_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + z);
-					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
+					_gen(minX, minZ, ptX - 1, maxZ, ptX - 1, maxZ);
+					_gen(ptX, minZ, maxX, maxZ, ptX, maxZ);
 				}
 			}
 			else
 			{
-				float neightborSum = sqrt(_heightmap[(int)floor(xMid)][(int)floor(zOff + z)] *
-					_heightmap[(int)floor(xOff + x)][(int)floor(zOff)] *
-					_heightmap[(int)floor(xOff)][(int)floor(zOff)]);
-				float height = sqrt(neightborSum * getRandomMult(halfX, zOff));
-
-
-				_heightmap[(int)floor(xOff + halfX)][(int)floor(zOff)] = height;
-				if (int(x) % 2)
+				if ((ptX != maxX) && (ptZ != maxZ))
 				{
-					_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff)] = height;
-					_gen(xOff, zOff, halfX - 1, z, xOff + halfX - 1, zOff + z);
-					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
-				}
-				else
-				{
-					_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + z);
-					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
+					_gen(minX, minZ, ptX, maxZ, ptX, maxZ);
+					_gen(ptX, minZ, maxX, maxZ, ptX, maxZ);
 				}
 			}
-
 		}
 		else
 		{
-			if (xMid == xOff)
+			_heightmap[ptX][minZ] = 1;
+			if (x % 2)
 			{
-				float neightborSum = sqrt(_heightmap[(int)floor(xMid)][(int)floor(zOff + halfZ)] *
-					_heightmap[(int)floor(xOff + x)][(int)floor(zOff + z)] *
-					_heightmap[(int)floor(xOff + x)][(int)floor(zOff)]);
-				float height = sqrt(neightborSum * getRandomMult(xOff + x, zOff + halfZ));
+				_heightmap[ptX - 1][minZ] = 1;
 
-				_heightmap[(int)floor(xOff + x)][(int)floor(zOff + halfZ)] = height;
-				if (int(x) % 2)
+				if ((ptX != maxX) && (ptZ != maxZ))
 				{
-					_heightmap[(int)floor(xOff + halfX - 1)][(int)floor(zOff + z)] = height;
-					_gen(xOff, zOff, halfX - 1, z, xOff + halfX - 1, zOff + z);
-					_gen(xOff + halfX - 1, zOff, halfX, z, xOff + halfX, zOff + z);
-				}
-				else
-				{
-					_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + z);
-					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
+					_gen(minX, minZ, ptX - 1, maxZ, ptX - 1, minZ);
+					_gen(ptX, minZ, maxX, maxZ, ptX, minZ);
 				}
 			}
 			else
 			{
-				float neightborSum = sqrt(_heightmap[(int)floor(xMid)][(int)floor(zOff + halfZ)] *
-					_heightmap[(int)floor(xOff)][(int)floor(zOff + z)] *
-					_heightmap[(int)floor(xOff)][(int)floor(zOff)]);
-				float height = sqrt(neightborSum * getRandomMult(xOff, zOff + halfZ));
-
-				_heightmap[(int)floor(xOff)][(int)floor(zOff + halfZ)] = height;
-				if (int(x) % 2)
+				if ((ptX != maxX) && (ptZ != maxZ))
 				{
-					_heightmap[(int)floor(xOff)][(int)floor(zOff + halfZ - 1)] = height;
-					_gen(xOff, zOff, halfX - 1, z, xOff + halfX - 1, zOff + z);
-					_gen(xOff + halfX - 1, zOff, halfX, z, xOff + halfX, zOff + z);
+					_gen(minX, minZ, ptX, maxX, ptX, minZ);
+					_gen(ptX, minZ, maxX, maxX, ptX, minZ);
 				}
-				else
+			}
+		}
+	}
+	else
+	{
+		if (xMid == minX)
+		{
+			_heightmap[maxX][ptZ] = 1;
+			if (z % 2)
+			{
+				_heightmap[maxX][ptZ - 1] = 1;
+
+				if ((ptX != maxX) && (ptZ != maxZ))
 				{
-					_gen(xOff, zOff, halfX, z, xOff + halfX, zOff + z);
-					_gen(xOff + halfX, zOff, halfX, z, xOff + halfX, zOff + z);
+					_gen(minX, minZ, maxX, ptZ - 1, maxX, ptZ - 1);
+					_gen(minX, ptZ, maxX, maxZ, maxX, ptZ);
+				}
+			}
+			else
+			{
+				if ((ptX != maxX) && (ptZ != maxZ))
+				{
+					_gen(minX, minZ, maxX, ptZ, maxX, ptZ);
+					_gen(minX, ptZ, maxX, maxZ, maxX, ptZ);
+				}
+			}
+		}
+		else
+		{
+			_heightmap[minX][ptZ] = 1;
+			if (z % 2)
+			{
+				_heightmap[minX][ptZ - 1] = 1;
+
+				if ((ptX != minX) && (ptZ != minZ))
+				{
+					_gen(minX, minZ, maxX, ptZ - 1, minX, ptZ - 1);
+					_gen(minX, ptZ, maxX, maxZ, minX, ptZ);
+				}
+			}
+			else
+			{
+				if ((ptX != minX) && (ptZ != minZ))
+				{
+					_gen(minX, minZ, maxX, ptZ, minX, ptZ);
+					_gen(minX, ptZ, maxX, maxZ, minX, ptZ);
 				}
 			}
 		}

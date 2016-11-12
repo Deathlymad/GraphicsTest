@@ -1,4 +1,5 @@
 #include "Util.h"
+#include "Deletors.h"
 #include "UniformRegistry.h"
 #include "RessourceHandler.h"
 #include <fstream>
@@ -28,6 +29,9 @@ public:
 
 	Image();
 	Image(string&);
+	Image(const Image& other);
+
+	void operator=(const Image& other);
 
 	string getPath() { return path; }
 	void load(ifstream& f);
@@ -40,10 +44,6 @@ public:
 
 	~Image()
 	{
-		if (_data)
-			delete[(unsigned int)ceil((_width * _height * _depth) / 8)] _data;
-		if (_colorTable)
-			delete[_tableSize] _colorTable;
 		_data = nullptr;
 		_colorTable = nullptr;
 	}
@@ -52,7 +52,7 @@ private:
 	ImageType getFileImageType( ifstream&);
 
 	string path;
-	char* _data;
+	std::unique_ptr<char[]> _data;
 
 	PixelStructure _structure;
 	ImageType _type;
@@ -61,14 +61,16 @@ private:
 	unsigned int _bitMasks[3];
 	int _width, _height;
 
-	char* _colorTable;
+	unique_ptr<char[]> _colorTable;
 	unsigned int _tableSize;
 };
 #pragma once
 class Texture
 {
 public:
-	Texture(string&, unsigned int samplerID = 0);
+	explicit Texture(string&, unsigned int samplerID = 0);
+	explicit Texture(Texture& other);
+
 	~Texture();
 
 	virtual void load(RessourceHandler*);
@@ -80,9 +82,8 @@ protected:
 	unsigned int _samplerID;
 private:
 	GLenum getTextureType(Image::PixelStructure);
-	void deleteTexture(GLuint* tex);
 
-	CustomPtr<GLuint> _ID;
+	unique_ptr<GLuint, deleteGLTexture> _ID;
 	static GLuint _lastTexID;
 	UniformRegistry _sampler;
 	Image _image;

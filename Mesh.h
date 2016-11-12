@@ -2,6 +2,7 @@
 #include <glm\common.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Util.h"
+#include "Deletors.h"
 
 #include "RessourceHandler.h"
 
@@ -35,10 +36,9 @@ public:
 		char isNor() { return (_bitset & 48) >> 4; }
 
 		bool valid() {
-			return _vao.valid();
+			return _vao != nullptr;
 		}
 
-		~VertexArrayObject();
 		static unsigned char genBitset(int vec, int tex = 0, int norm = 0) { return (vec | (tex << 2) | (norm << 4)); }
 
 	private:
@@ -51,7 +51,7 @@ public:
 		void enableNor();
 		void disableNor();
 
-		Ptr<GLuint> _vao;
+		unique_ptr<GLuint, deleteGLVAO> _vao;
 		unsigned char _bitset;
 	};
 	class Vertex
@@ -62,6 +62,10 @@ public:
 			data[0] = 0; data[1] = 0; data[2] = 0;
 			data[3] = 0; data[4] = 0; data[5] = 0;
 			data[6] = 0; data[7] = 0; data[8] = 0;
+		}
+		Vertex(const Vertex& other)
+		{
+			memcpy(data, other.data, sizeof(data));
 		}
 		Vertex(vec2 pos, vec2 tex, vec3 nor = vec3(0,0,0))
 		{
@@ -109,6 +113,11 @@ public:
 			data[6] = nor.x; data[7] = nor.y; data[8] = nor.z;
 			return data;
 		}
+
+		~Vertex()
+		{
+			delete[9] data;
+		}
 	private:
 		float data[9];
 	};
@@ -134,8 +143,9 @@ public:
 	Mesh ( string&);
 	Mesh ( vector<Vertex> &vec, unsigned char bitset); //Rectangle Constructor
 	Mesh ( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset);
+	explicit Mesh(Mesh&& other);
 	Mesh ();
-	
+		
 	virtual void load(RessourceHandler*);
 	virtual void load(ifstream&);
 	void* get() { return this; }
@@ -164,11 +174,10 @@ private:
 	RessourceHandler::Ressource _loadReq;
 	
 	VertexArrayObject _vao;
-	CustomPtr<GLuint> _vbo;
-	CustomPtr<GLuint> _ibo;
+	unique_ptr<GLuint, deleteGLBuffer> _vbo;
+	unique_ptr<GLuint, deleteGLBuffer> _ibo;
 	unsigned int _VerticesCount;
 
 	void _load(vector<string>);
 	void _glDownload( vector<Vertex>&, vector <unsigned int>&);
-	void deleteBuffer(GLuint* buf);
 };

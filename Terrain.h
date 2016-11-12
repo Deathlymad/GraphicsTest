@@ -3,15 +3,15 @@
 
 #include "Mesh.h"
 #include "Camera.h"
-#include "NoiseGraph.h"
+//#include "NoiseGraph.h"
 #include "ThreadManager.h"
 
 class Terrain :
 	public Mesh
 {
 public:
-	Terrain(float maxDif, float xOff, float zOff, unsigned xSize, unsigned zSize, float** heightmap);
-	Terrain(const Terrain&);
+	Terrain(float maxDif, int xOff, int zOff, unsigned xSize, unsigned zSize, float** heightmap);
+	Terrain(Terrain&&);
 	Terrain();
 
 	virtual void init();
@@ -25,15 +25,15 @@ public:
 
 	bool isInit() { return _updateState & 1; }
 
-	void setPos(float xOff, float zOff, float** heightmap);
-	bool isPos(float xOff, float zOff);
+	void setPos(int xOff, int zOff, float** heightmap);
+	bool isPos(int xOff, int zOff);
 
 	Terrain& operator=(const Terrain& other);
 
 	~Terrain();
 private:
 	float getRandomMult(float x, float z);
-	void _gen(float xOff, float zOff, float x, float z, float xMid, float zMid);
+	void _gen(int xOff, int zOff, int x, int z, int xMid, int zMid);
 	void _save();
 	bool _load();
 
@@ -41,7 +41,7 @@ private:
 	
 	unsigned _length;
 	unsigned _depth;
-	float _xOff, _zOff;
+	int _xOff, _zOff;
 	vector<Mesh::unnormalizedVertex> _unVec;
 	
 	float** _heightmap;

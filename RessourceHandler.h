@@ -23,6 +23,7 @@ class RessourceLoader //Loader Interface
 	friend class RessourceHandler;
 public:
 	RessourceLoader() : _ex(new mutex()) , _state(PENDING){}
+	RessourceLoader(const RessourceLoader& other) = delete;
 
 	virtual void load(ifstream&) = 0;
 	virtual void* get() = 0;
@@ -58,13 +59,13 @@ private:
 	public:
 		struct Entry
 		{
-			Entry(string& s) : _obj(future<void*>()), _name(s)
+			Entry(string& s) : _obj(future<void*>()), _name(s), _checksum(-1)
 			{}
-			Entry(string& name, promise<void*>* fut) : _obj(future<void*>()), _name(name)
+			Entry(string& name, promise<void*>* fut) : _obj(future<void*>()), _name(name), _checksum(-1)
 			{
 				_obj = fut->get_future();
 			}
-			Entry(const Entry& other) : _obj(future<void*>()), _name(other._name)
+			Entry(const Entry& other) : _obj(future<void*>()), _name(other._name), _checksum(-1)
 			{
 				_obj = other._obj;
 			}
@@ -79,7 +80,7 @@ private:
 				while (len--) {
 					crc ^= *(data++);
 					for (k = 0; k < 8; k++)
-						crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
+						crc = (crc & 1) ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
 				}
 				_checksum = crc;
 			}
@@ -93,6 +94,7 @@ private:
 			{
 				_name = other._name;
 				_obj = other._obj;
+				_checksum = other._checksum;
 				return *this;
 			}
 
