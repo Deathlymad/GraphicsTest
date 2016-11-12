@@ -65,7 +65,11 @@ public:
 		}
 		Vertex(const Vertex& other)
 		{
-			memcpy(data, other.data, sizeof(data));
+
+			data[0] = 0; data[1] = 0; data[2] = 0;
+			data[3] = 0; data[4] = 0; data[5] = 0;
+			data[6] = 0; data[7] = 0; data[8] = 0;
+			memcpy(&data[0], other.data, sizeof(data));
 		}
 		Vertex(vec2 pos, vec2 tex, vec3 nor = vec3(0,0,0))
 		{
@@ -114,10 +118,6 @@ public:
 			return data;
 		}
 
-		~Vertex()
-		{
-			delete[9] data;
-		}
 	private:
 		float data[9];
 	};
