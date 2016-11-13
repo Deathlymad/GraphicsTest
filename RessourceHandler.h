@@ -85,9 +85,9 @@ private:
 				_checksum = crc;
 			}
 
-			bool isEqual(Entry* entry)
+			bool operator==(const Entry& entry)
 			{
-				return _checksum == entry->_checksum;
+				return _checksum == entry._checksum;
 			}
 
 			Entry& operator=(const Entry& other)

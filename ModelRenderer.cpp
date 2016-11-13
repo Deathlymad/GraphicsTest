@@ -16,7 +16,7 @@ ModelRenderer::ModelRenderer() : EngineObject(), mesh(nullptr), tex(nullptr)
 }
 
 
-void ModelRenderer::load(RessourceHandler * loader)
+void ModelRenderer::load(RessourceHandler& loader)
 {
 	if (tex)
 		tex->load(loader);
@@ -24,7 +24,7 @@ void ModelRenderer::load(RessourceHandler * loader)
 		mesh->load(loader);
 }
 
-void ModelRenderer::init(KeyMap* kr)
+void ModelRenderer::init(KeyMap& kr)
 {
 	if (tex)
 	tex->glDownload();
@@ -32,9 +32,9 @@ void ModelRenderer::init(KeyMap* kr)
 	mesh->init();
 }
 
-void ModelRenderer::render(Shader* s, RenderingEngine::RenderState)
+void ModelRenderer::render(Shader& s, RenderingEngine::RenderState)
 {
-	s->bind();
+	s.bind();
 	if (tex)
 		tex->bind();
 	if (mesh)

@@ -14,7 +14,7 @@ KeyMap::KeyMap(Screen* s) : InputHandler(s), _activated(true)
 {
 }
 
-KeyMap::KeyMap(KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), _activated(true)
+KeyMap::KeyMap(const KeyMap & k): InputHandler(k), KeyBindings(k.KeyBindings), _activated(true)
 {
 }
 
@@ -42,7 +42,7 @@ void KeyMap::onKeyPress(unsigned short key)
 		temp.callback(key, ONHOLD);
 }
 
-KeyMap & KeyMap::operator=(KeyMap & other)
+KeyMap & KeyMap::operator=(const KeyMap & other)
 {
 	KeyBindings = other.KeyBindings;
 
@@ -98,14 +98,14 @@ size_t KeyMap::find(unsigned short key, vector<KeyBind>* arr, int min, int max)
 	}
 }
 
-void KeyMap::updateKeyMap(KeyMap * k)
+void KeyMap::updateKeyMap(KeyMap& k)
 {
-	if (!k->_activated)
+	if (!k._activated)
 		return;
 
-	for (unsigned int i = k->KeyBindings.size(); i > 0; i--)
+	for (unsigned int i = k.KeyBindings.size(); i > 0; i--)
 	{
-		if (k->KeyBindings[i - 1].isPressed)
-			k->onKeyPress(k->KeyBindings[i - 1].key);
+		if (k.KeyBindings[i - 1].isPressed)
+			k.onKeyPress(k.KeyBindings[i - 1].key);
 	}
 }

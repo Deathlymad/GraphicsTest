@@ -15,7 +15,7 @@ RenderingEngine::RenderingEngine(CoreEngine* parent, Screen* _screen) : ambient(
 	setup3DEngineState();
 }
 
-void RenderingEngine::load(RessourceHandler * loader)
+void RenderingEngine::load(RessourceHandler& loader)
 {
 	ambient.load(loader);
 }
@@ -23,7 +23,7 @@ void RenderingEngine::load(RessourceHandler * loader)
 void RenderingEngine::init()
 {
 	ambient.build();
-	UniformRegistry::registerShaderUniforms(&ambient);
+	UniformRegistry::registerShaderUniforms(ambient);
 	for (BaseLight* Light : Lights)
 		UniformRegistry::registerShaderUniforms(Light->getShader());
 }
@@ -37,7 +37,7 @@ void RenderingEngine::render(Scene * s)
 	
 	glEnable(GL_BLEND);  //setting up Multipassing
 	glBlendFunc(GL_ONE, GL_ONE);
-	s->render(&ambient, RenderState::AMBIENT_PASS);
+	s->render(ambient, RenderState::AMBIENT_PASS);
 	
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_EQUAL);

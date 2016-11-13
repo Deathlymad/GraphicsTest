@@ -16,10 +16,10 @@ public:
 		_root.add(obj);
 	}
 	
-	void load(RessourceHandler*);
-	void init(KeyMap*);
-	void update(ThreadManager*);
-	void render(Shader*, RenderingEngine::RenderState);
+	void load(RessourceHandler&);
+	void init(KeyMap&);
+	void update(ThreadManager&);
+	void render(Shader&, RenderingEngine::RenderState);
 
 	Camera& getCam() { return _view; }
 

@@ -18,8 +18,8 @@ public:
 
 	void addObject(EngineObject&);
 
-	virtual void load(RessourceHandler*);
-	virtual void update(ThreadManager*);
+	virtual void load(RessourceHandler&);
+	virtual void update(ThreadManager&);
 
 	void load() { _engine.load(); }
 
@@ -36,7 +36,7 @@ protected:
 private:
 	Scene _world;
 
-	vector<KeyMap*> KeyMaps;
+	vector<KeyMap> KeyMaps;
 
 	bool running;
 };

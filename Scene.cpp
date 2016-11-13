@@ -6,24 +6,24 @@
 Scene::Scene() : _root(), _view()
 {}
 
-void Scene::init(KeyMap * k)
+void Scene::init(KeyMap& k)
 {
 	_view.registerKeyBinds(k);
 	_root.init( k);
 }
 
-void Scene::load(RessourceHandler * loader)
+void Scene::load(RessourceHandler& loader)
 {
 	_root.load(loader);
 }
 
-void Scene::update(ThreadManager* mgr)
+void Scene::update(ThreadManager& mgr)
 {
 	_view.update(mgr);
 	_root.update(mgr);
 }
 
-void Scene::render(Shader* s, RenderingEngine::RenderState firstPass)
+void Scene::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	_view.render(s, firstPass);
 	_root.render(s, firstPass);

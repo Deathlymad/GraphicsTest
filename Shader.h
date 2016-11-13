@@ -72,9 +72,9 @@ public: //Public structures
 			_data.reset(alloc);
 		}
 
-		void create(GLuint* prgm);
+		void create(GLuint& prgm);
 		void copy(Uniform& other);
-		void write(GLuint* prgm);
+		void write(GLuint& other);
 
 		void enable() { enabled = true; }
 		void disable() { enabled = false; }
@@ -116,7 +116,7 @@ public: //Public structures
 		string _loadingErr;
 		vector<Uniform> uniforms;
 	public:
-		ShaderCode() : _owner(nullptr), _type(TESSELATION_EVALUATION), _path(""), _pos( new GLuint(), deleteGLShader()) {}
+		//ShaderCode() : _owner(), _type(TESSELATION_EVALUATION), _path(""), _pos( new GLuint(), deleteGLShader()) {}
 		ShaderCode(Shader* owner, ShaderType type, string& path) : _owner(owner), _type(type), _path(path), _pos( new GLuint(), deleteGLShader()) {}
 		ShaderCode(Shader* owner, ShaderType type, char* path) : _owner(owner), _type(type), _path(path), _pos( new GLuint(), deleteGLShader()) {}
 		ShaderCode(const ShaderCode& other) : 
@@ -160,18 +160,18 @@ public:
 	float* getUniformMemPos(string);
 
 	//functions
-	void load(RessourceHandler* loader);
+	void load(RessourceHandler& loader);
 
 	void build();
 	void bind();
 	void setUniforms();
 
 	//operators
-	Shader& operator= (Shader&);
-	Shader& operator= (vector<ShaderCode>&);
-	bool operator== (Shader&);
-	bool operator== (ShaderCode&);
-	bool operator== (vector<ShaderCode>&);
+	Shader& operator= (const Shader&);
+	Shader& operator= (const vector<ShaderCode>&);
+	bool operator== (const Shader&);
+	bool operator== (const ShaderCode&);
+	bool operator== (const vector<ShaderCode>&);
 private:
 
 	//variables

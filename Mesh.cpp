@@ -45,11 +45,11 @@ Mesh::Mesh(Mesh && other) :
 	 _ibo = move(other._ibo);
 }
 
-void Mesh::load(RessourceHandler * loader)
+void Mesh::load(RessourceHandler& loader)
 {
 	if (_path != "")
 	{
-		_loadReq = loader->getRessource(_path, this);
+		_loadReq = loader.getRessource(_path, this);
 	}
 	else {
 		promise<void*> prom = promise<void*>();

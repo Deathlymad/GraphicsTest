@@ -30,10 +30,10 @@ void UniformRegistry::update(float* data)
 				pos[i] = data[i];
 }
 
-void UniformRegistry::registerShaderUniforms(Shader* shader)
+void UniformRegistry::registerShaderUniforms(Shader& shader)
 {
 	for (UniformRegistry* registry : registryList)
-		registry->addMemPos(shader->getUniformMemPos(registry->_name));
+		registry->addMemPos(shader.getUniformMemPos(registry->_name));
 }
 
 bool UniformRegistry::localized() { return !MemPos.empty(); }

@@ -40,10 +40,10 @@ float* Shader::getUniformMemPos(string name)
 	return nullptr;
 }
 
-void Shader::load(RessourceHandler * loader)
+void Shader::load(RessourceHandler& loader)
 {
 	for (ShaderCode& code : Code)
-		reqArr.push_back(loader->getRessource(code.getPath(), (RessourceLoader*)&code));
+		reqArr.push_back(loader.getRessource(code.getPath(), &code));
 }
 
 void Shader::build()
@@ -60,50 +60,50 @@ void Shader::build()
 		}
 	}
 
-	if (!program.get() || !glIsProgram(*(program.get())))
+	if (!program.get() || !glIsProgram(*program))
 		*program = glCreateProgram(); //no Program existent creating
 
 	int attached = 0;
-	glGetProgramiv(*(program.get()), GL_ATTACHED_SHADERS, &attached);
+	glGetProgramiv(*program, GL_ATTACHED_SHADERS, &attached);
 	if (attached) //in case old Shaders are attached
 	{
 		vector<GLuint> shaders = vector<GLuint>();
 		for (char i = 0; i < 16; i++) //write invaid numbers to seperate them
 			shaders.push_back(-1);
-		glGetAttachedShaders(*(program.get()), 16, NULL, &shaders[0]); //get all Shaders attached to Program
+		glGetAttachedShaders(*program, 16, NULL, &shaders[0]); //get all Shaders attached to Program
 		for (GLuint shader : shaders)
 			if (shader != -1) //check if it is a valid shader
-				glDetachShader(*(program.get()), shader); //detaches Shader, DOES NO DELETE
+				glDetachShader(*program, shader); //detaches Shader, DOES NO DELETE
 		attached = 0; //resets counter
 	}
 
 	for (ShaderCode& shader : Code)
 	{
 		//should check Shader values
-		glAttachShader(*(program.get()), shader.getPos());
+		glAttachShader(*program, shader.getPos());
 		int ShaderCount = 0;
-		glGetProgramiv( *(program.get()), GL_ATTACHED_SHADERS, &ShaderCount); //might turn out t be slow since it querries operations and wait for them
+		glGetProgramiv( *program, GL_ATTACHED_SHADERS, &ShaderCount); //might turn out t be slow since it querries operations and wait for them
 		if (ShaderCount > attached) //used for Error catching
 			attached++;
 	}
 
 	if (attached > 0)
-		glLinkProgram(*(program.get()));
+		glLinkProgram(*program);
 	else
 		LOG << "OpenGL Program " << "NO SHADERS ATTACHED." << "\n";
 
-	GLint isLinked = 0;
-	glGetProgramiv(*(program.get()), GL_LINK_STATUS, (int *)&isLinked);
+	int isLinked = 0;
+	glGetProgramiv(*program, GL_LINK_STATUS, &isLinked);
 	if (!isLinked)
 	{
 		GLint maxLength = 0;
-		glGetProgramiv(*(program.get()), GL_INFO_LOG_LENGTH, &maxLength);
+		glGetProgramiv(*program, GL_INFO_LOG_LENGTH, &maxLength);
 
 		if (maxLength > 1)
 		{
 			//The maxLength includes the NULL character
 			vector<GLchar> infoLog = vector<GLchar>(maxLength);
-			glGetProgramInfoLog(*(program.get()), maxLength, NULL, &infoLog[0]);
+			glGetProgramInfoLog(*program, maxLength, NULL, &infoLog[0]);
 			LOG << "OpenGL Program " << infoLog.data() << "\n";
 		}
 	}
@@ -117,7 +117,7 @@ void Shader::bind()
 
 	if (err == "")
 	{
-		glUseProgram(*(program.get()));
+		glUseProgram(*program);
 		setUniforms();
 	}
 	else
@@ -126,24 +126,24 @@ void Shader::bind()
 void Shader::setUniforms()
 {
 	for (size_t i = 0; i < Uniforms.size(); i++)
-		Uniforms[i].write(program.get());
+		Uniforms[i].write(*program);
 }
 
-Shader& Shader::operator=(Shader& other)
+Shader& Shader::operator=(const Shader& other)
 {
 	Code = other.Code;
 	build();//handles the Shader changes on Program Level
 	return *this;
 }
 
-Shader& Shader::operator=(vector<ShaderCode>& Shaders)
+Shader& Shader::operator=(const vector<ShaderCode>& Shaders)
 {
 	Code = Shaders;
 	build();
 	return *this;
 }
 
-bool Shader::operator==(Shader& other)
+bool Shader::operator==(const Shader& other)
 {
 	if (Code.size() != other.Code.size())
 		return false;
@@ -153,7 +153,7 @@ bool Shader::operator==(Shader& other)
 	return program.get() == other.program.get();
 }
 
-bool Shader::operator==(ShaderCode& contained)
+bool Shader::operator==(const ShaderCode& contained)
 {
 	
 	ShaderCode& res = *find(Code.begin(), Code.end(), contained)._Ptr;
@@ -161,29 +161,31 @@ bool Shader::operator==(ShaderCode& contained)
 	return true;
 }
 
-bool Shader::operator==(vector<ShaderCode>& Shaders)
+bool Shader::operator==(const vector<ShaderCode>& Shaders)
 {
 	bool res = true;
-	for (ShaderCode& s : Shaders)
+	for (const ShaderCode& s : Shaders)
 	{
-		res = res && (*this == s);
+		res = (*this == s);
+		if (!res)
+			break;
 	}
 	return res;
 }
 
 void Shader::ShaderCode::makeShader()
 {
-	if (!glIsShader(*(_pos.get())))
+	if (!glIsShader(*_pos))
 	{
 		*_pos = glCreateShader(getShaderType(_type)); //no Shader existent; creating
 	}
 	else
 	{
 		int type = 0;
-		glGetShaderiv(*(_pos.get()), GL_SHADER_TYPE, &type); //if there is already a Shader, check if it has the right type
+		glGetShaderiv(*_pos, GL_SHADER_TYPE, &type); //if there is already a Shader, check if it has the right type
 		if (type != getShaderType(_type))
 		{
-			glDeleteShader(*(_pos.get())); //clear Shader if it is of the wrong Type (issues with Programs created from it?!)
+			glDeleteShader(*_pos); //clear Shader if it is of the wrong Type (issues with Programs created from it?!)
 			*_pos = glCreateShader(getShaderType(_type)); //recreate Shader of right Type
 		}
 	}//if there is a Shader created with the right type then it is going to be rewritten but not recreated should reduce memory
@@ -191,32 +193,32 @@ void Shader::ShaderCode::makeShader()
 	if (_code.size())
 	{
 		const char *c_str = _code.c_str();
-		glShaderSource(*(_pos.get()), 1, &c_str, NULL);
+		glShaderSource(*_pos, 1, &c_str, NULL);
 	}
 	else
 		LOG << "OpenGL Shader " << "Empty Source." << "\n";
 
 	int compiled = 0;
-	glGetShaderiv(*(_pos.get()), GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(*_pos, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
-		glCompileShader(*(_pos.get()));
+		glCompileShader(*_pos);
 
-	glGetShaderiv(*(_pos.get()), GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(*_pos, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{ //not compiling
 		GLint maxLength = 0;
-		glGetShaderiv(*(_pos.get()), GL_INFO_LOG_LENGTH, &maxLength);
+		glGetShaderiv(*_pos, GL_INFO_LOG_LENGTH, &maxLength);
 		if (maxLength > 1)
 		{
 			//The maxLength includes the NULL character
 			vector<GLchar> infoLog = vector<GLchar>(maxLength);
-			glGetShaderInfoLog(*(_pos.get()), maxLength, NULL, &infoLog[0]);
+			glGetShaderInfoLog(*_pos, maxLength, NULL, &infoLog[0]);
 			LOG << "OpenGL Shader " << infoLog.data() << "\n";
 		}
 	}
 }
 
-Shader::ShaderCode & Shader::ShaderCode::operator=(const Shader::ShaderCode & other)
+Shader::ShaderCode& Shader::ShaderCode::operator=(const Shader::ShaderCode & other)
 {
 	_code = other._code;
 	_owner = other._owner;
@@ -228,24 +230,24 @@ Shader::ShaderCode & Shader::ShaderCode::operator=(const Shader::ShaderCode & ot
 
 string Shader::checkProgram()
 {
-	if ( *(program.get()) == -1)
+	if ( *program == -1)
 		return "NO PROGRAM CREATED \n";
 	string errText = "";
 	int res = 0;
-	glValidateProgram(*(program.get()));
-	glGetProgramiv(*(program.get()), GL_VALIDATE_STATUS, &res);
+	glValidateProgram(*program);
+	glGetProgramiv(*program, GL_VALIDATE_STATUS, &res);
 	if (!res)
 	{
 		errText += "NOT LINKED \n";
 		int maxLength = 0;
-		glGetProgramiv(*(program.get()), GL_INFO_LOG_LENGTH, &maxLength);
+		glGetProgramiv(*program, GL_INFO_LOG_LENGTH, &maxLength);
 
 		//The maxLength includes the NULL character
 		if (maxLength > 1)
 		{
 			string infoLog;
 			infoLog.resize(maxLength);
-			glGetProgramInfoLog(*(program.get()), maxLength, &maxLength, &infoLog[0]);
+			glGetProgramInfoLog(*program, maxLength, &maxLength, &infoLog[0]);
 			errText += infoLog;
 		}
 	}
@@ -355,16 +357,16 @@ vector<string> Shader::ShaderCode::resolveStructVariable(string& name)
 	return vector<string>();
 }
 
-void Shader::Uniform::create( GLuint* prgm)
+void Shader::Uniform::create( GLuint& prgm)
 {
 	if (!enabled)
 		return;
-	pos = glGetUniformLocation(*prgm, _name.c_str());
+	pos = glGetUniformLocation(prgm, _name.c_str());
 	if (pos == -1)
 		LOG << "couldn't Resolve Uniform: " << _name << "\n";
 }
 
-void Shader::Uniform::write(GLuint* prgm)
+void Shader::Uniform::write(GLuint& prgm)
 {
 	if(pos == -1)
 		create(prgm);

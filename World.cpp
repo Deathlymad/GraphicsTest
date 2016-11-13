@@ -8,12 +8,12 @@ chunkX(x), chunkZ(z), allocator(16, nullptr), initialized(false), ground(string(
 		_heightmap[i] = (float*)malloc(sizeof(float) * ((4 * chunkZ) + 1));
 }
 
-void World::load(RessourceHandler * loader)
+void World::load(RessourceHandler& loader)
 {
 	ground.load(loader);
 }
 
-void World::init(KeyMap* map)
+void World::init(KeyMap& map)
 {
 	if (initialized)
 		return;
@@ -21,7 +21,7 @@ void World::init(KeyMap* map)
 	ground.glDownload();
 }
 
-void World::update(ThreadManager* mgr)
+void World::update(ThreadManager& mgr)
 {
 	lock_guard<mutex> lock(safeguard);
 	setPos(toWorldPos(player->getPos()));
@@ -29,9 +29,9 @@ void World::update(ThreadManager* mgr)
 		terr->update(mgr);
 }
 
-void World::render(Shader* s, RenderingEngine::RenderState state)
+void World::render(Shader& s, RenderingEngine::RenderState state)
 {
-	s->bind();
+	s.bind();
 	ground.bind();
 	for (Terrain* terr : allocator)
 	{

@@ -15,7 +15,7 @@ public:
 	Terrain();
 
 	virtual void init();
-	virtual void update(ThreadManager*);
+	virtual void update(ThreadManager&);
 	virtual void Draw();
 
 	void onUpdateMap()

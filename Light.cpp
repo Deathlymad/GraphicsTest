@@ -11,28 +11,24 @@ BaseLight::BaseLight( vec3 c, float i, string& name) : color(name + ".color", 3)
 {
 	_color = c;
 	_intensity = i;
-	shader = nullptr;
-	postShader = nullptr;
 }
 
-void BaseLight::load(RessourceHandler * loader)
+void BaseLight::load(RessourceHandler& loader)
 {
-	shader->load(loader);
-	if (postShader)
-		postShader->load(loader);
+	shader.load(loader);
+	postShader.load(loader);
 	EngineObject::load(loader);
 }
 
-void BaseLight::init(KeyMap *k)
+void BaseLight::init(KeyMap& k)
 {
-	shader->build();
-	if (postShader)
-		postShader->build();
+	shader.build();
+	postShader.build();
 
 	EngineObject::init(k);
 }
 
-void BaseLight::render(Shader * s, RenderingEngine::RenderState firstPass)
+void BaseLight::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	if (s == shader)
 	{
@@ -45,7 +41,7 @@ void BaseLight::render(Shader * s, RenderingEngine::RenderState firstPass)
 	else
 		EngineObject::render(s, firstPass);
 }
-void BaseLight::postRender(Shader* s)
+void BaseLight::postRender(Shader& s)
 {
 	//EngineObject::render(s, RenderingEngine::RenderState::POST_RENDER);
 }
@@ -53,15 +49,11 @@ void BaseLight::postRender(Shader* s)
 DirectionalLight::DirectionalLight( vec3 c, float i, vec3 dir, string& name) : BaseLight( c, i, name + ".base"), normal(name + ".direction", 3)
 {
 	_normal = dir;
-	if (shader)
-		shader->~Shader();
-	shader = new Shader(string("assets/shaders/forward_directional_vs.glsl"), string("assets/shaders/forward_directional_fs.glsl"));
-	if (postShader)
-		postShader->~Shader();
-	postShader = new Shader(string("assets/shaders/forward_directional_vs.glsl"), string("assets/shaders/forward_directional_dl_fs.glsl"));
+	shader = Shader(string("assets/shaders/forward_directional_vs.glsl"), string("assets/shaders/forward_directional_fs.glsl"));
+	postShader = Shader(string("assets/shaders/forward_directional_vs.glsl"), string("assets/shaders/forward_directional_dl_fs.glsl"));
 }
 
-void DirectionalLight::render(Shader * s, RenderingEngine::RenderState firstPass)
+void DirectionalLight::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	if (s == shader)
 	{
@@ -75,27 +67,19 @@ void DirectionalLight::render(Shader * s, RenderingEngine::RenderState firstPass
 PointLight::PointLight( vec3 c, float i,Attenuation& a, vec3 p, string& name) : BaseLight( c, i, name + ".base"), pos( name + ".pos", 3), range( name + ".range", 3), atten(a), _pos(p)
 {
 	calcRange();
-	if (shader)
-		shader->~Shader();
-	shader = new Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_fs.glsl"));
-	if (postShader)
-		postShader->~Shader();
-	postShader = new Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_dl_fs.glsl"));
+	shader = Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_fs.glsl"));
+	postShader = Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_dl_fs.glsl"));
 }
 
 PointLight::PointLight(vec3 c, float i, float ex, float lin, float con, vec3 p, string& name) : BaseLight(c, i, name + ".base"), pos(name + ".pos", 3), range(name + ".range", 3), atten(con, lin, ex, name + ".atten")
 {
 	_pos = p;
 	calcRange();
-	if (shader)
-		shader->~Shader();
-	shader = new Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_fs.glsl"));
-	if (postShader)
-		postShader->~Shader();
-	postShader = new Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_dl_fs.glsl"));
+	shader = Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_fs.glsl"));
+	postShader = Shader(string("assets/shaders/forward_point_vs.glsl"), string("assets/shaders/forward_point_dl_fs.glsl"));
 }
 
-void PointLight::render(Shader * s, RenderingEngine::RenderState firstPass)
+void PointLight::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	if (s == shader)
 	{
@@ -112,15 +96,11 @@ SpotLight::SpotLight(vec3 c, float i, float ex, float lin, float con, vec3 p, ve
 {
 	_direction = normalize(dir);
 	_cutoff = cut;
-	if (shader)
-		shader->~Shader();
-	shader = new Shader(string("assets/shaders/forward_spot_vs.glsl"), string("assets/shaders/forward_spot_fs.glsl"));
-	if (postShader)
-		postShader->~Shader();
-	postShader = new Shader(string("assets/shaders/forward_spot_vs.glsl"), string("assets/shaders/forward_spot_dl_fs.glsl"));
+	shader = Shader(string("assets/shaders/forward_spot_vs.glsl"), string("assets/shaders/forward_spot_fs.glsl"));
+	postShader = Shader(string("assets/shaders/forward_spot_vs.glsl"), string("assets/shaders/forward_spot_dl_fs.glsl"));
 }
 
-void SpotLight::render(Shader * s, RenderingEngine::RenderState firstPass)
+void SpotLight::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	if (s == shader)
 	{

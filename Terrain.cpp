@@ -89,7 +89,7 @@ void Terrain::init()
 	safeguard.unlock();
 }
 
-void Terrain::update(ThreadManager* mgr)
+void Terrain::update(ThreadManager& mgr)
 {
 	if ( (_updateState & 1) && !(_updateState & 2)) //generate Map Data
 	{

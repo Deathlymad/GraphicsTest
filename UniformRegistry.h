@@ -17,7 +17,7 @@ public:
 
 	void update(float* data);
 
-	static void registerShaderUniforms(Shader* shader);
+	static void registerShaderUniforms(Shader& shader);
 
 	bool localized();
 

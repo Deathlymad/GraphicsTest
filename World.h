@@ -10,11 +10,11 @@ class World : public EngineObject
 public:
 	World(ThreadManager*, Camera*, unsigned x, unsigned z);
 
-	virtual void load(RessourceHandler* loader);
-	virtual void init(KeyMap* map);
+	virtual void load(RessourceHandler& loader);
+	virtual void init(KeyMap& map);
 
-	virtual void update(ThreadManager*);
-	virtual void render(Shader*, RenderingEngine::RenderState);
+	virtual void update(ThreadManager&);
+	virtual void render(Shader&, RenderingEngine::RenderState);
 
 	static unsigned getMemPosForTerrain(int x, int z, bool invX, bool invZ);
 

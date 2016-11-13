@@ -17,11 +17,11 @@ Camera::Camera() : InputHandler(), EngineObject(), ViewProjMat("ViewProj", 16), 
 	projection = perspective( FoV, Aspect, 0.1f, 100000.0f);
 }
 
-void Camera::update(ThreadManager* mgr)
+void Camera::update(ThreadManager& mgr)
 {
 }
 
-void Camera::render(Shader *, RenderingEngine::RenderState firstPass)
+void Camera::render(Shader&, RenderingEngine::RenderState firstPass)
 {
 	if (firstPass == RenderingEngine::RenderState::AMBIENT_PASS)
 	{
@@ -43,12 +43,12 @@ void Camera::setAspect(float aspect)
 	projection = perspective(FoV, Aspect, 0.1f, 100.0f);
 }
 
-void Camera::registerKeyBinds(KeyMap * k)
+void Camera::registerKeyBinds(KeyMap& k)
 {
-	k->addKeyBind(87, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Move Forward", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//W
-	k->addKeyBind(83, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Move Backward", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//S
-	k->addKeyBind(65, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Strafe Left", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//A
-	k->addKeyBind(68, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Strafe Right", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//D
+	k.addKeyBind(87, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Move Forward", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//W
+	k.addKeyBind(83, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Move Backward", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//S
+	k.addKeyBind(65, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Strafe Left", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//A
+	k.addKeyBind(68, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Strafe Right", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//D
 }
 
 Camera::~Camera()

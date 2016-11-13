@@ -244,9 +244,9 @@ Texture::~Texture()
 {
 }
 
-void Texture::load(RessourceHandler * loader)
+void Texture::load(RessourceHandler& loader)
 {
-	_imgLink = loader->getRessource(_image.getPath(), &_image);
+	_imgLink = loader.getRessource(_image.getPath(), &_image);
 }
 
 void Texture::glDownload()
@@ -308,7 +308,7 @@ LayeredTexture::~LayeredTexture()
 
 }
 
-void LayeredTexture::load(RessourceHandler * loader)
+void LayeredTexture::load(RessourceHandler& loader)
 {
 	for (Texture& tex : _samplerList)
 		tex.load(loader);

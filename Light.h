@@ -26,24 +26,24 @@ class BaseLight :public EngineObject
 public:
 	BaseLight( vec3 c, float i, string& name = string("Light"));
 	
-	virtual void load(RessourceHandler* loader);
-	virtual void init(KeyMap*);
+	virtual void load(RessourceHandler& loader);
+	virtual void init(KeyMap&);
 
 	float getIntensity() { return _intensity; }
 	vec3 getColor() { return _color; }
 
-	virtual void render(Shader*, RenderingEngine::RenderState);
-	virtual void postRender(Shader*);
+	virtual void render(Shader&, RenderingEngine::RenderState);
+	virtual void postRender(Shader&);
 	void render() { this->render(shader, RenderingEngine::RenderState::FWD_RENDER); }
 
 	~BaseLight(void)
 	{
 	}
 	
-	Shader* getShader(){return shader;}
+	Shader& getShader(){return shader;}
 protected:
-	Shader* shader;
-	Shader* postShader;
+	Shader shader;
+	Shader postShader;
 private:
 	vec3 _color;
 	UniformRegistry color;
@@ -57,7 +57,7 @@ class DirectionalLight  : public BaseLight
 public:
 	DirectionalLight( vec3 c, float i, vec3 dir, string& name = string("Light"));
 
-	virtual void render(Shader*, RenderingEngine::RenderState);
+	virtual void render(Shader&, RenderingEngine::RenderState);
 
 	void setNormal( vec3 n)
 	{
@@ -131,7 +131,7 @@ public:
 	PointLight( vec3 c, float i,Attenuation& a, vec3 p, string& name = string("Light"));
 	PointLight(vec3 c, float i, float ex, float lin, float con, vec3 p, string& name = string("Light"));
 	
-	virtual void render(Shader*, RenderingEngine::RenderState);
+	virtual void render(Shader&, RenderingEngine::RenderState);
 
 	Attenuation getAttenuation()
 	{
@@ -169,7 +169,7 @@ class SpotLight : public PointLight
 public:
 	SpotLight( vec3 c, float i, float ex, float lin, float con, vec3 p, vec3 dir, float cut, string& name = string("Light"));
 	
-	virtual void render(Shader*, RenderingEngine::RenderState);
+	virtual void render(Shader&, RenderingEngine::RenderState);
 
 	vec3 getDirection(){ return _direction;}
 	float getCutoff(){return _cutoff;}

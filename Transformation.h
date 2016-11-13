@@ -27,9 +27,9 @@ public:
 	void scale(vec3);
 
 
-	void init(KeyMap*);
-	void update(ThreadManager* mgr) { EngineObject::update(mgr); }
-	void render(Shader*, RenderingEngine::RenderState);
+	void init(KeyMap&);
+	void update(ThreadManager& mgr) { EngineObject::update(mgr); }
+	void render(Shader&, RenderingEngine::RenderState);
 
 
 	~Transformation();

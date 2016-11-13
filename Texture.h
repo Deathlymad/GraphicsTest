@@ -73,7 +73,7 @@ public:
 
 	~Texture();
 
-	virtual void load(RessourceHandler*);
+	virtual void load(RessourceHandler&);
 	virtual void glDownload();
 	virtual void bind();
 protected:
@@ -97,7 +97,7 @@ public:
 	LayeredTexture(vector<string>&);
 	~LayeredTexture();
 
-	virtual void load(RessourceHandler*);
+	virtual void load(RessourceHandler&);
 	virtual void glDownload();
 	virtual void bind();
 private:

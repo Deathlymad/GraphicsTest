@@ -31,7 +31,7 @@ public:
 	};
 
 	KeyMap(Screen* s);
-	KeyMap(KeyMap&);
+	KeyMap(const KeyMap&);
 	KeyMap();
 
 	void activate() { _activated = true; }
@@ -39,12 +39,12 @@ public:
 
 	void addKeyBind( unsigned short key, function<void(unsigned short, KeyState)> Func, string name, int trig = ONHOLD);
 
-	KeyMap& operator=(KeyMap& other);
+	KeyMap& operator=(const KeyMap& other);
 
 	~KeyMap();
 	
-	void updateKeyMap() { updateKeyMap(this); }
-	static void updateKeyMap(KeyMap*);
+	void updateKeyMap() { updateKeyMap(*this); }
+	static void updateKeyMap(KeyMap&);
 protected:
 	void onKeyPress(char button, char action, char mods);
 private:

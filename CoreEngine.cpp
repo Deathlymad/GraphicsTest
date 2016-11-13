@@ -8,8 +8,8 @@ CoreEngine::CoreEngine(Screen* _screen, Game* g) : _game(g), GrEngine( this, _sc
 
 void CoreEngine::load()
 {
-	_game->load(&_ressourceLoader);
-	GrEngine.load(&_ressourceLoader);
+	_game->load(_ressourceLoader);
+	GrEngine.load(_ressourceLoader);
 }
 
 void CoreEngine::start()
@@ -34,6 +34,6 @@ CoreEngine::~CoreEngine()
 
 int CoreEngine::run()
 {
-	_game->update(&_manager);
+	_game->update(_manager);
 	return 0;
 }

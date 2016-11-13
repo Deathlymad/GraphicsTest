@@ -146,7 +146,7 @@ public:
 	explicit Mesh(Mesh&& other);
 	Mesh ();
 		
-	virtual void load(RessourceHandler*);
+	virtual void load(RessourceHandler&);
 	virtual void load(ifstream&);
 	void* get() { return this; }
 	virtual void init();

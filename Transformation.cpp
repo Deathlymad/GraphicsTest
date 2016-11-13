@@ -115,12 +115,12 @@ mat4 Transformation::getMatrix()
 	return trans*rot*scale;
 }
 
-void Transformation::init(KeyMap* s)
+void Transformation::init(KeyMap& s)
 {
 	EngineObject::init(s);
 }
 
-void Transformation::render(Shader* s, RenderingEngine::RenderState firstPass)
+void Transformation::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	mat4 mat = getMatrix();
 	TransformationMatrix.update(&mat[0][0]);

@@ -26,7 +26,7 @@ public:
 		_ID = ID;
 	}
 
-	void render(Shader* s, RenderingEngine::RenderState firstPass)
+	void render(Shader& s, RenderingEngine::RenderState firstPass)
 	{
 		specularIntensity.update(&_specularIntensity);
 		specularExponent.update(&_specularExponent);
