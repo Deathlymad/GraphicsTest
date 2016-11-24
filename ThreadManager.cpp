@@ -123,7 +123,10 @@ function<int()> ThreadManager::TaskDistributor::getTask()
 	if (_tasks.empty())
 	{
 		for (CallableObject* obj : _registry)
-			_tasks.push([obj] { return obj->run(); });
+			if (obj)
+				_tasks.push([obj] { return obj->run(); });
+			else
+				LOG << "Invalid Task Object passed.";
 	}
 	if (!_tasks.empty())
 	{

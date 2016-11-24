@@ -1,11 +1,8 @@
 #include "World.h"
 
 World::World(ThreadManager* manager, Camera* ref, unsigned x, unsigned z) : EngineObject(), player(ref),
-chunkX(x), chunkZ(z), allocator(16, nullptr), initialized(false), ground(string("assets/textures/Test_tex2.bmp"))
+chunkX(x), chunkZ(z), allocator(16), initialized(false), ground(string("assets/textures/Test_tex2.bmp")), _heightmap( chunkX * 4, chunkZ * 4)
 {
-	_heightmap = (float**)malloc(sizeof(float) * (( 4 * chunkX) + 1));
-	for (unsigned i = 0; i < ((4 * chunkX) + 1); i++)
-		_heightmap[i] = (float*)malloc(sizeof(float) * ((4 * chunkZ) + 1));
 }
 
 void World::load(RessourceHandler& loader)
@@ -23,37 +20,29 @@ void World::init(KeyMap& map)
 
 void World::update(ThreadManager& mgr)
 {
-	lock_guard<mutex> lock(safeguard);
-	setPos(toWorldPos(player->getPos()));
-	for (Terrain* terr : allocator)
-		terr->update(mgr);
+	{
+		lock_guard<mutex> lock(safeguard);
+		setPos(toWorldPos(player->getPos()));
+	}
+	for (Terrain& terr : allocator)
+		terr.update(mgr);
 }
 
 void World::render(Shader& s, RenderingEngine::RenderState state)
 {
 	s.bind();
 	ground.bind();
-	for (Terrain* terr : allocator)
+	for (Terrain& terr : allocator)
 	{
-		if (terr)
-		{
-			if (terr->isInit())
-				terr->Draw();
-			else
-				terr->init();
-		}
+		if (terr.isInit())
+			terr.Draw();
+		else
+			terr.init();
 	}
 }
 
 World::~World()
 {
-	for (Terrain* terr : allocator)
-	{
-		delete terr;
-	}
-	for (unsigned i = 0; i < 4 * chunkX; i++)
-		delete[] _heightmap[i];
-	delete[] _heightmap;
 }
 
 unsigned World::getMemPosForTerrain(int x, int z, bool invX, bool invZ)
@@ -76,16 +65,8 @@ void World::TerrainForPos(vec2 p, int xO, int zO)
 	  , zOff = (zO - 2) * chunkZ;
 	unsigned pos = getMemPosForTerrain((int)(abs(xOff) / chunkX), (int)(abs(zOff) / chunkZ), xOff < 0, zOff < 0);
 
-	if (!allocator[pos] || !(allocator[pos]->isPos(xOff, zOff))) //checks if cache is correct
-	{
-		float** heightmap = (float**)malloc(sizeof(float*) * (chunkX + 1));
-		unsigned it = 0;
-		for (; it <= chunkX; it++)
-			heightmap[it] = &_heightmap[((pos & 3) * chunkX) + it][(pos & 12) * chunkZ];
-		allocator[pos] = move(new Terrain(100.0f, xOff, zOff, chunkX, chunkZ, heightmap));
-
-		free(heightmap);
-	}
+	if ( !allocator[pos].isPos(xOff, zOff)) //checks if cache is correct
+		allocator[pos].setPos(chunkX, chunkZ, xOff, zOff, _heightmap.get((((pos & 12) >> 2) * chunkZ), ((pos & 3) * chunkX)));
 }
 
 void World::setPos(vec2 pos)
@@ -93,4 +74,59 @@ void World::setPos(vec2 pos)
 	for (unsigned char x = 0; x < 4; x++)
 		for (unsigned char z = 0; z < 4; z++)
 			TerrainForPos(pos, x, z);
+}
+
+
+
+World::Heightmap::Heightmap(unsigned x, unsigned z) : _x(x), _z(z)
+{
+	_mem.reset(new float[x * z]);
+	_pos0 = _mem.get();
+}
+
+World::Heightmap::Heightmap(const Heightmap &other) : _x(other._x), _z(other._z)
+{
+	_mem.reset(new float[_x * _z]);
+	_pos0 = _mem.get();
+	memcpy(_pos0, other._pos0, sizeof(float) * _x * _z);
+}
+
+World::Heightmap::Heightmap(Heightmap &&other) : _x(other._x), _z(other._z)
+{
+	_mem.reset(other._mem.release());
+	_pos0 = _mem.get();
+}
+
+World::Heightmap & World::Heightmap::operator=(const Heightmap &other)
+{
+	_x = other._x;
+	_z = other._z;
+	_mem.reset(new float[_x * _z]);
+	_pos0 = _mem.get();
+	memcpy(_pos0, other._pos0, sizeof(float) * _x * _z);
+	return *this;
+}
+
+World::Heightmap & World::Heightmap::operator=(Heightmap &&other)
+{
+	_x = other._x;
+	_z = other._z;
+	_mem.reset(other._mem.release());
+	_pos0 = _mem.get();
+	return *this;
+}
+
+float * World::Heightmap::get()
+{
+	return _pos0;
+}
+
+float * World::Heightmap::get(unsigned x, unsigned z)
+{
+	return &_pos0[(x * _z) + z];
+}
+
+float * World::Heightmap::operator[](unsigned x)
+{
+	return &_pos0[x * _z];
 }

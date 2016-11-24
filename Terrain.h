@@ -10,8 +10,6 @@ class Terrain :
 	public Mesh
 {
 public:
-	Terrain(float maxDif, int xOff, int zOff, unsigned xSize, unsigned zSize, float** heightmap);
-	Terrain(Terrain&&);
 	Terrain();
 
 	virtual void init();
@@ -25,10 +23,8 @@ public:
 
 	bool isInit() { return _updateState & 1; }
 
-	void setPos(int xOff, int zOff, float** heightmap);
+	void setPos(int x, int z, int xOff, int zOff, float* heightmap);
 	bool isPos(int xOff, int zOff);
-
-	Terrain& operator=(const Terrain& other);
 
 	~Terrain();
 private:
@@ -44,7 +40,7 @@ private:
 	int _xOff, _zOff;
 	vector<Mesh::unnormalizedVertex> _unVec;
 	
-	float** _heightmap;
+	float* _heightmap;
 
 	mutex safeguard;
 	int _updateState;

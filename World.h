@@ -7,6 +7,25 @@
 
 class World : public EngineObject
 {
+	class Heightmap
+	{
+	public:
+		Heightmap(unsigned x, unsigned z);
+		explicit Heightmap(const Heightmap&);
+		explicit Heightmap(Heightmap&&);
+		Heightmap& operator=(const Heightmap&);
+		Heightmap& operator=(Heightmap&&);
+
+		float* get();
+		float* get( unsigned x, unsigned z);
+
+		float* operator[] (unsigned x);
+
+	private:
+		unique_ptr<float> _mem;
+		float* _pos0;
+		unsigned _x, _z;
+	};
 public:
 	World(ThreadManager*, Camera*, unsigned x, unsigned z);
 
@@ -27,8 +46,8 @@ private:
 
 	unsigned chunkX, chunkZ;
 
-	vector<Terrain*> allocator;
-	float** _heightmap;
+	vector<Terrain> allocator;
+	Heightmap _heightmap;
 	Camera* player;
 
 	mutex safeguard;

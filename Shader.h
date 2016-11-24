@@ -117,8 +117,8 @@ public: //Public structures
 		vector<Uniform> uniforms;
 	public:
 		//ShaderCode() : _owner(), _type(TESSELATION_EVALUATION), _path(""), _pos( new GLuint(), deleteGLShader()) {}
-		ShaderCode(Shader* owner, ShaderType type, string& path) : _owner(owner), _type(type), _path(path), _pos( new GLuint(), deleteGLShader()) {}
-		ShaderCode(Shader* owner, ShaderType type, char* path) : _owner(owner), _type(type), _path(path), _pos( new GLuint(), deleteGLShader()) {}
+		ShaderCode(Shader* owner, ShaderType type, string& path) : _owner(owner), _type(type), _path(path), _pos( new GLuint(-1), deleteGLShader()) {}
+		ShaderCode(Shader* owner, ShaderType type, char* path) : _owner(owner), _type(type), _path(path), _pos( new GLuint(-1), deleteGLShader()) {}
 		ShaderCode(const ShaderCode& other) : 
 			_code(other._code),
 			_type(other._type),

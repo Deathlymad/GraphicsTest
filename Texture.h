@@ -68,8 +68,9 @@ private:
 class Texture
 {
 public:
+	Texture();
 	explicit Texture(string&, unsigned int samplerID = 0);
-	explicit Texture(Texture& other);
+	explicit Texture(Texture&& other);
 
 	~Texture();
 
@@ -77,7 +78,6 @@ public:
 	virtual void glDownload();
 	virtual void bind();
 protected:
-	Texture();
 
 	unsigned int _samplerID;
 private:

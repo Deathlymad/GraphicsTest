@@ -111,9 +111,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>TestGame</Filter>
     </ClCompile>
-    <ClCompile Include="Clock.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestGame.h">
@@ -196,9 +193,6 @@
     </ClInclude>
     <ClInclude Include="Deletors.h">
       <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Clock.h">
-      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

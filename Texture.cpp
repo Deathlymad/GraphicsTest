@@ -213,13 +213,13 @@ Texture::Texture(string& path, unsigned int samplerID) : _image(path), _samplerI
 {
 }
 
-Texture::Texture(Texture & other) :
+Texture::Texture(Texture&& other) :
 	_samplerID(other._samplerID),
 	_sampler(other._sampler),
 	_image(other._image),
 	_imgLink(other._imgLink)
 {
-	_ID.reset(other._ID.release());
+	_ID = move(other._ID);
 }
 
 Texture::Texture() : _image(), _samplerID(0), _ID( new GLuint, deleteGLTexture()), _sampler("_tex" + std::to_string(_samplerID), 1)

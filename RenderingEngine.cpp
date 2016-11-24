@@ -30,8 +30,8 @@ void RenderingEngine::init()
 
 void RenderingEngine::render(Scene * s)
 {
-	if (!_screen->isFocused())
-		return;
+	//if (!_screen->isFocused())
+		//return;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	

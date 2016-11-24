@@ -3,42 +3,21 @@
 #include <algorithm>
 
 NSP_GLM
-
-Terrain::Terrain(float maxDif, int xOff, int zOff, unsigned xSize, unsigned zSize, float** heightmap) : Mesh(),
-_length(xSize),
-_depth(zSize),
-_xOff(xOff),
-_zOff(zOff),
-_updateState(0)
-{
-	_heightmap = (float**)malloc(sizeof(float*) * (xSize + 1));
-	memcpy(&_heightmap[0], &heightmap[0], (xSize + 1) * sizeof(float*));
-
-}
-
-Terrain::Terrain(Terrain &&other) : Mesh(move(other)),
-_length(other._length),
-_depth(other._depth),
-_xOff(other._xOff),
-_zOff(other._zOff),
-_updateState(0)
-{
-	_heightmap = (float**)malloc(sizeof(float*) * (_length + 1));
-	memcpy(&_heightmap[0], &(other._heightmap[0]), (_length + 1) * sizeof(float*));
-}
-
+//turn heightmap into vertexmap
+//less memory, faster, behaves more proper. Dangerous. neighboring Terrains should be updated upon border change
 Terrain::Terrain() : Mesh(),
 _length(0),
 _depth(0),
 _xOff(0),
 _zOff(0),
-_updateState(0)
+_updateState(0),
+_heightmap(nullptr)
 {
 }
 
 void Terrain::init()
 {
-	safeguard.lock();
+	lock_guard<mutex> lock(safeguard);
 	if (_updateState & 1)
 		return;
 
@@ -86,11 +65,14 @@ void Terrain::init()
 	Mesh::init();
 
 	_updateState |= 1;
-	safeguard.unlock();
 }
 
 void Terrain::update(ThreadManager& mgr)
 {
+	if (!_heightmap)
+		return;
+
+	lock_guard<mutex> lock(safeguard);
 	if ( (_updateState & 1) && !(_updateState & 2)) //generate Map Data
 	{
 		if (!_load())
@@ -172,14 +154,17 @@ void Terrain::Draw()
 	Mesh::Draw();
 }
 
-void Terrain::setPos(int xOff, int zOff, float ** heightmap)
+void Terrain::setPos(int x, int z, int xOff, int zOff, float* heightmap)
 {
 	if (xOff != _xOff || zOff != _zOff)
 	{
+		_length = x;
+		_depth = z;
 		_heightmap = heightmap;
 		_xOff = xOff;
 		_zOff = zOff;
-		_updateState = heightmap[0][0] != 0xDEAD;
+		_updateState = heightmap[0] != 0xDEAD;
+		init();
 	}
 }
 
@@ -188,25 +173,10 @@ bool Terrain::isPos(int xOff, int zOff)
 	return xOff == _xOff && zOff == _zOff;
 }
 
-Terrain & Terrain::operator=(const Terrain & other)
-{
-	Mesh::operator=(other);
-	_length = other._length;
-	_depth = other._depth;
-	_xOff = other._xOff;
-	_zOff = other._zOff;
-
-	_heightmap = (float**)malloc(sizeof(float) * _length);
-	memcpy(&_heightmap[0],&(other._heightmap[0]), sizeof(float*) * _length);
-
-	return *this;
-}
-
 Terrain::~Terrain()
 {
 	_length = 0;
 	_depth = 0;
-	delete[] _heightmap;
 	Mesh::~Mesh();
 }
 
@@ -220,10 +190,10 @@ void Terrain::_gen(int minX, int minZ, int maxX, int maxZ, int xMid, int zMid)
 {
 	if ((xMid + zMid) == 0) //ensuring generation
 	{
-		_heightmap[minX][minZ] = 1;
-		_heightmap[maxX][minZ] = 1;
-		_heightmap[minX][maxZ] = 1;
-		_heightmap[maxX][maxZ] = 1;
+		_heightmap[(minX * _length) + minZ] = 1;
+		_heightmap[(maxX * _length) + minZ] = 1;
+		_heightmap[(minX * _length) + maxZ] = 1;
+		_heightmap[(maxX * _length) + maxZ] = 1;
 	}
 
 	int x = maxX - minX;
@@ -242,13 +212,13 @@ void Terrain::_gen(int minX, int minZ, int maxX, int maxZ, int xMid, int zMid)
 
 	if (x == z) //diamond step
 	{
-		_heightmap[ptX][ptZ] = 1;
+		_heightmap[(ptX * _length) + ptZ] = 1;
 
 		if (x % 2)
 		{
-			_heightmap[ptX - 1][ptZ] = 1;
-			_heightmap[ptX][ptZ - 1] = 1;
-			_heightmap[ptX - 1][ptZ - 1] = 1;
+			_heightmap[((ptX - 1) * _length) + ptZ] = 1;
+			_heightmap[(ptX * _length) + ptZ - 1] = 1;
+			_heightmap[((ptX - 1) * _length) + ptZ - 1] = 1;
 
 			_gen(minX, ptZ, maxX, maxZ, ptX, ptZ);
 			_gen(minX, minZ, maxX, ptZ - 1, ptX - 1, ptZ - 1);
@@ -268,10 +238,10 @@ void Terrain::_gen(int minX, int minZ, int maxX, int maxZ, int xMid, int zMid)
 	{
 		if (zMid == minZ)
 		{
-			_heightmap[ptX][maxZ] = 1;
+			_heightmap[(ptX * _length) + maxZ] = 1;
 			if (x % 2)
 			{
-				_heightmap[ptX - 1][maxZ] = 1;
+				_heightmap[((ptX - 1) * _length) + maxZ] = 1;
 
 				if ((ptX != maxX) && (ptZ != maxZ))
 				{
@@ -290,10 +260,10 @@ void Terrain::_gen(int minX, int minZ, int maxX, int maxZ, int xMid, int zMid)
 		}
 		else
 		{
-			_heightmap[ptX][minZ] = 1;
+			_heightmap[(ptX * _length) + minZ] = 1;
 			if (x % 2)
 			{
-				_heightmap[ptX - 1][minZ] = 1;
+				_heightmap[((ptX - 1) * _length) + minZ] = 1;
 
 				if ((ptX != maxX) && (ptZ != maxZ))
 				{
@@ -315,10 +285,10 @@ void Terrain::_gen(int minX, int minZ, int maxX, int maxZ, int xMid, int zMid)
 	{
 		if (xMid == minX)
 		{
-			_heightmap[maxX][ptZ] = 1;
+			_heightmap[(maxX * _length) + ptZ] = 1;
 			if (z % 2)
 			{
-				_heightmap[maxX][ptZ - 1] = 1;
+				_heightmap[(maxX * _length) + ptZ - 1] = 1;
 
 				if ((ptX != maxX) && (ptZ != maxZ))
 				{
@@ -337,10 +307,10 @@ void Terrain::_gen(int minX, int minZ, int maxX, int maxZ, int xMid, int zMid)
 		}
 		else
 		{
-			_heightmap[minX][ptZ] = 1;
+			_heightmap[(minX * _length) + ptZ] = 1;
 			if (z % 2)
 			{
-				_heightmap[minX][ptZ - 1] = 1;
+				_heightmap[(minX * _length) + ptZ - 1] = 1;
 
 				if ((ptX != minX) && (ptZ != minZ))
 				{
@@ -362,18 +332,15 @@ void Terrain::_gen(int minX, int minZ, int maxX, int maxZ, int xMid, int zMid)
 
 void Terrain::_save()
 {
-	if (_heightmap[0][0] != 0xDEAD) //invalid data
+	if (_heightmap[0] != 0xDEAD) //invalid data
 		return;
 
 }
 
 bool Terrain::_load()
 {
-	if (_heightmap[0][0] != 0xDEAD) //already loaded
+	if ( _heightmap[0] != 0xDEAD) //already loaded
 		return false;
-
-
-
 	return false;
 }
 

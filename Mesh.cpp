@@ -114,7 +114,7 @@ void Mesh::updateVertices(unsigned int offset, unsigned int end, unsigned int in
 		const unsigned int size = _end-offset;
 		const unsigned int vertexSize = _vao.isNor() + _vao.isTex() + _vao.isVec();
 		const unsigned int dataSize = size * vertexSize;
-		glBindBuffer(GL_ARRAY_BUFFER, *_vbo.get());
+		glBindBuffer(GL_ARRAY_BUFFER, *_vbo.get()); //called synchronously?
 
 		vector<float> temp;
 		for (unsigned int i = offset; i < _end; i++)
@@ -293,7 +293,7 @@ Mesh::~Mesh(void)
 void Mesh::VertexArrayObject::createVertexArray()
 {
 	GLuint temp = -1;
-	if ( !_vao.get() || !glIsVertexArray(*(_vao.get())))
+	if ( !_vao.get() || !glIsVertexArray(*_vao))
 	{
 		glGenVertexArrays(1, &temp);
 		*_vao = temp;

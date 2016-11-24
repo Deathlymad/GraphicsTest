@@ -20,9 +20,9 @@ public:
 	class VertexArrayObject //bitset works as long as we stay in 3D space
 	{
 	public:
-		VertexArrayObject() : _vao( nullptr) {}
-		VertexArrayObject( int vec, int tex, int norm) : _vao( nullptr), _bitset( vec | (tex << 2) | (norm << 4) ) {}
-		VertexArrayObject(unsigned char _bitset) : _vao( nullptr), _bitset(_bitset) {}
+		VertexArrayObject() : _vao( new GLuint(-1)) {}
+		VertexArrayObject( int vec, int tex, int norm) : _vao( new GLuint(-1)), _bitset( vec | (tex << 2) | (norm << 4) ) {}
+		VertexArrayObject(unsigned char _bitset) : _vao(new GLuint(-1)), _bitset(_bitset) {}
 
 		void setBitset(unsigned char set) { _bitset = set; }
 		void setBitset(int vec, int tex = 0, int norm = 0) { _bitset = (vec | (tex << 2) | (norm << 4)); }

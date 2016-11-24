@@ -48,5 +48,5 @@ void main()
         }
     }
 
-	gl_FragColor = (difCol + specCol) * texture2D(_tex0, texCoord);
+	gl_FragColor = (difCol + specCol);// * texture2D(_tex0, texCoord);
 }

@@ -117,13 +117,13 @@ void Screen::setupGraphicFunctions()
 	if (initializedGLEW)
 		return;
 
-	LOG << "GLEW" << "start init of GLEW" << "\n";
+	LOG << "start init of GLEW" << "\n";
 	glewExperimental = true; // Needed for core profile
-	LOG << "GLEW" << "using experimental version of GLEW" << "\n";
+	LOG << "using experimental version of GLEW" << "\n";
 	if (glewInit() != GLEW_OK) {
-		LOG << "GLEW" << "Failed to initialize GLEW" << "\n";
+		LOG << "Failed to initialize GLEW" << "\n";
 	}
-	LOG << "GLEW" << "done with GLEW" << "\n";
+	LOG << "done with GLEW" << "\n";
 
 	glGetError(); //catches the Invalid Enum Error that GLEW Throws, not a error but a bug
 	LOG << string("Running Versions: \n") +

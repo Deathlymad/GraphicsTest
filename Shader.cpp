@@ -12,7 +12,7 @@ Shader::Shader() : Code(), program(new GLuint(), deleteGLProgram())
 	Code.clear();
 }
 
-Shader::Shader(string& vertexPath, string& fragPath) : Code(), program(new GLuint(), deleteGLProgram())
+Shader::Shader(string& vertexPath, string& fragPath) : Code(), program(new GLuint( -1), deleteGLProgram())
 {
 	Code.push_back(ShaderCode( this, VERTEX, vertexPath));
 	Code.push_back(ShaderCode( this, FRAGMENT, fragPath));

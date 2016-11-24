@@ -3,7 +3,6 @@
 #include <thread>
 #include <functional>
 
-#include "Clock.h"
 #include "InputHandler.h"
 #include "Util.h"
 

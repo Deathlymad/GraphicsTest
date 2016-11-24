@@ -9,29 +9,25 @@ EngineObject::EngineObject() : children()
 void EngineObject::init( KeyMap& k)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->init( k);
+		children[i]->init( k);
 }
 
 void EngineObject::load(RessourceHandler& loader)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->load(loader);
+		children[i]->load(loader);
 }
 
 void EngineObject::update(ThreadManager& mgr)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->update(mgr);
+		children[i]->update(mgr);
 }
 
 void EngineObject::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->render(s, firstPass);
+		children[i]->render(s, firstPass);
 }
 
 

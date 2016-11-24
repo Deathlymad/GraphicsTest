@@ -10,7 +10,7 @@ class KeyMap;
 class ModelRenderer : public EngineObject
 {
 public:
-	ModelRenderer(Mesh& _mesh);
+	ModelRenderer(Mesh&& _mesh);
 	ModelRenderer( string&, string&);
 
 	virtual void load(RessourceHandler&);
@@ -23,7 +23,7 @@ public:
 protected:
 	ModelRenderer();
 private:
-	Texture* tex;
-	Mesh* mesh;
+	Texture tex;
+	Mesh mesh;
 };
 

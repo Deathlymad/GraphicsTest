@@ -3,7 +3,6 @@
 #include <queue>
 #include <functional>
 
-#include "Clock.h"
 #include "ThreadManager.h"
 #include "Util.h"
 

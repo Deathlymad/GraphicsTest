@@ -76,7 +76,7 @@ void main()
 				specCol = vec4(Light.point.base.color, 1.0) * spec * specularIntensity0;
 			}
 		}
-		color = (difCol + specCol) * texture2D(_tex0, texCoord);
+		color = (difCol + specCol) ;// * texture2D(_tex0, texCoord);
 
 		float attenuation = Light.point.atten.constant + Light.point.atten.linear * distanceToPoint + Light.point.atten.exponent * distanceToPoint * distanceToPoint + 0.0001;
     
