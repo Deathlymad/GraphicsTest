@@ -13,20 +13,15 @@ public:
 	UniformRegistry(const char* str, unsigned int size);
 	UniformRegistry(string& name, unsigned int size);
 
-	void addMemPos(float * data);
-
-	void update(float* data);
-
-	static void registerShaderUniforms(Shader& shader);
-
-	bool localized();
+	void update(float* data, unsigned size);
+	void update(float data);
 
 	UniformRegistry& operator=(const UniformRegistry& other);
 
 	~UniformRegistry();
 private:
 	string _name;
-	vector<float*> MemPos;
+	unique_ptr<float[]> _mem;
 	const unsigned int _size;
 
 	static vector<UniformRegistry*> registryList;

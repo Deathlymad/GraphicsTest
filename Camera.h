@@ -4,7 +4,6 @@
 #include "EngineObject.h"
 #include "InputHandler.h"
 #include "KeyMap.h"
-#include "UniformRegistry.h"
 #include "Util.h"
 
 class RenderingEngine;
@@ -39,13 +38,13 @@ private:
 	vec3 _pos;
 	vec3 forward;
 	vec3 up;
-	UniformRegistry EyePos;
+	const string EyePos;
 	
 	mat4 View;
 	float FoV;
 	float Aspect;
 	mat4 projection;
-	UniformRegistry ViewProjMat;
+	const string ViewProjMat = "";
 	bool _update;
 
 	double XAngle, YAngle;

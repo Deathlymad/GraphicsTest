@@ -31,7 +31,7 @@ void ModelRenderer::init(KeyMap& kr)
 void ModelRenderer::render(Shader& s, RenderingEngine::RenderState)
 {
 	s.bind();
-	tex.bind();
+	tex.bind(s);
 	mesh.Draw();
 }
 

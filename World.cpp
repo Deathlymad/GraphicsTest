@@ -31,7 +31,7 @@ void World::update(ThreadManager& mgr)
 void World::render(Shader& s, RenderingEngine::RenderState state)
 {
 	s.bind();
-	ground.bind();
+	ground.bind( s);
 	for (Terrain& terr : allocator)
 	{
 		if (terr.isInit())
@@ -65,8 +65,10 @@ void World::TerrainForPos(vec2 p, int xO, int zO)
 	  , zOff = (zO - 2) * chunkZ;
 	unsigned pos = getMemPosForTerrain((int)(abs(xOff) / chunkX), (int)(abs(zOff) / chunkZ), xOff < 0, zOff < 0);
 
-	if ( !allocator[pos].isPos(xOff, zOff)) //checks if cache is correct
+	if (!allocator[pos].isPos(xOff, zOff)) //checks if cache is correct
+	{
 		allocator[pos].setPos(chunkX, chunkZ, xOff, zOff, _heightmap.get((((pos & 12) >> 2) * chunkZ), ((pos & 3) * chunkX)));
+	}
 }
 
 void World::setPos(vec2 pos)

@@ -66,19 +66,12 @@ NSP_UTIL_BEG
 			return true;
 			//Fehler abfangen???
 		}
-		bool save(vector<unsigned char>&vec, string filename)
+		bool save(vector<char>&vec, string filename)
 		{
 			ofstream Save(filename.c_str(), ios::binary | ios::trunc);
 			if (Save.good())
 			{
-				char* buffer = new char[vec.size()]; //char Pointer auf die Länge der Datei einstellen
-											   //vec nach buffer kopieren
-				for (unsigned int i = 0; i < vec.size(); i++)
-				{
-					buffer[i] = vec[i];
-				}
-				Save.write(buffer, vec.size()); //Datei schreiben
-				delete[] buffer; //Speicherplatz freigeben
+				Save.write(vec.data(), vec.size()); //Datei schreiben
 				vec.clear();
 			}
 			if (Save.good())

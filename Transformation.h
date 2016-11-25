@@ -1,7 +1,6 @@
 #include <glm\glm.hpp>
 #include "Def.h"
 #include "EngineObject.h"
-#include "UniformRegistry.h"
 
 NSP_GLM
 
@@ -43,7 +42,7 @@ private:
 	vec3 _rotation;
 	vec3 _scale;
 
-	UniformRegistry TransformationMatrix;
+	const string TransformationMatrix;
 
 	unsigned int _ID;
 };

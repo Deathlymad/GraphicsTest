@@ -43,22 +43,20 @@ public: //Public structures
 		Uniform(string& name, unsigned int size) : _name(name), _data(new float[size]), _size(size), pos(-1), enabled(false) {}
 		Uniform(string& name, float*& data, unsigned size) : _name(name), _data(new float[size]), _size(0), pos(-1), enabled(false)
 		{
-			data = _data.get();
+			memcpy(_data.get(), data, size * sizeof(float));
 			_size = size;
 		}
 		Uniform(const Uniform& other) : 
 			enabled(other.enabled),
 			_name(other._name),
 			_size(other._size),
-			pos(other.pos)
+			pos(other.pos),
+			_data(new float[other._size])
 		{
-			float* data = other._data.get();
-			float* alloc = new float[int(sizeof(data) / sizeof(float))];
-			memcpy(alloc, data, sizeof(data));
-			_data.reset(alloc);
+			memcpy(_data.get(), other._data.get(), other._size * sizeof(float));
 		}
 
-		void operator=(const Uniform& other)
+		Uniform& operator=(const Uniform& other)
 			
 		{
 			enabled = other.enabled;
@@ -66,10 +64,10 @@ public: //Public structures
 			_size = other._size;
 			pos = other.pos;
 
-			float* data = other._data.get();
-			float* alloc = new float[int(sizeof(data) / sizeof(float))];
-			memcpy(alloc, data, sizeof(data));
-			_data.reset(alloc);
+			_data.reset(new float[other._size]);
+			memcpy(_data.get(), other._data.get(), other._size * sizeof(float));
+			
+			return *this;
 		}
 
 		void create(GLuint& prgm);
@@ -79,19 +77,28 @@ public: //Public structures
 		void enable() { enabled = true; }
 		void disable() { enabled = false; }
 
-		float* getPtr();
 		string& getName() { return _name; }
 
-		bool operator==(Uniform& other) { return _name == other._name; }
-		bool operator==(string& name) { return _name == name; }
-		bool operator!=(Uniform& other) { return _name != other._name; }
-		bool operator!=(string& name) { return _name != name; }
-		bool operator< (Uniform& other) { return _name.compare(other._name) < 0; }
-		bool operator< (string& name) { return _name.compare(name) < 0; }
-		bool operator> (Uniform& other) { return _name.compare(other._name) > 0; }
-		bool operator> (string& name) { return _name.compare(name) > 0; }
+		bool operator==(const Uniform& other) { return _name == other._name; }
+		bool operator==(const string& name) { return _name == name; }
+		bool operator!=(const Uniform& other) { return _name != other._name; }
+		bool operator!=(const string& name) { return _name != name; }
+		bool operator< (const Uniform& other) { return _name.compare(other._name) < 0; }
+		bool operator< (const string& name) { return _name.compare(name) < 0; }
+		bool operator> (const Uniform& other) { return _name.compare(other._name) > 0; }
+		bool operator> (const string& name) { return _name.compare(name) > 0; }
 
 		static int getUniformSize(string& name);
+
+		void set(float *val)
+		{
+			memcpy(_data.get(),val, _size * sizeof(float));
+		}
+
+		float* getPtr()
+		{
+			return _data.get();
+		}
 
 		~Uniform()
 		{
@@ -164,6 +171,7 @@ public:
 
 	void build();
 	void bind();
+	void setUniform(const string&, float*);
 	void setUniforms();
 
 	//operators
@@ -184,7 +192,7 @@ private:
 
 	//functions
 	string checkProgram();
-	int findUniform(Uniform&, int, int);
-	int findUniform(string&, int, int);
+	int findUniform(const Uniform&, int, int);
+	int findUniform(const string&, int, int);
 };
 

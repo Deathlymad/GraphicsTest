@@ -47,7 +47,7 @@ class RessourceHandler
 public:
 	typedef shared_future<void*> Ressource;
 
-	RessourceHandler(ThreadManager*);
+	explicit RessourceHandler(ThreadManager*);
 
 	Ressource getRessource(string& file, RessourceLoader* loader);
 	
@@ -58,7 +58,7 @@ private:
 	public:
 		struct Entry
 		{
-			Entry(string& s) : _obj(future<void*>()), _name(s), _checksum(-1)
+			explicit Entry(string& s) : _obj(future<void*>()), _name(s), _checksum(-1)
 			{}
 			Entry(string& name, promise<void*>* fut) : _obj(future<void*>()), _name(name), _checksum(-1)
 			{

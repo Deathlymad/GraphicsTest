@@ -123,6 +123,16 @@ void Shader::bind()
 	else
 		LOG << "OpenGL Shader " << err << "\n";
 }
+void Shader::setUniform(const string &name, float* val)
+{
+	unsigned int pos = findUniform(name, 0, Uniforms.size());
+
+	if (pos >= Uniforms.size())
+		return;
+
+	if (Uniforms[pos] == name)
+		Uniforms[pos].set(val);
+}
 void Shader::setUniforms()
 {
 	for (size_t i = 0; i < Uniforms.size(); i++)
@@ -273,7 +283,7 @@ GLenum Shader::ShaderCode::getShaderType(ShaderType shaderType)
 	}
 }
 
-int Shader::findUniform(string& name, int min, int max)
+int Shader::findUniform(const string& name, int min, int max)
 {
 	if (min > max) {
 		return min;
@@ -296,7 +306,7 @@ int Shader::findUniform(string& name, int min, int max)
 		}
 	}
 }
-int Shader::findUniform(Uniform& u, int min, int max)
+int Shader::findUniform(const Uniform& u, int min, int max)
 {
 	if (min > max) {
 		return min;
@@ -396,11 +406,6 @@ void Shader::Uniform::write(GLuint& prgm)
 	default:
 		break;
 	}
-}
-
-float * Shader::Uniform::getPtr()
-{
-	return _data.get();
 }
 
 int Shader::Uniform::getUniformSize(string& name)

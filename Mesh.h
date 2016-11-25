@@ -36,7 +36,7 @@ public:
 		char isNor() { return (_bitset & 48) >> 4; }
 
 		bool valid() {
-			return _vao != nullptr;
+			return *_vao != -1;
 		}
 
 		static unsigned char genBitset(int vec, int tex = 0, int norm = 0) { return (vec | (tex << 2) | (norm << 4)); }

@@ -21,13 +21,13 @@ void Camera::update(ThreadManager& mgr)
 {
 }
 
-void Camera::render(Shader&, RenderingEngine::RenderState firstPass)
+void Camera::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	if (firstPass == RenderingEngine::RenderState::AMBIENT_PASS)
 	{
 		View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
-		ViewProjMat.update(&View[0][0]);
-		EyePos.update(&_pos[0]);
+		s.setUniform(ViewProjMat, &View[0][0]);
+		s.setUniform(EyePos, &_pos[0]);
 	}
 }
 

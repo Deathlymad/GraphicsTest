@@ -90,9 +90,6 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="UniformRegistry.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="RessourceHandler.cpp">
       <Filter>Core\IO</Filter>
     </ClCompile>
@@ -141,9 +138,6 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="UniformRegistry.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="CoreEngine.h">

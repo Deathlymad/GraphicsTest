@@ -32,8 +32,8 @@ void BaseLight::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	if (s == shader)
 	{
-		color.update(value_ptr(_color));
-		intensity.update(&_intensity);
+		s.setUniform(color, value_ptr(_color));
+		s.setUniform(intensity, &_intensity);
 
 		EngineObject::render(s, firstPass);
 		postRender(postShader);
@@ -57,7 +57,7 @@ void DirectionalLight::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	if (s == shader)
 	{
-		normal.update(value_ptr(_normal));
+		s.setUniform(normal, value_ptr(_normal));
 		BaseLight::render(s, firstPass);
 	}
 	else
@@ -83,9 +83,9 @@ void PointLight::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	if (s == shader)
 	{
-		atten.update();
-		range.update(&_range);
-		pos.update(value_ptr(_pos));
+		atten.update(s);
+		s.setUniform(range, &_range);
+		s.setUniform(pos, value_ptr(_pos));
 		BaseLight::render(s, firstPass);
 	}
 	else
@@ -104,8 +104,8 @@ void SpotLight::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	if (s == shader)
 	{
-		direction.update(value_ptr(_direction));
-		cutoff.update(&_cutoff);
+		s.setUniform(direction, value_ptr(_direction));
+		s.setUniform(cutoff, &_cutoff);
 		PointLight::render(s, firstPass);
 	}
 	else

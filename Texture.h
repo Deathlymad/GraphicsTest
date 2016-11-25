@@ -1,6 +1,5 @@
 #include "Util.h"
 #include "Deletors.h"
-#include "UniformRegistry.h"
 #include "RessourceHandler.h"
 #include <fstream>
 
@@ -28,10 +27,10 @@ public:
 	};
 
 	Image();
-	Image(string&);
+	explicit Image(string&);
 	Image(const Image& other);
 
-	void operator=(const Image& other);
+	Image& operator=(const Image& other);
 
 	string getPath() { return path; }
 	void load(ifstream& f);
@@ -76,7 +75,7 @@ public:
 
 	virtual void load(RessourceHandler&);
 	virtual void glDownload();
-	virtual void bind();
+	virtual void bind(Shader&);
 protected:
 
 	unsigned int _samplerID;
@@ -85,7 +84,7 @@ private:
 
 	unique_ptr<GLuint, deleteGLTexture> _ID;
 	static GLuint _lastTexID;
-	UniformRegistry _sampler;
+	const string _sampler;
 	Image _image;
 	RessourceHandler::Ressource _imgLink;
 };
@@ -93,13 +92,13 @@ private:
 class LayeredTexture : public Texture
 {
 public:
-	LayeredTexture(string&);
-	LayeredTexture(vector<string>&);
+	explicit LayeredTexture(string&);
+	explicit LayeredTexture(vector<string>&);
 	~LayeredTexture();
 
 	virtual void load(RessourceHandler&);
 	virtual void glDownload();
-	virtual void bind();
+	virtual void bind(Shader&);
 private:
 	vector<Texture> _samplerList;
 };
@@ -116,5 +115,5 @@ private:
 	unsigned int _countY;
 
 	double _xRatio, _yRatio;
-	UniformRegistry _xUni, _yUni;
+	const string _xUni, _yUni;
 };

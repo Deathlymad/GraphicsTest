@@ -10,7 +10,7 @@ _length(0),
 _depth(0),
 _xOff(0),
 _zOff(0),
-_updateState(0),
+_updateState(-1),
 _heightmap(nullptr)
 {
 }
@@ -18,49 +18,53 @@ _heightmap(nullptr)
 void Terrain::init()
 {
 	lock_guard<mutex> lock(safeguard);
-	if (_updateState & 1)
+	if (_updateState & 1 || _updateState == -1)
 		return;
 
-	unsigned  x, y = 0;
+	unsigned  x = 0, z = 0;
 	unsigned StripLength = _length + 1;
-	vector<Mesh::Vertex> _vec( (_depth + 1) * (StripLength));
-	vector<unsigned int> _ind((_length) * (_depth) * 6);
+
+	_vertices.clear();
+	_vertices.resize((_depth + 1) * StripLength);
+
+	_indices.clear();
+	_indices.resize(_length * _depth * 6);
+
 	unsigned indPos = 0;
-	while (y <= _depth)
+
+	while (x <= _length)
 	{
-		x = 0;
-		while (x <= _length)
+		z = 0;
+		while (z <= _depth)
 		{
-			_vec[(y)*(StripLength)+x] = Vertex(vec3(x + _xOff, 0, y + _zOff), vec2(), vec3());
-			x += 1;
+			_vertices[(x * StripLength)+z] = Vertex(vec3(x + _xOff, 0, z + _zOff), vec2(), vec3());
+			z += 1;
 		}
 
-		if (y > 0)
+		if (x > 0)
 		{
 			unsigned
-				thisStart = y * (StripLength),
-				prevStart = (y - 1) * (StripLength);
+				thisStart = x * StripLength,
+				prevStart = thisStart - StripLength;
 
 			//writes the Strip
-			x = 1;
-			while (x <= _length)
+			z = 1;
+			while (z <= _length)
 			{
-				_ind[indPos] = prevStart + x - 1;
-				_ind[indPos + 1] = prevStart + x;
-				_ind[indPos + 2] = thisStart + x - 1;
+				_indices[indPos] = prevStart + x - 1;
+				_indices[indPos + 1] = prevStart + z;
+				_indices[indPos + 2] = thisStart + z - 1;
 
-				_ind[indPos + 3] = thisStart + x - 1;
-				_ind[indPos + 4] = prevStart + x;
-				_ind[indPos + 5] = thisStart + x;
+				_indices[indPos + 3] = thisStart + z - 1;
+				_indices[indPos + 4] = prevStart + z;
+				_indices[indPos + 5] = thisStart + z;
 				indPos += 6;
-				x += 1;
+				z += 1;
 			}
 		}
-		y += 1;
+		x += 1;
 	}
 
-	_vertices = move(_vec);
-	_indices = move(_ind);
 	_updatePos = -1;
 	Mesh::init();
 
@@ -163,8 +167,7 @@ void Terrain::setPos(int x, int z, int xOff, int zOff, float* heightmap)
 		_heightmap = heightmap;
 		_xOff = xOff;
 		_zOff = zOff;
-		_updateState = heightmap[0] != 0xDEAD;
-		init();
+		_updateState = 0;
 	}
 }
 

@@ -17,34 +17,15 @@ UniformRegistry::UniformRegistry(string& name, unsigned int size) : _name(name),
 	registryList.push_back(this);
 }
 
-void UniformRegistry::addMemPos(float * data)
+void UniformRegistry::update(float* data, unsigned size)
 {
-	MemPos.push_back(data);
+	if ( size == sizeof(_mem.get()))
+		memcpy( _mem.get(), data, size);
 }
 
-void UniformRegistry::update(float* data)
+void UniformRegistry::update(float data)
 {
-	for (float* pos : MemPos)
-		if (pos && data)
-			for (size_t i = 0; i < _size; i++)
-				pos[i] = data[i];
-}
-
-void UniformRegistry::registerShaderUniforms(Shader& shader)
-{
-	for (UniformRegistry* registry : registryList)
-		registry->addMemPos(shader.getUniformMemPos(registry->_name));
-}
-
-bool UniformRegistry::localized() { return !MemPos.empty(); }
-
-UniformRegistry& UniformRegistry::operator=(const UniformRegistry& other)
-{
-	if (other._size != _size)
-		return *this; //can't be copied
-	_name = other._name;
-	MemPos = other.MemPos;
-	return *this;
+	*_mem.get() = data;
 }
 
 UniformRegistry::~UniformRegistry()

@@ -6,22 +6,22 @@
 
 Transformation::Transformation() : EngineObject(), 
 	_translation(0.0f, 0.0f, 0.0f), _rotation(0.0f, 0.0f, 0.0f), _scale(1.0f, 1.0f, 1.0f), _ID(-1), 
-	TransformationMatrix("TransMatrix", 16)
+	TransformationMatrix("TransMatrix")
 {}
 
 Transformation::Transformation(unsigned int ID) : EngineObject(), 
 	_translation(0.0f, 0.0f, 0.0f), _rotation(0.0f, 0.0f, 0.0f), _scale(1.0f, 1.0f, 1.0f), _ID(ID), 
-	TransformationMatrix("TransMatrix" + to_string(ID), 16)
+	TransformationMatrix("TransMatrix" + to_string(ID))
 {}
 
 Transformation::Transformation(vec3 translation, vec3 rotation, vec3 scale) : EngineObject(), 
 	_translation(translation), _rotation(rotation), _scale(scale), _ID(-1), 
-	TransformationMatrix("TransMatrix", 16)
+	TransformationMatrix("TransMatrix")
 {}
 
 Transformation::Transformation(unsigned int ID, vec3 translation, vec3 rotation, vec3 scale) : EngineObject(), 
 	_translation(translation), _rotation(rotation), _scale(scale), _ID(ID), 
-	TransformationMatrix("TransMatrix" + to_string(ID), 16)
+	TransformationMatrix("TransMatrix" + to_string(ID))
 {}
 
 void Transformation::setTranslation(vec3 trans)
@@ -123,7 +123,7 @@ void Transformation::init(KeyMap& s)
 void Transformation::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
 	mat4 mat = getMatrix();
-	TransformationMatrix.update(&mat[0][0]);
+	s.setUniform(TransformationMatrix, &mat[0][0]);
 
 	EngineObject::render(s, firstPass);
 }

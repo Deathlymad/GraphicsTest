@@ -176,7 +176,6 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
     <ClCompile Include="Transformation.cpp" />
-    <ClCompile Include="UniformRegistry.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
@@ -205,7 +204,6 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="Transformation.h" />
-    <ClInclude Include="UniformRegistry.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

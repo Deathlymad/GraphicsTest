@@ -1,11 +1,10 @@
 #include "Shader.h"
-#include "UniformRegistry.h"
 
 #pragma once
 class Material :public EngineObject
 {
 public:
-	Material() : EngineObject(), specularExponent("specularExponent", 1), specularIntensity("specularIntensity", 1)
+	Material() : EngineObject(), specularExponent("specularExponent0", 1), specularIntensity("specularIntensity0", 1)
 	{
 		_specularExponent = 0.0f;
 		_specularIntensity = 0.0f;
@@ -28,16 +27,14 @@ public:
 
 	void render(Shader& s, RenderingEngine::RenderState firstPass)
 	{
-		specularIntensity.update(&_specularIntensity);
-		specularExponent.update(&_specularExponent);
+		s.setUniform(specularIntensity, &_specularIntensity);
+		s.setUniform(specularExponent, &_specularExponent);
 
 		EngineObject::render(s, firstPass);
 	}
 
 	void operator=(Material& m)
 	{
-		specularIntensity = m.specularIntensity;
-		specularExponent = m.specularExponent;
 		_specularIntensity = m._specularIntensity;
 		_specularExponent = m._specularExponent;
 	}
@@ -46,8 +43,8 @@ public:
 
 private:
 	float _specularIntensity;
-	UniformRegistry specularIntensity;
+	const string specularIntensity;
 	float _specularExponent;
-	UniformRegistry specularExponent;
+	const string specularExponent;
 	unsigned int _ID;
 };

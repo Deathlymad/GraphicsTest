@@ -13,7 +13,6 @@
 #include "EngineObject.h"
 #include "Shader.h"
 #include "Def.h"
-#include"UniformRegistry.h"
 
 NSP_STD
 NSP_GLM
@@ -46,9 +45,9 @@ protected:
 	Shader postShader;
 private:
 	vec3 _color;
-	UniformRegistry color;
+	const string color;
 	float _intensity;
-	UniformRegistry intensity;
+	const string intensity;
 };
 
 #pragma once
@@ -75,7 +74,7 @@ public:
 
 private:
 	vec3 _normal;
-	UniformRegistry normal;
+	const string normal;
 };
 
 #pragma once
@@ -88,11 +87,11 @@ public:
 		_linear = l;
 		_exponent = e;
 	}
-	void update()
+	void update(Shader& s)
 	{
-		constant.update(&_constant);
-		linear.update(&_linear);
-		exponent.update(&_exponent);
+		s.setUniform(constant, &_constant);
+		s.setUniform(linear, &_linear);
+		s.setUniform(exponent, &_exponent);
 	}
 
 	float getConstant()
@@ -121,7 +120,7 @@ public:
 	}
 private:
 	float _constant, _linear, _exponent;
-	UniformRegistry constant, linear, exponent;
+	const string constant, linear, exponent;
 };
 
 #pragma once
@@ -158,9 +157,9 @@ private:
 
 	Attenuation atten;
 	vec3 _pos;
-	UniformRegistry pos;
+	const string pos;
 	float _range;
-	UniformRegistry range;
+	const string range;
 };
 
 #pragma once
@@ -178,7 +177,7 @@ public:
 	
 private:
 	vec3 _direction;
-	UniformRegistry direction;
+	const string direction;
 	float _cutoff;
-	UniformRegistry cutoff;
+	const string cutoff;
 };

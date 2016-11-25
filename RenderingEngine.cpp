@@ -23,9 +23,6 @@ void RenderingEngine::load(RessourceHandler& loader)
 void RenderingEngine::init()
 {
 	ambient.build();
-	UniformRegistry::registerShaderUniforms(ambient);
-	for (BaseLight* Light : Lights)
-		UniformRegistry::registerShaderUniforms(Light->getShader());
 }
 
 void RenderingEngine::render(Scene * s)

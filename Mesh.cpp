@@ -15,20 +15,20 @@
 #include "Mesh.h"
 #include <fstream>
 
-Mesh::Mesh() : _vbo( new GLuint, deleteGLBuffer()), _ibo( new GLuint, deleteGLBuffer()), _vao( 3, 2, 3)
+Mesh::Mesh() : _vbo( new GLuint(-1), deleteGLBuffer()), _ibo( new GLuint(-1), deleteGLBuffer()), _vao( 3, 2, 3)
 {
 }
 
-Mesh::Mesh ( string& file) : _vbo(new GLuint, deleteGLBuffer()), _ibo(new GLuint, deleteGLBuffer()), _vao(3), _path(file)
+Mesh::Mesh ( string& file) : _vbo(new GLuint(-1), deleteGLBuffer()), _ibo(new GLuint(-1), deleteGLBuffer()), _vao(3), _path(file)
 {}
 
-Mesh::Mesh( vector<Vertex>& vec, unsigned char bitset) : _vbo(new GLuint, deleteGLBuffer()), _ibo(new GLuint, deleteGLBuffer()), _vao(bitset)
+Mesh::Mesh( vector<Vertex>& vec, unsigned char bitset) : _vbo(new GLuint(-1), deleteGLBuffer()), _ibo(new GLuint(-1), deleteGLBuffer()), _vao(bitset)
 {
 	vector<unsigned int> i = vector<unsigned int>({ 0,1,2,2,1,3 });//2D indices, might need additions later for other sizes
 	_glDownload( vec, i);
 }
 
-Mesh::Mesh( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset) : _vbo(new GLuint, deleteGLBuffer()), _ibo(new GLuint, deleteGLBuffer()), _vao(bitset)
+Mesh::Mesh( vector<Vertex> &vec, vector < unsigned int> &i, unsigned char bitset) : _vbo(new GLuint(-1), deleteGLBuffer()), _ibo(new GLuint(-1), deleteGLBuffer()), _vao(bitset)
 {
 	_glDownload( vec, i);
 }
@@ -230,7 +230,7 @@ void Mesh::_glDownload(vector<Vertex>& v, vector < unsigned int>& i)
 		_vertices = v;
 	if (i != _indices)
 		_indices = i;
-	initGL(!glIsBuffer(*(_vbo.get())) << 1 | !glIsBuffer(*(_ibo.get())));
+	initGL(!glIsBuffer(*_vbo) << 1 | !glIsBuffer(*_ibo));
 
 	if (v.size() == 0)
 		return;
@@ -262,11 +262,11 @@ void Mesh::Draw()
 		return;
 	_vao.bindVertexArray();
 	glBindBuffer(GL_ARRAY_BUFFER, *_vbo);
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *(_ibo.get()));
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, *_ibo);
 
-	glDrawElements(GL_TRIANGLES, _VerticesCount, GL_UNSIGNED_INT, 0);
+	//glDrawElements(GL_TRIANGLES, _VerticesCount, GL_UNSIGNED_INT, 0);
 	//Wireframe Shader
-	//glDrawElements( GL_LINE_STRIP, _VerticesCount, GL_UNSIGNED_INT, 0);  //for debug purposes
+	glDrawElements( GL_LINE_STRIP, _VerticesCount, GL_UNSIGNED_INT, 0);  //for debug purposes
 
 	_vao.disableVAO();
 }

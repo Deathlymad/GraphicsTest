@@ -45,7 +45,8 @@ Image::Image(const Image & other) :
 	_colorTable.reset(d);
 }
 
-void Image::operator=(const Image & other)
+
+Image& Image::operator=(const Image & other)
 {
 	path = other.path;
 	char* d = new char[unsigned(sizeof(other._data) / sizeof(char))];
@@ -66,6 +67,8 @@ void Image::operator=(const Image & other)
 	_colorTable.reset(d);
 
 	_tableSize = other._tableSize;
+
+	return *this;
 }
 
 char* Image::getData()
@@ -256,7 +259,7 @@ void Texture::glDownload()
 
 		if (_image.get() != _imgLink.get())
 		{
-			_image = *((Image*)_imgLink.get());
+			_image = *reinterpret_cast<Image*>(_imgLink.get());
 		}
 
 	}
@@ -264,8 +267,6 @@ void Texture::glDownload()
 	{
 		LOG << e.what();
 	}
-
-	_sampler.update((float*)&_samplerID);
 
 	glActiveTexture(GL_TEXTURE0 + _samplerID);
 	glGenTextures(1, _ID.get());
@@ -284,8 +285,9 @@ void Texture::glDownload()
 	glGenerateMipmap(GL_TEXTURE_2D);
 }
 
-void Texture::bind()
+void Texture::bind(Shader& s)
 {
+	s.setUniform(_sampler, (float*)&_samplerID);
 	if (_lastTexID != *_ID.get())
 	{
 		glBindTexture(GL_TEXTURE_2D, *(_ID.get()));
@@ -320,10 +322,10 @@ void LayeredTexture::glDownload()
 		t.glDownload();
 }
 
-void LayeredTexture::bind()
+void LayeredTexture::bind(Shader& s)
 {
 	for (unsigned int i = 0; i < _samplerList.size(); i++)
-		_samplerList[i].bind();
+		_samplerList[i].bind(s);
 }
 
 TextureAtlas::TextureAtlas(string& file, unsigned int xCount, unsigned int yCount) : LayeredTexture(file), 
