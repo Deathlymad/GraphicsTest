@@ -1,14 +1,15 @@
 #include "Scene.h"
 #include "RenderingEngine.h"
+#include "Screen.h"
 #include <GL\glew.h>
 
 
 Scene::Scene() : _root(), _view()
 {}
 
-void Scene::init(KeyMap& k)
+void Scene::init(Screen& k)
 {
-	_view.registerKeyBinds(k);
+	k.subscribe(_view);
 	_root.init( k);
 }
 

@@ -1,286 +1,206 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Quelldateien">
+    <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Headerdateien">
+    <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Ressourcendateien">
+    <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Ressourcendateien\Assets">
-      <UniqueIdentifier>{36e03b0c-fe6d-490c-8542-ae36e5969ea7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Ressourcendateien\Assets\Shaders">
-      <UniqueIdentifier>{b6225adc-e0dc-4cee-a8ca-92dffa6fa47d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Ressourcendateien\World">
-      <UniqueIdentifier>{688e69c0-6d86-49ea-900a-393154bcf1c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TestGame">
-      <UniqueIdentifier>{fe85f8b7-29fa-434f-8bc0-c34f8f2556ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Graphics">
-      <UniqueIdentifier>{22421b31-23df-4d21-9b42-da409cb8d901}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{ad5ee55d-b56c-4a67-a038-8175d5990c56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\IO">
-      <UniqueIdentifier>{47aea068-ee91-4388-a0a1-38b0388b57ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Graphics\UI">
-      <UniqueIdentifier>{93398a99-2f28-4a6d-9093-120a610161ae}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestGame.cpp">
-      <Filter>TestGame</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Screen.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderingEngine.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelRenderer.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CoreEngine.cpp">
-      <Filter>Core</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EngineObject.cpp">
-      <Filter>Core</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
-      <Filter>Core</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InputHandler.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyMap.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Transformation.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Util.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="RessourceHandler.cpp">
-      <Filter>Core\IO</Filter>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Log.cpp">
-      <Filter>Core\IO</Filter>
-    </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>TestGame</Filter>
-    </ClCompile>
-    <ClCompile Include="World.cpp">
-      <Filter>TestGame</Filter>
-    </ClCompile>
-    <ClCompile Include="ThreadManager.cpp">
-      <Filter>Core</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>TestGame</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderingEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RessourceHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Screen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transformation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestGame.h">
-      <Filter>TestGame</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Screen.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderingEngine.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelRenderer.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Graphics</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CoreEngine.h">
-      <Filter>Core</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Def.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineObject.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="ExclusiveObject.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="InputHandler.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyMap.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Transformation.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Util.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="RessourceHandler.h">
-      <Filter>Core\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>Core\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="Terrain.h">
-      <Filter>TestGame</Filter>
-    </ClInclude>
-    <ClInclude Include="World.h">
-      <Filter>TestGame</Filter>
-    </ClInclude>
-    <ClInclude Include="ThreadManager.h">
-      <Filter>Core</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Deletors.h">
-      <Filter>Graphics</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExclusiveObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RessourceHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Screen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transformation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenCallbacks.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="To Do.txt">
-      <Filter>Ressourcendateien</Filter>
-    </Text>
-    <Text Include="World\Death.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Dual Player System.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Elements &amp; Alchemy.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Gender.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Leben.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Magic.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Magomechanics.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Rassen.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Religion.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Skills.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Spell Casting.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\World, Space &amp; Time.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="World\Storylines.txt">
-      <Filter>Ressourcendateien\World</Filter>
-    </Text>
-    <Text Include="newGen.txt">
-      <Filter>Ressourcendateien</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="assets\shaders\forward_ambient_dl_fs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
     <None Include="assets\shaders\forward_ambient_fs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+      <Filter>Resource Files</Filter>
     </None>
     <None Include="assets\shaders\forward_ambient_vs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\forward_directional_fs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\forward_directional_vs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\forward_point_fs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\forward_point_vs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\forward_spot_fs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\forward_spot_vs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\UIRender_fs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\UIRender_vs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\UIRender_text_vs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\forward_ambient_dl_fs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+      <Filter>Resource Files</Filter>
     </None>
     <None Include="assets\shaders\forward_directional_dl_fs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\forward_directional_fs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\forward_directional_vs.glsl">
+      <Filter>Resource Files</Filter>
     </None>
     <None Include="assets\shaders\forward_point_dl_fs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\forward_point_fs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\forward_point_vs.glsl">
+      <Filter>Resource Files</Filter>
     </None>
     <None Include="assets\shaders\forward_spot_dl_fs.glsl">
-      <Filter>Ressourcendateien\Assets\Shaders</Filter>
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\forward_spot_fs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\forward_spot_vs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\UIRender_fs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\UIRender_text_vs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\UIRender_vs.glsl">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>

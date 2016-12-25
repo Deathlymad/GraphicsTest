@@ -1,7 +1,7 @@
 #include <GL\glew.h>
 
 #pragma once
-struct deleteGLBuffer
+struct deleteGLBuffer //needs Size
 {
 	deleteGLBuffer() {}
 	void operator()(GLuint* buf) const
@@ -24,8 +24,12 @@ struct deleteGLShader
 	deleteGLShader() {}
 	void operator()(GLuint* s) const
 	{
-		if (glIsShader(*s))
-			glDeleteShader(*s);
+		if (s == nullptr)
+			return;
+		else if (*s != -1)
+			if (glIsShader(*s))
+				glDeleteShader(*s);
+		delete s;
 	}
 };
 struct deleteGLProgram
@@ -37,7 +41,7 @@ struct deleteGLProgram
 			glDeleteProgram(*prgm);
 	}
 };
-struct deleteGLTexture
+struct deleteGLTexture //needs Size
 {
 	deleteGLTexture() {}
 	void operator()(GLuint* tex) const

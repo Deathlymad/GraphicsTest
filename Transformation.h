@@ -26,7 +26,7 @@ public:
 	void scale(vec3);
 
 
-	void init(KeyMap&);
+	void init(Screen&);
 	void update(ThreadManager& mgr) { EngineObject::update(mgr); }
 	void render(Shader&, RenderingEngine::RenderState);
 

@@ -1,7 +1,6 @@
 #include <vector>
 #include "CoreEngine.h"
 #include "Scene.h"
-#include "KeyMap.h"
 #include "Screen.h"
 
 #pragma once
@@ -23,8 +22,6 @@ public:
 
 	void load() { _engine.load(); }
 
-	KeyMap& addKeyMap();
-
 	~Game();
 private: //context
 	Screen _screen;
@@ -35,8 +32,6 @@ protected:
 	CoreEngine* getEngine() { return &_engine; }
 private:
 	Scene _world;
-
-	vector<KeyMap> KeyMaps;
 
 	bool running;
 };

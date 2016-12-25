@@ -115,7 +115,7 @@ mat4 Transformation::getMatrix()
 	return trans*rot*scale;
 }
 
-void Transformation::init(KeyMap& s)
+void Transformation::init(Screen& s)
 {
 	EngineObject::init(s);
 }

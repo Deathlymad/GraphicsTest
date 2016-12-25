@@ -1,12 +1,11 @@
 #include "EngineObject.h"
 #include "RenderingEngine.h"
-#include "KeyMap.h"
 
 
 EngineObject::EngineObject() : children()
 {}
 
-void EngineObject::init( KeyMap& k)
+void EngineObject::init( Screen& k)
 {
 	for (unsigned int i = 0; i < children.size(); i++)
 		children[i]->init( k);

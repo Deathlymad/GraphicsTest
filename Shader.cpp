@@ -12,10 +12,10 @@ Shader::Shader() : Code(), program(new GLuint(), deleteGLProgram())
 	Code.clear();
 }
 
-Shader::Shader(string& vertexPath, string& fragPath) : Code(), program(new GLuint( -1), deleteGLProgram())
+Shader::Shader(string& vertexPath, string& fragPath) : Code(), program(new GLuint(-1), deleteGLProgram())
 {
-	Code.push_back(ShaderCode( this, VERTEX, vertexPath));
-	Code.push_back(ShaderCode( this, FRAGMENT, fragPath));
+	Code.push_back(move(ShaderCode( this, VERTEX, vertexPath)));
+	Code.push_back(move(ShaderCode( this, FRAGMENT, fragPath)));
 }
 
 Shader::~Shader(){}
@@ -34,7 +34,6 @@ float* Shader::getUniformMemPos(string name)
 
 	if (Uniforms[pos] == name)
 	{
-		Uniforms[pos].enable();
 		return Uniforms[pos].getPtr();
 	}
 	return nullptr;
@@ -113,7 +112,7 @@ void Shader::build()
 }
 void Shader::bind()
 {
-	string err = checkProgram();
+	string err = checkProgram(); //move check to when shader changed
 
 	if (err == "")
 	{
@@ -235,6 +234,7 @@ Shader::ShaderCode& Shader::ShaderCode::operator=(const Shader::ShaderCode & oth
 	_type = other._type;
 	_path = other._path;
 	uniforms = other.uniforms;
+	_pos = unique_ptr<GLuint, deleteGLShader>(new GLuint(-1), deleteGLShader());
 	return *this; 
 }
 
@@ -369,8 +369,6 @@ vector<string> Shader::ShaderCode::resolveStructVariable(string& name)
 
 void Shader::Uniform::create( GLuint& prgm)
 {
-	if (!enabled)
-		return;
 	pos = glGetUniformLocation(prgm, _name.c_str());
 	if (pos == -1)
 		LOG << "couldn't Resolve Uniform: " << _name << "\n";

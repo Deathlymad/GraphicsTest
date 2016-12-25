@@ -3,16 +3,14 @@
 #include "RenderingEngine.h"
 
 
-Game::Game() : _screen(1366, 768, string("Test"), char(154)), _engine(&_screen, this), _world()
+Game::Game() : _screen(800, 600, string("Test"), char(154)), _engine(&_screen, this), _world()
 {
-	_screen.handleWindow(InputHandler::registerCallbacks);
-	KeyMaps.push_back(KeyMap(&_screen));
 	running = false;
 }
 
 void Game::Start()
 {
-	_world.init(KeyMaps[0]);
+	_world.init(_screen);
 	_engine.start();
 	running = true;
 	Run();
@@ -25,7 +23,6 @@ void Game::Run()
 	{
 		running = !_screen.isScreenClosed();
 		_engine.getGraphicEngine()->render(&_world);
-		for (KeyMap& k : KeyMaps) k.updateKeyMap(); //pulls Key updates if button is pressed
 		auto passedTime = duration_cast<chrono::milliseconds>(system_clock::now() - lastTick);
 		if (passedTime.count() < 16)
 			this_thread::sleep_for(milliseconds(16) - passedTime);
@@ -50,14 +47,6 @@ void Game::load(RessourceHandler& loader)
 void Game::update(ThreadManager& mgr)
 {
 	_world.update( mgr);
-	KeyMaps[0].updateKeyMap();
-}
-
-KeyMap & Game::addKeyMap()
-{
-	unsigned int temp = KeyMaps.size();
-	KeyMaps.insert( KeyMaps.begin() + temp, KeyMap());
-	return KeyMaps[temp];
 }
 
 Game::~Game()

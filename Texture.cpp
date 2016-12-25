@@ -212,7 +212,7 @@ Image::ImageType Image::getFileImageType(ifstream& file)
 	return BMP;
 }
 
-Texture::Texture(string& path, unsigned int samplerID) : _image(path), _samplerID(samplerID), _ID(new GLuint, deleteGLTexture()), _sampler("_tex" + std::to_string(_samplerID), 1)
+Texture::Texture(string& path, unsigned int samplerID) : _image(path), _samplerID(samplerID), _ID(new GLuint, deleteGLTexture()), _sampler("_tex" + std::to_string(_samplerID))
 {
 }
 
@@ -225,7 +225,7 @@ Texture::Texture(Texture&& other) :
 	_ID = move(other._ID);
 }
 
-Texture::Texture() : _image(), _samplerID(0), _ID( new GLuint, deleteGLTexture()), _sampler("_tex" + std::to_string(_samplerID), 1)
+Texture::Texture() : _image(), _samplerID(0), _ID( new GLuint, deleteGLTexture()), _sampler("_tex" + std::to_string(_samplerID))
 {
 }
 

@@ -1,6 +1,5 @@
 #include "TestGame.h"
 #include "Def.h"
-#include "UIPart.h"
 
 NSP_GLM
 

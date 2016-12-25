@@ -2,19 +2,19 @@
 
 #pragma once
 #include "EngineObject.h"
-#include "InputHandler.h"
-#include "KeyMap.h"
 #include "Util.h"
+#include "ScreenCallbacks.h"
 
 class RenderingEngine;
 class Shader;
+class Screen;
 
 NSP_UTIL
 NSP_GLM
 
 class Camera :
-	public InputHandler,
-	public EngineObject
+	public EngineObject,
+	public KeyCallback
 {
 public:
 	Camera();
@@ -27,13 +27,12 @@ public:
 
 	vec3 getPos() { return _pos; }
 
-	void registerKeyBinds(KeyMap&);
 	void onMouseMove(double x, double y); //move, cameras need to be static too
 
 	~Camera();
 protected:
 private:
-	void move(unsigned short key);
+	void onCallback(char button, char action, char mods);
 
 	vec3 _pos;
 	vec3 forward;
@@ -44,7 +43,7 @@ private:
 	float FoV;
 	float Aspect;
 	mat4 projection;
-	const string ViewProjMat = "";
+	const string ViewProjMat;
 	bool _update;
 
 	double XAngle, YAngle;

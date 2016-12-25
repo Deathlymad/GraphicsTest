@@ -214,6 +214,8 @@ ModelManifest.xml
 *.opendb
 /GraphicsTest.VC.db
 /Log.txt
-/assets/mesh/untitled.blend
+/assets/mesh/
+/assets/textures/
+/old/
 *.mtl
 /scan.xml

@@ -23,10 +23,8 @@ class RenderingEngine;
 class BaseLight :public EngineObject
 {
 public:
-	BaseLight( vec3 c, float i, string& name = string("Light"));
-	
 	virtual void load(RessourceHandler& loader);
-	virtual void init(KeyMap&);
+	virtual void init(Screen&);
 
 	float getIntensity() { return _intensity; }
 	vec3 getColor() { return _color; }
@@ -41,6 +39,8 @@ public:
 	
 	Shader& getShader(){return shader;}
 protected:
+	BaseLight(vec3 c, float i, string& shaderName, string& name = string("Light"));
+
 	Shader shader;
 	Shader postShader;
 private:
@@ -54,7 +54,7 @@ private:
 class DirectionalLight  : public BaseLight
 {
 public:
-	DirectionalLight( vec3 c, float i, vec3 dir, string& name = string("Light"));
+	DirectionalLight( vec3 c, float i, vec3 dir, string& name = string("Light"), string& shaderName = string("forward_directional"));
 
 	virtual void render(Shader&, RenderingEngine::RenderState);
 
@@ -127,8 +127,8 @@ private:
 class PointLight : public BaseLight
 {
 public:
-	PointLight( vec3 c, float i,Attenuation& a, vec3 p, string& name = string("Light"));
-	PointLight(vec3 c, float i, float ex, float lin, float con, vec3 p, string& name = string("Light"));
+	PointLight( vec3 c, float i,Attenuation& a, vec3 p, string& name = string("Light"), string& shaderName = string("forward_point"));
+	PointLight(vec3 c, float i, float ex, float lin, float con, vec3 p, string& name = string("Light"), string& shaderName = string("forward_point"));
 	
 	virtual void render(Shader&, RenderingEngine::RenderState);
 
@@ -166,7 +166,7 @@ private:
 class SpotLight : public PointLight
 {
 public:
-	SpotLight( vec3 c, float i, float ex, float lin, float con, vec3 p, vec3 dir, float cut, string& name = string("Light"));
+	SpotLight( vec3 c, float i, float ex, float lin, float con, vec3 p, vec3 dir, float cut, string& name = string("Light"), string& shaderName = string("forward_spot"));
 	
 	virtual void render(Shader&, RenderingEngine::RenderState);
 

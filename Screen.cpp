@@ -25,7 +25,6 @@
 #include "Log.h"
 
 bool Screen::initializedGLFW = false;
-vector<Screen*> Screen::_winPtr;
 
 void Screen::initGraphicContexCreation()
 {
@@ -55,37 +54,6 @@ GLFWmonitor* Screen::getMonitor(unsigned short monitorID)
 		return nullptr; //actually uses the default screen in Fullscreen mode
 }
 
-unsigned int Screen::getPtr(GLFWwindow * key, unsigned int min, unsigned int max)
-{
-	if (min > max) {
-		return min;
-	}
-	else if (_winPtr.size() == 0)
-		return 0;
-	else {
-		unsigned int mid = (min + max) / 2;
-		if (mid >= _winPtr.size())
-			return _winPtr.size();
-		int comp = int(_winPtr[mid]->_winHandle) - int(key);
-		if (comp == 0) {
-			return mid;
-		}
-		else if (comp < 0) {
-			return getPtr(key, mid + 1, max);
-		}
-		else {
-			return getPtr(key, min, mid - 1);
-		}
-	}
-}
-
-void Screen::onWindowResize(GLFWwindow * win, int width, int height)
-{
-	Screen* s = _winPtr[getPtr(win, 0, _winPtr.size() - 1)];
-	s->_width = width;
-	s->_height = height;
-}
-
 void Screen::createWindow(int width, int height, string title, char flags)
 {
 	if (flags == 0)
@@ -103,12 +71,18 @@ void Screen::createWindow(int width, int height, string title, char flags)
 		return;
 
 	LOG << "Created Window" << "\n";
-	
+	//configure Window
 	glfwSetInputMode(_winHandle, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetInputMode(_winHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetWindowSizeCallback(_winHandle, onWindowResize);
-	_winPtr.insert(_winPtr.begin() + getPtr(_winHandle, 0, _winPtr.size() - 1), this);
-
+	glfwSetWindowUserPointer(_winHandle, this);
+	//register Callbacks
+	glfwSetWindowSizeCallback(_winHandle, windowResize);
+	glfwSetKeyCallback(_winHandle, keyCallback);
+	glfwSetCursorPosCallback(_winHandle, cursorPosCallback);
+	glfwSetMouseButtonCallback(_winHandle, mouseButtonCallback);
+	glfwSetScrollCallback(_winHandle, mouseScrollCallback);
+	
+	//set window as current
 	glfwMakeContextCurrent(_winHandle);
 }
 
@@ -138,7 +112,7 @@ void Screen::setupGraphicFunctions()
 	initializedGLEW = true;
 }
 
-Screen::Screen(string& title)
+Screen::Screen(string& title) : _width(0), _height(0), initializedGLEW(false), oldMouseX(0), oldMouseY(0)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
@@ -149,7 +123,7 @@ Screen::Screen(string& title)
 	setupGraphicFunctions();
 }
 
-Screen::Screen(int width, int height, string& title)
+Screen::Screen(int width, int height, string& title) : _width(width), _height(height), initializedGLEW(false), oldMouseX(0), oldMouseY(0)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
@@ -161,7 +135,7 @@ Screen::Screen(int width, int height, string& title)
 	setupGraphicFunctions();
 }
 
-Screen::Screen(string& title, char flags)
+Screen::Screen(string& title, char flags) : _width(0), _height(0), initializedGLEW(false), oldMouseX(0), oldMouseY(0)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
@@ -172,14 +146,12 @@ Screen::Screen(string& title, char flags)
 	setupGraphicFunctions();
 }
 
-Screen::Screen(int width, int height, string& title, char flags)
+Screen::Screen(int width, int height, string& title, char flags) : _width(width), _height(height), initializedGLEW(false), oldMouseX(0), oldMouseY(0)
 {
 	if (!initializedGLFW)
 		initGraphicContexCreation();
 
 	createWindow(width, height, title, flags);
-	_width = width;
-	_height = height;
 
 	setupGraphicFunctions();
 }
@@ -216,10 +188,99 @@ bool Screen::isFocused()
 	return glfwGetWindowAttrib(_winHandle, GLFW_FOCUSED) != 0;
 }
 
+//Event Handling
+
+void Screen::subscribe(ResizeCallback &callback)
+{
+	_resizeSubscribers.push_back(callback);
+}
+void Screen::subscribe(KeyCallback &callback)
+{
+	_KeySubscribers.push_back(callback);
+}
+void Screen::subscribe(MouseMoveCallback &callback)
+{
+	_MouseMoveSubscribers.push_back(callback);
+}
+void Screen::subscribe(MouseButtonCallback &callback)
+{
+	_ClickSubscribers.push_back(callback);
+}
+void Screen::subscribe(ScrollCallback &callback)
+{
+	_ScrollSubscribers.push_back(callback);
+}
+
+
+void Screen::onResize(int width, int height)
+{
+	_width = width;
+	_height = height;
+
+	for (ResizeCallback callback : _resizeSubscribers)
+		callback( width, height);
+}
+
+void Screen::onKeyChange(char button, char action, char mods)
+{
+	for (KeyCallback callback : _KeySubscribers)
+		callback(button, action, mods);
+}
+void Screen::onMouseMove(double x, double y)
+{
+	double changeX = oldMouseX - x;
+	double changeY = oldMouseY - y;
+	oldMouseX = x;
+	oldMouseY = y;
+
+	for (MouseMoveCallback callback : _MouseMoveSubscribers)
+		callback(changeX, changeY, x, y);
+}
+void Screen::onMouseClick(char button, char action, char mods)
+{
+	for (MouseButtonCallback callback : _ClickSubscribers)
+		callback(button, action, mods);
+}
+void Screen::onMouseScroll(double x, double y)
+{
+	for (ScrollCallback callback : _ScrollSubscribers)
+		callback( x, y);
+}
+
+
+
 Screen::~Screen()
 {
-	if (!_winPtr.empty())
-		_winPtr.erase(_winPtr.begin() + getPtr(_winHandle, 0, _winPtr.size() - 1));
 	if (glfwGetCurrentContext() == _winHandle)
 		glfwDestroyWindow(_winHandle);
+}
+
+
+//GLFW Callbacks
+
+void Screen::windowResize(GLFWwindow* win, int width, int height)
+{
+	Screen* handler = (Screen*)glfwGetWindowUserPointer(win);
+	handler->onResize(width, height);
+}
+
+void Screen::keyCallback(GLFWwindow* win, int key, int scancode, int action, int mods)
+{
+	Screen* handler = (Screen*)glfwGetWindowUserPointer(win);
+	handler->onKeyChange(key, action, mods);
+}
+void Screen::cursorPosCallback(GLFWwindow* win, double xpos, double ypos)
+{
+	Screen* handler = (Screen*)glfwGetWindowUserPointer(win);
+	handler->onMouseMove(xpos, ypos);
+}
+void Screen::mouseButtonCallback(GLFWwindow* win, int button, int action, int mods)
+{
+	Screen* handler = (Screen*)glfwGetWindowUserPointer(win);
+	handler->onMouseClick(button, action, mods);
+}
+void Screen::mouseScrollCallback(GLFWwindow* win, double xOffset, double yOffset)
+{
+	Screen* handler = (Screen*)glfwGetWindowUserPointer(win);
+	handler->onMouseScroll(xOffset, yOffset);
 }

@@ -39,15 +39,14 @@ public: //Public structures
 	{
 	public:
 
-		Uniform() : _name("emptyUniform"), _data(nullptr), _size(0), pos(-1), enabled(false) {}
-		Uniform(string& name, unsigned int size) : _name(name), _data(new float[size]), _size(size), pos(-1), enabled(false) {}
-		Uniform(string& name, float*& data, unsigned size) : _name(name), _data(new float[size]), _size(0), pos(-1), enabled(false)
+		Uniform() : _name("emptyUniform"), _data(nullptr), _size(0), pos(-1) {}
+		Uniform(string& name, unsigned int size) : _name(name), _data(new float[size]), _size(size), pos(-1) {}
+		Uniform(string& name, float*& data, unsigned size) : _name(name), _data(new float[size]), _size(0), pos(-1)
 		{
 			memcpy(_data.get(), data, size * sizeof(float));
 			_size = size;
 		}
 		Uniform(const Uniform& other) : 
-			enabled(other.enabled),
 			_name(other._name),
 			_size(other._size),
 			pos(other.pos),
@@ -57,9 +56,7 @@ public: //Public structures
 		}
 
 		Uniform& operator=(const Uniform& other)
-			
 		{
-			enabled = other.enabled;
 			_name = other._name;
 			_size = other._size;
 			pos = other.pos;
@@ -73,9 +70,6 @@ public: //Public structures
 		void create(GLuint& prgm);
 		void copy(Uniform& other);
 		void write(GLuint& other);
-
-		void enable() { enabled = true; }
-		void disable() { enabled = false; }
 
 		string& getName() { return _name; }
 
@@ -106,7 +100,6 @@ public: //Public structures
 		}
 
 	private:
-		bool enabled;
 		string _name;
 		unique_ptr<float[]> _data;
 		unsigned _size;
@@ -133,7 +126,7 @@ public: //Public structures
 			_owner(other._owner),
 			_loadingErr(other._loadingErr),
 			uniforms(other.uniforms), 
-			_pos(new GLuint(), deleteGLShader())
+			_pos(new GLuint(-1), deleteGLShader())
 		{
 		}
 

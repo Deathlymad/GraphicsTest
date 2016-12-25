@@ -8,8 +8,8 @@ NSP_GLM
 Terrain::Terrain() : Mesh(),
 _length(0),
 _depth(0),
-_xOff(0),
-_zOff(0),
+_xOff(-1),
+_zOff(-1),
 _updateState(-1),
 _heightmap(nullptr)
 {
@@ -51,13 +51,13 @@ void Terrain::init()
 			z = 1;
 			while (z <= _length)
 			{
-				_indices[indPos] = prevStart + x - 1;
+				_indices[indPos] = prevStart + z - 1;
 				_indices[indPos + 1] = prevStart + z;
 				_indices[indPos + 2] = thisStart + z - 1;
 
-				_indices[indPos + 3] = thisStart + z - 1;
+				_indices[indPos + 3] = thisStart + z;
 				_indices[indPos + 4] = prevStart + z;
-				_indices[indPos + 5] = thisStart + z;
+				_indices[indPos + 5] = thisStart + z - 1;
 				indPos += 6;
 				z += 1;
 			}
@@ -84,10 +84,11 @@ void Terrain::update(ThreadManager& mgr)
 			_gen( 0, 0, _length, _depth, 0, 0);
 			_save();
 		}
+		LOG << "Created Hightmap for " + to_string(_xOff) + ":" + to_string(_zOff) + "/n";
 		_updateState |= 2;
 	}
 	else if ((_updateState & 2) && !(_updateState & 4)) //generate Normal Data
-	{
+	{/*
 		_unVec = vector<Mesh::unnormalizedVertex>(_vertices.size()); //move to init phase
 		copy(_vertices.begin(), _vertices.end(), _unVec.begin());
 		for (unsigned i = 0; i < unsigned(_indices.size() / 3); i++) //generating Normal Data
@@ -102,14 +103,15 @@ void Terrain::update(ThreadManager& mgr)
 			_unVec[_indices[ind + 1]]._nor.push_back(c);
 			_unVec[_indices[ind + 2]]._nor.push_back(c);
 
-		}
+		}*/
+		LOG << "Created Normals for " + to_string(_xOff) + ":" + to_string(_zOff) + "/n";
 		_updateState |= 4;
 	}
 	else if ( (_updateState & 4) && !(_updateState & 8)) //update Data
 	{
 		vec3 StartPos = _vertices[0].getPos();
 		for (unsigned i = 0; i < _unVec.size(); i++) //normalize the normals
-		{
+		{/*
 			vector<vec3> normals;
 			for (vec3 n :_unVec[i]._nor)
 				if (!(find(normals.begin(), normals.end(), n) != normals.end())) //every point is just registered once
@@ -117,28 +119,28 @@ void Terrain::update(ThreadManager& mgr)
 			vec3 nor = vec3(0, 0, 0);
 			for (vec3 n : normals)
 				nor += n;
-			/*
+			*/
 			vec3 pos = _vertices[i].getPos();
 			unsigned x, z;
 			getVecPos(pos, x, z);
-			pos.y = _heightmap[x][z];
+			pos.y = _heightmap[x * _length + z];
 			
-			_vertices[i].setPos(pos);*/
+			_vertices[i].setPos(pos);
 			_vertices[i].setTexCoord(vec2(
 				((float)rand() / (RAND_MAX)),
 				((float)rand() / (RAND_MAX))
 			));
-			_vertices[i].setNormal(normalize(nor));
-			
+			//_vertices[i].setNormal(normalize(nor));
+
 		}
+		LOG << "Wrote extra Data for " + to_string(_xOff) + ":" + to_string(_zOff) + "/n";
 		_updateState |= 8;
 	}
 }
 
 void Terrain::Draw()
 {
-	
-	if (_updatePos == -1 && _updateState & 8)
+	if (_updatePos == -1 && _updateState & 4)
 	{
 		_updatePos = 0;
 	}
@@ -173,7 +175,7 @@ void Terrain::setPos(int x, int z, int xOff, int zOff, float* heightmap)
 
 bool Terrain::isPos(int xOff, int zOff)
 {
-	return xOff == _xOff && zOff == _zOff;
+	return (xOff == _xOff) && (zOff == _zOff);
 }
 
 Terrain::~Terrain()
@@ -349,8 +351,8 @@ bool Terrain::_load()
 
 void Terrain::getVecPos(vec3 & pos, unsigned & x, unsigned & z)
 {
-	int X = (int)floorf(pos.x);
-	int Z = (int)floorf(pos.z);
+	unsigned X = pos.x;
+	unsigned Z = pos.z;
 	int originX = X - (X % _length);
 	int originZ = Z - (Z % _depth);
 	x = X - originX;

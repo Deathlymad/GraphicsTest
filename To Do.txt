@@ -2,7 +2,7 @@ Short Term:
 
 completely disable threads if there is no workload, globalize work pool
 Dynamic Ressource reloading
-fast noise / checksum generation
+fast noise
 recreate UI using View Plane
 move Text from UI class
 read PNG

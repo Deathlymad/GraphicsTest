@@ -6,7 +6,7 @@
 float Camera::speed = 0.05f;
 vec3 Camera::YAxis = vec3(0.0f, 1.0f, 0.0f);
 
-Camera::Camera() : InputHandler(), EngineObject(), ViewProjMat("ViewProj", 16), EyePos("EyePos", 3)
+Camera::Camera() : KeyCallback(), EngineObject(), ViewProjMat("ViewProj"), EyePos("EyePos")
 {
 	_pos = vec3(0, 0, 0);
 	forward = vec3(0, 0, -1);
@@ -23,12 +23,9 @@ void Camera::update(ThreadManager& mgr)
 
 void Camera::render(Shader& s, RenderingEngine::RenderState firstPass)
 {
-	if (firstPass == RenderingEngine::RenderState::AMBIENT_PASS)
-	{
-		View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
-		s.setUniform(ViewProjMat, &View[0][0]);
-		s.setUniform(EyePos, &_pos[0]);
-	}
+	View = projection * lookAt(_pos, _pos + normalize(forward), normalize(up));
+	s.setUniform(ViewProjMat, &View[0][0]);
+	s.setUniform(EyePos, &_pos[0]);
 }
 
 void Camera::setFoV(float fov)
@@ -41,14 +38,6 @@ void Camera::setAspect(float aspect)
 {
 	Aspect = aspect;
 	projection = perspective(FoV, Aspect, 0.1f, 100.0f);
-}
-
-void Camera::registerKeyBinds(KeyMap& k)
-{
-	k.addKeyBind(87, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Move Forward", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//W
-	k.addKeyBind(83, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Move Backward", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//S
-	k.addKeyBind(65, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Strafe Left", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//A
-	k.addKeyBind(68, [this](unsigned short key, KeyMap::KeyState) { move(key); }, "Strafe Right", KeyMap::KeyState::ONHOLD | KeyMap::KeyState::ONPRESS);//D
 }
 
 Camera::~Camera()
@@ -72,9 +61,9 @@ void Camera::onMouseMove(double dY, double dX)
 	up = normalize(cross(forward, HorizontalAxis));
 }
 
-void Camera::move(unsigned short key)
+void Camera::onCallback(char button, char action, char mods)
 {
-	switch (key)
+	switch (button)
 	{
 	case 65:
 		_pos += normalize(cross(up, forward)) * speed;

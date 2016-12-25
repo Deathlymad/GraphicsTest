@@ -3,7 +3,6 @@
 #include "Screen.h"
 #include "Scene.h"
 #include "Texture.h"
-#include "UI.h"
 #include "Light.h"
 #include "RessourceHandler.h"
 
@@ -32,10 +31,10 @@ void RenderingEngine::render(Scene * s)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	glEnable(GL_BLEND);  //setting up Multipassing
-	glBlendFunc(GL_ONE, GL_ONE);
+	//glEnable(GL_BLEND);  //setting up Multipassing
+	//glBlendFunc(GL_ONE, GL_ONE);
 	s->render(ambient, RenderState::AMBIENT_PASS);
-	
+	/*
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_EQUAL);
 
@@ -45,7 +44,7 @@ void RenderingEngine::render(Scene * s)
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND); //resetting to standard State
-	
+	*/
 	_screen->updateScreen();
 }
 
@@ -67,9 +66,9 @@ void RenderingEngine::setup3DEngineState()
 {
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-	glFrontFace(GL_CW); //defines the Front face having counterclockwise vertices for culling
-	glCullFace(GL_BACK); //Deletes the Backface
-	glEnable(GL_CULL_FACE); //Enables Backfaceculling
+	//glFrontFace(GL_CW); //defines the Front face having counterclockwise vertices for culling
+	//glCullFace(GL_BACK); //Deletes the Backface
+	//glEnable(GL_CULL_FACE); //Enables Backfaceculling
 	glEnable(GL_DEPTH_CLAMP);
 	glDepthFunc(GL_LESS); //Tells OpenGL that Framebuffer values may be overwritten if the new Fragment is closer
 	glEnable(GL_DEPTH_TEST); //Enables Depth Test for Fragments

@@ -1,6 +1,5 @@
 #include "EngineObject.h"
 #include "Camera.h"
-#include "UI.h"
 
 class Shader;
 class RessourceHandler;
@@ -17,7 +16,7 @@ public:
 	}
 	
 	void load(RessourceHandler&);
-	void init(KeyMap&);
+	void init(Screen&);
 	void update(ThreadManager&);
 	void render(Shader&, RenderingEngine::RenderState);
 
